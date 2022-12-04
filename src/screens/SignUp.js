@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
+import url from '../commons/axiosUrl.js';
+
 import axios from 'axios';
 import {
   StyleSheet,
@@ -17,6 +20,12 @@ export default function SignUp({ navigation }) {
     const [number, setNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [text, setText] = useState('');
+  const [num, setNum] = React.useState('');
+
+
+
   const handleClick = async () => {
     //validation
     if(name==''  || number == '' || email == '' || password == '' ){
@@ -25,14 +34,28 @@ export default function SignUp({ navigation }) {
     }
     else{
      
-        axios.post('http://10.20.20.93:8019/user', { name:name,phoneNumber:number,emailAddress:email,password:password},
-        {headers: {
-          'Content-Type': 'application/json',
-        }})
-        .then(response => alert(response.data))
-        .then(response => navigation.navigate('Login'))
+      axios.post(url+'api/register', { name:name,phoneNumber:number,emailAddress:email,password:password,role: {
+        id: 1,
+        name: "Host"
+    }}
+      )
+        
+        .then(response => {
+          
+            
+            if(response.data == "User already exists"){
+
+              alert("Email Address already registered!")
+            } else
+            {
+              alert("Registration Successful!");
+               navigation.navigate('Login');
+              }
+          
+          
+        })
         .catch(error => alert("Something went wrong: "+error));
-l
+
       
         
        
@@ -59,12 +82,13 @@ fontWeight:'bold',fontSize:25,
           style={styles.TextInput}
           
           placeholder="Enter Your Name"
+          placeholderTextColor="#613EEA"
          
           onChangeText={(name) => setName(name)}
         />
         
  
-
+        
  </View>
 
  
@@ -72,6 +96,7 @@ fontWeight:'bold',fontSize:25,
         <TextInput
           style={styles.TextInput}
           placeholder="Enter Your Contact Number"
+          placeholderTextColor="#613EEA"
         
           onChangeText={(number) => setNumber(number)}
         />
@@ -82,6 +107,7 @@ fontWeight:'bold',fontSize:25,
         <TextInput
           style={styles.TextInput}
           placeholder="Enter Your Email"
+          placeholderTextColor="#613EEA"
    
           onChangeText={(email) => setEmail(email)}
         />
@@ -91,11 +117,14 @@ fontWeight:'bold',fontSize:25,
         <TextInput
           style={styles.TextInput}
        placeholder="Enter your Password"
+       placeholderTextColor="#613EEA"
      
           secureTextEntry={true}
+         
           onChangeText={(password) => setPassword(password)}
         />
       </View>
+  
       
      
 

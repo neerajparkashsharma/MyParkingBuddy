@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Toast from "react-native-toast-message";
 import axios from 'axios';
 import {
   StyleSheet,
@@ -8,12 +9,20 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  Switch
 } from "react-native";
-
+import url from '../commons/axiosUrl.js';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [isEnabled, setIsEnabled] = useState(false);
+
+
+    
+
+
   const handleClick = async () => {
         //validation
         if(email == '' || password == '' ){
@@ -21,24 +30,44 @@ export default function Login({ navigation }) {
           return false;
         }
         else{
-          console.log("Inside else")
-            axios.post('http://10.20.20.93:8019/login', { emailAddress:email,password:password},
-            {headers: {
-              'Content-Type': 'application/json',
-            }})
-            .then(response => alert(response.data))
-            .catch(error => alert("Something went wrong: "+error));
+
+            axios.post(url+'api/authenticate', { username:email,password:password}     ,
+            {
+            
+              headers: {
+                'Content-Type': 'application/json',
+                
+              }
+            }     )
+            .then(response => 
+             
+            {
+            
+           
+              if(response.data == "User not found"){
+                alert("User not found!");
+              }
+
+              if(response.data.token){
+                
+                alert("Login Successfull");
+
+                navigation.navigate('Map')
+              }
+              else{
+
+                alert("else - "+response.data)
+              }
+              }   
+            
+            )
+            .catch(error => alert(error));
             
             
         }
   }
   return (
     <View style={styles.container}>
-       {/* <Image
-                    resizeMode="contain"
-                    style={{width: 4000, height: 400,resizeMode:'contain'}}
-                    source={require('./assets/p1.png')}
-                  /> */}
 
 
                    
@@ -51,6 +80,7 @@ fontWeight:'bold',fontSize:25,
         <TextInput
           style={styles.TextInput}
         placeholder="Enter Your Email"
+        placeholderTextColor="#613EEA"
           
           onChangeText={(email) => setEmail(email)}
         />
@@ -60,16 +90,20 @@ fontWeight:'bold',fontSize:25,
         <TextInput
           style={styles.TextInput}
        placeholder="Enter your Password"
+       placeholderTextColor="#613EEA"
      
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
         />
       </View>
- 
+    
+<Switch value={isEnabled} style={{marginLeft:-240}}  onValueChange={()=>{ setIsEnabled(isEnabled == true ? false: true);}} />
+<Text style={{marginLeft:-180,color:"#613EEA"}}>Remember Me</Text>
+
 
 <TouchableOpacity
 
-style={{left:120, top:0}}
+style={{left:80, top:-22}}
         onPress={() => navigation.navigate("OnBoarding")}
       >
         <Text style={{color:'#613EEA'}}>Forgot Password?</Text>
@@ -79,7 +113,7 @@ style={{left:120, top:0}}
       
       <TouchableOpacity style={styles.loginBtn}  onPress={() => handleClick(this)}>
         <Text style={styles.loginText}>LOGIN</Text>
-      </TouchableOpacity><TouchableOpacity    onPress={() => navigation.push('SignUp')}>
+      </TouchableOpacity><TouchableOpacity    onPress={() => navigation.push('SignUpOptions')}>
    
         <Text >or <Text style={styles.SignUp}>Sign Up</Text> </Text>
       </TouchableOpacity>
