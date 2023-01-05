@@ -1,3 +1,3 @@
 import axios from 'axios';
 
-export default url="http://10.20.20.93:8012/";
+export default url="http://192.168.135.180:8042/"; 

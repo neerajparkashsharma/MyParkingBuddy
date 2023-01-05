@@ -22,8 +22,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 console.disableYellowBox = true;
-const VisionCamera = ({route, navigation}) => {
-  const {bookingId} = route.params;
+const VisionCamera2 = props=> {
+  const {bookingId} = 32;
 
   const camera = useRef(null);
   const [Isactive, setIsActive] = useState(false);
@@ -32,18 +32,19 @@ const VisionCamera = ({route, navigation}) => {
 
   const onSuccess = e => {
     console.log(e.data);
+
     //console.log(Ischeckout);
    
       axios
         .post(url + 'bookingVehicles', {
           parkingBookingRecords: {id: JSON.stringify(bookingId)},
 
-          checkIn: Date.now(),
-          checkInInput: e.data,
+          checkOut: Date.now(),
+          checkOutInput: e.data,
         })
 
         .then(function (response) {
-          alert('WAITING FOR VECHICLE TO BE PARKED');
+          alert('CHECKOUT!');
         })
         .catch(function (error) {
           console.log('error' + error);
@@ -175,4 +176,4 @@ const styles = StyleSheet.create({
     backgroundColor: scanBarColor,
   },
 });
-export default VisionCamera;
+export default VisionCamera2;

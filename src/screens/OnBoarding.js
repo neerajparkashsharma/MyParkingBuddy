@@ -12,115 +12,112 @@ import {
   TouchableOpacity,
   Button,
   Alert,
+  Dimensions,
 } from 'react-native';
+import {colors} from '../commons/Colors';
+import styles from '../styles/OnBoardingStyle';
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
+const HeadingfontSize = SCREEN_WIDTH / 12 - 2;
 
 import Swiper from 'react-native-swiper';
 
 const OnBoarding = ({navigation}) => {
   return (
     <Swiper
+      arrowColor="white"
       style={styles.wrapper}
       loop={false}
-      dotStyle={{color: '#613EEA'}}
+      dotStyle={{color: colors.themeColor}}
       showsButtons={true}>
       <View style={styles.slide}>
-        <Image
-          style={{
-            top: 0,
-            width: 150,
-            height: 150,
-            resizeMode: 'contain',
-          }}
-          source={require('../Images/logo.png')}
-        />
+        <Image style={styles.logo} source={require('../Images/logo.png')} />
 
         <Text
-          style={{marginTop: 30, marginDown: 40, color: 'black', fontSize: 25}}>
-          Welcome to Parking Buddy!
-        </Text>
-        <Image
           style={{
-            width: 450,
-            height: 250,
-            marginTop: 30,
-          }}
+            marginTop: SCREEN_HEIGHT / 47,
+            color: 'black',
+            fontSize: HeadingfontSize,
+            fontWeight: 'bold',
+          }}>
+          WELCOME
+        </Text>
+        <Text
+          style={{
+            fontSize: SCREEN_WIDTH / 20 - 5,
+            marginTop: 20,
+            fontWeight: '500',
+            color: colors.themeColor,
+          }}>
+          TO PARKING BUDDY
+        </Text>
+
+        <Image
+          style={styles.picture4}
           source={require('../Images/Picture4.png')}
         />
 
         <TouchableOpacity
-          style={{left: -150, bottom: -45, color: '#613EEA'}}
-          onPress={() => navigation.push('Login')}>
-          <Text style={{color: '#613EEA', fontWeight: 'bold'}}>SKIP</Text>
+          style={styles.skip}
+          onPress={() => navigation.navigate('Login')}>
+          <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
+            SKIP{' '}
+          </Text>
         </TouchableOpacity>
-
-        {/* <Text style={{left:150, top:50, color:'#613EEA'}}>NEXT</Text> */}
       </View>
-
       <View style={styles.slide}>
         <Image
-          style={{
-            width: 250,
-            height: 250,
-            resizeMode: 'contain',
-          }}
+          style={styles.picture1}
           source={require('../Images/Picture1.png')}
         />
         <Text style={styles.text}>Best Parking Spots</Text>
         <Text>Be our parking Buddy!</Text>
         <TouchableOpacity
-          style={{left: -150, bottom: -140, color: '#613EEA'}}
-          onPress={() => navigation.push('Login')}>
-          <Text style={{color: '#613EEA', fontWeight: 'bold'}}>SKIP</Text>
+          style={styles.skip}
+          onPress={() => navigation.navigate('Login')}>
+          <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
+            SKIP
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={styles.slide}>
         <Image
-          style={{
-            width: 250,
-            height: 250,
-            resizeMode: 'contain',
-          }}
+          style={styles.picture2}
           source={require('../Images/Picture2.png')}
         />
         <Text style={styles.text}>Quick Navigation</Text>
-        <Text style={{fontSize: 15, marginTop: 20}}>Be our parking Buddy!</Text>
+        <Text style={{fontSize: 15, marginTop: 20, color: 'black'}}>
+          Be our parking Buddy!
+        </Text>
         <TouchableOpacity
-          style={{left: -150, bottom: -130, color: '#613EEA'}}
-          onPress={() => navigation.push('Login')}>
-          <Text style={{color: '#613EEA', fontWeight: 'bold'}}>SKIP</Text>
+          style={styles.skip}
+          onPress={() => navigation.navigate('Login')}>
+          <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
+            SKIP
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={styles.slide}>
         <Image
-          style={{width: 250, height: 250, resizeMode: 'contain'}}
+          style={styles.picture3}
           source={require('../Images/Picture3.png')}
         />
         <Text style={styles.text}>Easy Payment</Text>
-        <Text style={{}}>
+        <Text style={{fontSize: 15, marginTop: 20, color: 'black'}}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit
         </Text>
 
         <TouchableOpacity
-          style={{left: -150, bottom: -140, color: '#613EEA'}}
-          onPress={() => navigation.push('Login')}>
-          <Text style={{color: '#613EEA', fontWeight: 'bold'}}>SKIP</Text>
+          style={styles.skip}
+          onPress={() => navigation.navigate('Login')}>
+          <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
+            SKIP
+          </Text>
         </TouchableOpacity>
       </View>
     </Swiper>
   );
 };
 
-const styles = StyleSheet.create({
-  wrapper: {},
-  slide: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  text: {
-    color: 'black',
-    fontSize: 25,
-  },
-});
 export default OnBoarding;
