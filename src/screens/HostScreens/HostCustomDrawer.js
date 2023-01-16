@@ -81,47 +81,46 @@ import {
     return (
       <View style={{flex: 1}}>
         <View
-          style={{
-            flex: 0.1,
-  
-            paddingTop: 50,
-            paddingHorizontal: 20,
-            paddingVertical: 0,
-            backgroundColor: 'black',
-          }}>
-          <Icon
-            name="close"
-            style={{marginTop: -40, marginLeft: 220}}
-            onPress={() => props?.navigation.closeDrawer()}
-            color={colors.white}
-            size={23}
+        style={{
+          flex: 0.1,
+
+          paddingTop: 50,
+          paddingHorizontal: 20,
+          paddingVertical: 0,
+          
+        }}>
+        <Icon
+          name="close"
+          style={{marginTop: -40, marginLeft: 220}}
+          onPress={() => props?.navigation.closeDrawer()}
+          color={colors.themeColor}
+          size={23}
+        />
+        <TouchableOpacity
+          style={{flexDirection: 'row', display: 'flex', paddingHorizontal: 10}}
+          onPress={() => props?.navigation.navigate('Profile')}>
+          <Image
+            source={require('../../Images/user.png')}
+            style={{
+              width: SCREEN_WIDTH / 10,
+              height: SCREEN_HEIGHT / 17,
+             
+            
+            }}
           />
-          <TouchableOpacity
-            style={{flexDirection: 'row', display: 'flex', paddingHorizontal: 10}}
-            onPress={() => props?.navigation.navigate('Profile')}>
-            <Image
-              source={require('../../Images/user_avatar.png')}
-              style={{
-                width: SCREEN_WIDTH / 8,
-                height: SCREEN_HEIGHT / 15,
-                borderRadius: 50,
-                borderWidth: 3,
-                borderColor: '#AF8DEB',
-              }}
-            />
-            <Text
-              style={{
-                fontSize: SCREEN_HEIGHT / 40,
-                fontWeight: 'bold',
-                top: 10,
-                left: SCREEN_WIDTH / 50,
-                color: colors.white,
-              }}>
+          <Text
+            style={{
+              fontSize: SCREEN_HEIGHT / 40,
+              fontWeight: 'bold',
+              top: 10,
+              left: SCREEN_WIDTH / 50,
+              color: colors.themeColor,
+            }}>
              sj@gmail.com
             </Text>
           </TouchableOpacity>
         </View>
-        <View style={{flex: 0.9, borderBottomColor: 'black', borderWidth: 1}}>
+        <View style={{flex: 0.9}}>
           <FlatList
             data={HostListOfDrawerItems}
             renderItem={renderItem}></FlatList>

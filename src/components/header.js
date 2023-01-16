@@ -10,11 +10,26 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const Headerx = ({navigation,headerName}) => {
   return (
     <View style={styles.topContainer}>
-    <TouchableOpacity
-    onPress={() => {navigation.goBack()}
-  }>
-      <Icon name="chevron-left" size={SCREEN_WIDTH/15} color={colors.themeColor} />
-    </TouchableOpacity>
+      {
+        navigation.openDrawer ?
+ (       <TouchableOpacity onPress={() => navigation.openDrawer()}>
+          
+          <Icon name="menu" size={30} color={colors.themeColor} />
+        </TouchableOpacity>
+  )      :
+(
+        <TouchableOpacity
+        onPress={() => {
+          
+          
+          navigation.goBack()}
+      }>
+          <Icon name="chevron-left" size={SCREEN_WIDTH/15} color={colors.themeColor} />
+        </TouchableOpacity>
+  )
+
+      }
+   
     <Text style={styles.topTitle}>{headerName}</Text>
     <View />
   </View>

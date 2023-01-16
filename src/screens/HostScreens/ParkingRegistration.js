@@ -1,4 +1,3 @@
-
 import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -22,23 +21,17 @@ import {
   TextInput,
 } from 'react-native';
 
-
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {ScrollView} from 'react-native-gesture-handler';
 import Headerx from '../../components/header';
 
-
-
 const ParkingRegistration = props => {
-
-  
-
-  const [charges, setCharges] = useState("");
-  const [checkin, setCheckin] = useState("");
-const [checkout, setCheckout] = useState("");
-const [description, setDescription] = useState("");
-const [location, setLocaiton] = useState("");
-const [uid, setUid] = useState("");
+  const [charges, setCharges] = useState('');
+  const [checkin, setCheckin] = useState('');
+  const [checkout, setCheckout] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocaiton] = useState('');
+  const [uid, setUid] = useState('');
 
   const placesRef = useRef();
   const [latLong, setLatLong] = useState({
@@ -49,39 +42,63 @@ const [uid, setUid] = useState("");
     fetchLocation();
   }, []);
 
-
-
-  
   const handleClick = async () => {
     //validation
-    if(location==''  || description == '' || checkout == '' || checkin == '' ||charges == ''){
+    if (
+      location == '' ||
+      description == '' ||
+      checkout == '' ||
+      checkin == '' ||
+      charges == ''
+    ) {
       alert('Please fill all the fields');
-      console.log("locaiton"+location + "descr"+ description+"checkout" + checkout+"check in" + checkin +"charges"+charges )
+      console.log(
+        'locaiton' +
+          location +
+          'descr' +
+          description +
+          'checkout' +
+          checkout +
+          'check in' +
+          checkin +
+          'charges' +
+          charges,
+      );
       alert('Please fill all the fields');
       return false;
-    }
-    else{
+    } else {
       setUid(getData());
-      console.log(checkin+""+checkout+""+charges+""+description+""+location+""+uid)
-      axios.post(url+'parking', {parkingLocation:location,parkingCharges:charges,description:description,latitude:latLong.latitude, longitude:latLong.longitude,checkInCode:checkin,checkOutCode:checkout, host:{id:uid}}, 
-     
-      )
-    
-        .then(response => {
-          
-           alert(response.data);
-           
-          
-          
+      console.log(
+        checkin +
+          '' +
+          checkout +
+          '' +
+          charges +
+          '' +
+          description +
+          '' +
+          location +
+          '' +
+          uid,
+      );
+      axios
+        .post(url + 'parking', {
+          parkingLocation: location,
+          parkingCharges: charges,
+          description: description,
+          latitude: latLong.latitude,
+          longitude: latLong.longitude,
+          checkInCode: checkin,
+          checkOutCode: checkout,
+          host: {id: uid},
         })
-        .catch(error => alert("Something went wrong: "+error));
 
-      
-        
-       
+        .then(response => {
+          alert(response.data);
+        })
+        .catch(error => alert('Something went wrong: ' + error));
     }
-}
-
+  };
 
   const fetchLocation = async () => {
     const chckLocationPermission = PermissionsAndroid.check(
@@ -239,37 +256,40 @@ const [uid, setUid] = useState("");
 
   const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem('@userdata')
-      if(value !== null) {
+      const value = await AsyncStorage.getItem('@userdata');
+      if (value !== null) {
         value = JSON.parse(value);
         console.log(value);
       }
-    } catch(e) {
+    } catch (e) {
       // error reading value
     }
-  }
+  };
   return (
-    <View style={styles.container}>
-  
-  
+    <ScrollView style={styles.container}>
+      <Headerx
+        navigation={props.navigation}
+        headerName={'Parking Registration'}
+      />
 
-      
-      <Text
-        style={{
-          paddingHorizontal: 10,
-          color: '#613EEA',
-          fontWeight: 'bold',
-          fontSize: 25,
-          backgroundColor: 'white',
-          marginBottom: 10, marginLeft:30
-        }}>
-        PARKING REGISTRATION
-      </Text>
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Text
+          style={{
+            paddingHorizontal: 10,
+            color: '#613EEA',
+            fontWeight: 'bold',
+            fontSize: 25,
+            backgroundColor: 'white',
+            marginTop: 30,
+            marginBottom: 10,
+            marginLeft: 30,
+          }}>
+          Register a new Parking
+        </Text>
 
-      <Text >  </Text>
+        <Text> </Text>
 
-
-      {/* <QRCode
+        {/* <QRCode
         value={'12312983'}
         size={250}
         color="black"
@@ -277,8 +297,7 @@ const [uid, setUid] = useState("");
         getRef={getRef}
         /> */}
 
-
-{/* <QRCode
+        {/* <QRCode
         value={"1231231123"}
         size={250}
         color="black"
@@ -286,128 +305,118 @@ const [uid, setUid] = useState("");
        
         /> */}
 
+        <TouchableOpacity style={styles.loginBtn} onPress={chooseFile}>
+          <Text style={styles.loginText}>Attach Image</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginBtn} onPress={chooseFile}>
-        <Text style={styles.loginText}>Attach Image</Text>
-      </TouchableOpacity>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Enter parking Charges (per hr.)"
+            placeholderTextColor={'#613EEA'}
+            onChangeText={charges => setCharges(charges)}></TextInput>
+        </View>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Add Check-in Code"
+            placeholderTextColor={'#613EEA'}
+            onChange={checkin => setCheckin(checkin)}></TextInput>
+        </View>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Add Check-out Code"
+            placeholderTextColor={'#613EEA'}
+            onChange={checkout => setCheckout(checkout)}></TextInput>
+        </View>
 
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-        
-          placeholder="Enter parking Charges (per hr.)"
-          placeholderTextColor={'#613EEA'}
-          
-          onChangeText={(charges) => setCharges(charges)}
-          ></TextInput>
-      </View>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-         
-          placeholder="Add Check-in Code"
-          placeholderTextColor={'#613EEA'}
-          onChange={(checkin) => setCheckin(checkin)}
-          ></TextInput>
-      </View>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-     
-          placeholder="Add Check-out Code"
-          placeholderTextColor={'#613EEA'}
-     onChange={(checkout) => setCheckout(checkout)}
-          ></TextInput>
-      </View>
+        <View style={styles.descriptionView}>
+          <TextInput
+            style={styles.descriptionInput}
+            numberOfLines={5}
+            multiline={true}
+            placeholder="Description"
+            placeholderTextColor={'#613EEA'}
+            onChangeText={description =>
+              setDescription(description)
+            }></TextInput>
+        </View>
 
-      <View style={styles.descriptionView}>
-        <TextInput
-          style={styles.descriptionInput}
-          numberOfLines={5}
-          multiline={true}
-          placeholder="Description"
-          placeholderTextColor={'#613EEA'}
-          onChangeText={(description) => setDescription(description)}
-          ></TextInput>
-      </View>
+        <GooglePlacesAutocomplete
+          placeholder="Select Location"
+          minLength={2}
+          autoFocus={false}
+          returnKeyType={'default'}
+          fetchDetails={true}
+          ref={placesRef}
+          textInputProps={{
+            onChangeText: text => {
+              setLocaiton(text);
+            },
+            autoFocus: true,
+            placeholderTextColor: '#613EEA',
+            blurOnSubmit: false,
 
-   
-        
-      <GooglePlacesAutocomplete
-      
-        placeholder="Select Location"
-        minLength={2}
-        autoFocus={false}
-        returnKeyType={'default'}
-        fetchDetails={true}
-        ref={placesRef}
-        textInputProps={{
-        onChangeText: (text) => { setLocaiton(text) },
-          autoFocus: true,
-          placeholderTextColor: '#613EEA',
-          blurOnSubmit: false,
-
-          height: 50,
-     
-          color: '#613EEA',
-
-          padding: 10,
-          marginLeft: 20,
-          backgroundColor: '#f2f3f4',
-        }}
-        onPress={(data, details = null) => {
-          console.log(details.geometry.location.lat);
-          console.log(details.geometry.location.lng);
-          
-          setLatLong({
-            latitude: details.geometry.location.lat,
-            longitude: details.geometry.location.lng,
-          });
-        }}
-        query={{
-          key: 'AIzaSyDUsfGK5aTpPQ1ik_1ncS2eFPN6DoOd2vw',
-          language: 'en',
-        }}
-        styles={{
-          textInputContainer: {
-            backgroundColor: '#f2f3f4',
-            borderRadius: 5,
-
-            width: '70%',
             height: 50,
 
-            marginBottom: 30,
             color: '#613EEA',
 
-            alignItems: 'flex-start',
-          },
-          description: {
-            color: '#613EEA',
-            fontSize: 15,
-
-            width: '70%',
-            alignItems: 'flex-start',
+            padding: 10,
             marginLeft: 20,
-            padding: 5,
-            flex: 1,
-          },
+            backgroundColor: '#f2f3f4',
+          }}
+          onPress={(data, details = null) => {
+            console.log(details.geometry.location.lat);
+            console.log(details.geometry.location.lng);
 
-          textInput: {  color: '#613EEA',
-        },
-          predefinedPlacesDescription: {
-            color: '#1faadb',
-          },
-        }}
-      />
-    
-   
+            setLatLong({
+              latitude: details.geometry.location.lat,
+              longitude: details.geometry.location.lng,
+            });
+          }}
+          query={{
+            key: 'AIzaSyDUsfGK5aTpPQ1ik_1ncS2eFPN6DoOd2vw',
+            language: 'en',
+          }}
+          styles={{
+            textInputContainer: {
+              backgroundColor: '#f2f3f4',
+              borderRadius: 5,
 
-   
-    <TouchableOpacity style={styles.submit} onPress={() => handleClick(this)}>
-        <Text style={styles.loginText}>Submit Details</Text>
-      </TouchableOpacity>
-    
-    </View>
+              width: '70%',
+              height: 50,
+
+              marginBottom: 30,
+              color: '#613EEA',
+
+              alignItems: 'flex-start',
+            },
+            description: {
+              color: '#613EEA',
+              fontSize: 15,
+
+              width: '70%',
+              alignItems: 'flex-start',
+              marginLeft: 20,
+              padding: 5,
+              flex: 1,
+            },
+
+            textInput: {color: '#613EEA'},
+            predefinedPlacesDescription: {
+              color: '#1faadb',
+            },
+          }}
+        />
+
+        <TouchableOpacity
+          style={styles.submit}
+          onPress={() => handleClick(this)}>
+          <Text style={styles.loginText}>Submit Details</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -417,9 +426,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-
-    justifyContent: 'center',
   },
 
   image: {
@@ -478,7 +484,7 @@ const styles = StyleSheet.create({
     width: '70%',
     borderRadius: 5,
     height: 50,
-    marginBottom:30,
+    marginBottom: 30,
     alignItems: 'center',
     justifyContent: 'center',
 
@@ -489,8 +495,8 @@ const styles = StyleSheet.create({
     width: '70%',
     borderRadius: 5,
     height: 50,
-    marginTop:30,
-    marginBottom:30,
+    marginTop: 30,
+    marginBottom: 30,
     alignItems: 'center',
     justifyContent: 'center',
 

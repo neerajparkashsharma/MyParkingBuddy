@@ -64,8 +64,14 @@ export default Home = props => {
     {
       id: 2,
       name: 'Your Wallet',
-      image: require('../../Images/icons8-digital-wallet-100.png'),
-      screen: 'EWallet',
+      image: require('../../Images/wallete.png'),
+      screen: 'E-Wallet',
+    },
+    {
+      id: 3,
+      name: 'Your Bookings',
+      image: require('../../Images/parkingbooking.png'),
+      screen: 'AllBookings',
     },
     // ,
     // {
@@ -122,23 +128,26 @@ export default Home = props => {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}>
-        {/* Header */}
+      
         <SafeAreaView>
           <View style={styles.headerWrapper}>
             {console.log(props)}
             <TouchableOpacity onPress={() => props?.navigation?.openDrawer()}>
-              <Feather name="menu" size={24} color={colors.black} />
+              <Feather name="menu" size={24} color={colors.themeColor} />
             </TouchableOpacity>
+         <TouchableOpacity onPress={() => props?.navigation?.navigate('Profile')}>
             <Image
-              source={require('../../Images/user_avatar.png')}
+              source={require('../../Images/user.png')}
               style={styles.profileImage}
+              resizeMode="contain"
             />
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
 
         <View style={styles.titlesWrapper}>
-          <Text style={styles.titlesSubtitle}>Find</Text>
-          <Text style={styles.titlesTitle}>PARKINGS</Text>
+          <Text style={styles.titlesSubtitle}>Find your Parking Space!</Text>
+          {/* <Text style={styles.titlesTitle}>PARKING SPACE</Text> */}
         </View>
 
         {/* <View style={styles.searchWrapper}>
@@ -149,7 +158,7 @@ export default Home = props => {
         </View> */}
 
         <View style={styles.categoriesWrapper}>
-          <Text style={styles.categoriesTitle}>Categories</Text>
+          {/* <Text style={styles.categoriesTitle}>Categories</Text> */}
           <View style={styles.categoriesListWrapper}>
             <FlatList
               data={NavItems}
@@ -161,7 +170,7 @@ export default Home = props => {
         </View>
 
         <View style={styles.popularWrapper}>
-          <Text style={styles.popularTitle}>Your Bookings</Text>
+         <Text style={styles.titlesTitle}>Recent Bookings</Text>
           {listOfBookings.map(item => (
             <TouchableOpacity key={item.id}>
               <View
@@ -249,9 +258,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileImage: {
-    width: SCREEN_WIDTH / 20,
-    height: SCREEN_HEIGHT / 20,
-    borderRadius: 4,
+    width: SCREEN_WIDTH / 10,
+    height: SCREEN_HEIGHT / 15,
+    
+    borderRadius: 35,
   },
   titlesWrapper: {
     marginTop: 30,
@@ -259,16 +269,16 @@ const styles = StyleSheet.create({
   },
   titlesSubtitle: {
     fontFamily: 'Montserrat-Regular',
-    fontSize: 16,
+    fontSize: 34,
     color: colors.themeColor,
-    fontWeight:'700'
+    fontWeight: 'bold',
   },
   titlesTitle: {
     fontFamily: 'Montserrat-Bold',
-    fontSize: 32,
-    color: colors.textDark,
+    fontSize: 23,
+    color: colors.themeColor,
     marginTop: 5,
-    fontWeight:'500'
+    fontWeight:'700'
   },
   searchWrapper: {
     flexDirection: 'row',
