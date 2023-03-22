@@ -153,10 +153,10 @@ const MyMap = props => {
     }
   };
   return (
-    <View >
+    <View>
       <Headerx navigation={props.navigation} headerName={'Find Parkings'} />
 
-{/*       
+      {/*       
 
       <GooglePlacesAutocomplete
           placeholder="Select Location"
@@ -222,16 +222,14 @@ const MyMap = props => {
           }}
         /> */}
 
-
       <MapView
         customMapStyle={mapStyle}
         mapType="standard"
-       
         showsUserLocation={true}
         showsMyLocationButton={true}
         provider={PROVIDER_GOOGLE}
         trackViewChanges={true}
-        style={{flex:1}}
+        style={{flex: 1}}
         region={{
           latitude: latLong.latitude,
           longitude: latLong.longitude,
@@ -268,8 +266,6 @@ const MyMap = props => {
           );
         })}
 
-
-
         <Marker
           draggable
           coordinate={{
@@ -282,7 +278,6 @@ const MyMap = props => {
           }
         />
       </MapView>
-
 
       {show ? (
         //   <View
@@ -333,32 +328,66 @@ const MyMap = props => {
 
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-             
-        
-             <View style={{flexDirection:'column',justifyContent:'space-between'}}>
-             <Text style={{fontSize:16, color:colors.black, fontWeight:'bold'}}>Parking Location: <Text style={{fontSize:16, color:colors.themeColor,fontWeight:'bold'}}>{charges}</Text> </Text>
-          
-              <Text style={{fontSize:16, color:colors.black, fontWeight:'bold',marginTop:35}}>Parking Charges: <Text style={{fontSize:16, color:colors.themeColor, fontWeight:'bold'}}>Rs. {charges}</Text> </Text>
-            
-              <TouchableOpacity
-        style={{  width: '70%',
-        borderRadius: 5,
-        left:60,
-        height: 50,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 70,
-        top: 30,
-        backgroundColor: '#613EEA'}}
-        onPress={() => handleClick(this)}>
-        <Text style={{color:'white',fontWeight:'bold'}}>BOOK NOW</Text>
-      </TouchableOpacity>
-              
+              <View
+                style={{
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: colors.black,
+                    fontWeight: 'bold',
+                  }}>
+                  Parking Location:{' '}
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: colors.themeColor,
+                      fontWeight: 'bold',
+                    }}>
+                    {charges}
+                  </Text>{' '}
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: colors.black,
+                    fontWeight: 'bold',
+                    marginTop: 35,
+                  }}>
+                  Parking Charges:{' '}
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: colors.themeColor,
+                      fontWeight: 'bold',
+                    }}>
+                    Rs. {charges}
+                  </Text>{' '}
+                </Text>
+
+                <TouchableOpacity
+                  style={{
+                    width: '70%',
+                    borderRadius: 5,
+                    left: 60,
+                    height: 50,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 70,
+                    top: 30,
+                    backgroundColor: '#613EEA',
+                  }}
+                  onPress={() => handleClick(this)}>
+                  <Text style={{color: 'white', fontWeight: 'bold'}}>
+                    BOOK NOW
+                  </Text>
+                </TouchableOpacity>
               </View>
 
-
-
-            {/* <GooglePlacesAutocomplete
+              {/* <GooglePlacesAutocomplete
   placeholder='Enter Location'
   query={{
     key: 'AIzaSyBVKhAcSTDpGwbcREq4xN3cR6W8ij4Vi88',
@@ -391,14 +420,9 @@ const MyMap = props => {
   }}
 /> */}
 
-             
-            
               <Text style={styles.info}>{charges}</Text>
-
-             
-              </View>
-              </View>
-
+            </View>
+          </View>
         </View>
       ) : (
         <View></View>
@@ -440,14 +464,13 @@ const styles = StyleSheet.create({
     placeholderTextColor: 'black',
   },
 
-  body:{
-top:30,
-
+  body: {
+    top: 30,
   },
-  name:{
-fontWeight:'700',
-fontSize:20,
-color:colors.themeColor,
+  name: {
+    fontWeight: '700',
+    fontSize: 20,
+    color: colors.themeColor,
   },
   bodyContainer: {
     borderTopStartRadius: 24,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   ImageBackground,
   ScrollView,
@@ -14,10 +14,33 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import FIcon from 'react-native-vector-icons/Feather';
 import {colors} from '../../commons/Colors';
-import {SCREEN_HEIGHT, SCREEN_WIDTH} from '../../components/units';
-import {color} from 'react-native-reanimated';
 
-const DetailsScreen = ({navigation, route}) => {
+import {SCREEN_WIDTH, SCREEN_HEIGHT} from '../../components/units';
+import Headerx from '../../components/header';
+import axios from 'axios';
+import url from '../../commons/axiosUrl';
+
+export default BookingParking = (props) => {
+  
+  [address, setAddress] = React.useState('');
+  const id = props.route.params?.id
+
+  useEffect(() => {
+    console.log(props)
+    console.log(id)
+
+    axios.get(`${url}parking/${id}`).then((res) => {
+      console.log(res.data);
+      setAddress(res.data?.parkingLocation)
+      
+    }
+    ).catch((err) => {
+      console.log(err);
+    }
+    )
+  }, [])
+
+
   //   const item = route.params;
   const ANIMAL_NAMES = [
     {
@@ -42,17 +65,17 @@ const DetailsScreen = ({navigation, route}) => {
     },
     {
       id: 5,
-      name: 'Cow',
+      name: '2.5',
       selected: false,
     },
     {
       id: 6,
-      name: 'Deer',
+      name: '3',
       selected: false,
     },
     {
       id: 7,
-      name: 'Horse',
+      name: '4',
       selected: false,
     },
   ];
@@ -116,11 +139,7 @@ const DetailsScreen = ({navigation, route}) => {
         backgroundColor: 'white',
         paddingBottom: 70,
       }}>
-      <StatusBar
-        barStyle="light-content"
-        translucent
-        backgroundColor="rgba(0,0,0,0)"
-      />
+   <Headerx navigation={props?.navigation} headerName={'Booking Parking'}></Headerx>
       <ImageBackground
         style={style.headerImage}
         source={require('../../Images/parking.jpeg')}>
@@ -357,6 +376,7 @@ const style = StyleSheet.create({
   },
   headerImage: {
     height: 250,
+    top:15,
     borderBottomRightRadius: 40,
     borderBottomLeftRadius: 40,
     overflow: 'hidden',
@@ -421,4 +441,3 @@ const style = StyleSheet.create({
   },
 });
 
-export default DetailsScreen;

@@ -21,10 +21,15 @@ import {createStackNavigator} from '@react-navigation/stack';
 import CardDetails from './src/screens/UserScreens/CardDetails';
 // import HomeScreen from './src/screens/UserScreens/HomeScreen';
 import DrawerNavigator from './src/Navigators/DrawerNavigator';
+import LocationSettings from './src/screens/UserScreens/LocationSettings';
 import HostDrawer from './src/Navigators/HostDrawer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function App() {
   return (
     <NavigationContainer>
+
+ 
+     
       <Stack.Navigator initialRouteName="OnBoarding">
         <Stack.Screen
           name="OnBoarding"
@@ -35,6 +40,11 @@ export default function App() {
         <Stack.Screen
           name="Drawer"
           component={DrawerNavigator}
+          options={{headerShown: false}}
+        />
+         <Stack.Screen
+          name="LocationSettings"
+          component={LocationSettings}
           options={{headerShown: false}}
         />
          <Stack.Screen

@@ -1,6 +1,7 @@
 /**
  * @format
  */
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 
 import {AppRegistry} from 'react-native';
 import App from './App';

@@ -56,7 +56,11 @@ const Settings = props => {
             elevation: 20,
             alignItems: 'center',
             borderRadius: 15,
-          }}>
+          }}
+          onPress={
+            ()=>props?.navigation.navigate('LocationSettings')
+          }
+          >
           <Image
             style={{alignSelf: 'center', marginTop: 10}}
             source={require('../../Images/icons8-location-100.png')}></Image>

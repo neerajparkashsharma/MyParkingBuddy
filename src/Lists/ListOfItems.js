@@ -12,9 +12,14 @@ export const UserListOfDrawerItems = [
 
   {
     id: 2,
-    name: 'EWallet',
+    name: 'E-Wallet',
     icon: 'payment',
   },
+  {
+    id: 3,
+    name:'Settings',
+    icon:'settings'
+  }
 
 ];
 

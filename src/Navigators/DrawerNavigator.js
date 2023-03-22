@@ -7,7 +7,10 @@ import UserDrawerCustom from '../screens/UserScreens/UserDrawerCustom';
 import EWallet from '../screens/UserScreens/EWallet';
 import VisionCamera2 from '../screens/QRCheckout';
 import Profile from '../screens/UserScreens/Profile';
-
+import FindParking from '../screens/UserScreens/FindParking';
+import Settings from '../screens/UserScreens/Settings';
+import LocationSettings from '../screens/UserScreens/LocationSettings';
+import BookingParking from '../screens/UserScreens/ParkingBooking';
 const Drawer = createDrawerNavigator();
 
 export default function DrawerNavigator({navigation}) {
@@ -16,6 +19,7 @@ export default function DrawerNavigator({navigation}) {
       useLegacyImplementation
       initialRouteName="Home"
       drawerContent={props => <UserDrawerCustom {...props} />}>
+      
       <Drawer.Screen
         name="Home"
         component={Home}
@@ -28,13 +32,33 @@ export default function DrawerNavigator({navigation}) {
         options={{headerShown: false}}
       />
       <Drawer.Screen
-        name="EWallet"
+        name="E-Wallet"
         component={EWallet}
         options={{headerShown: false}}
       />
       <Drawer.Screen
+        name="Settings"
+        component={Settings}
+        options={{headerShown: false}}
+      />
+
+      <Drawer.Screen
+      name='LocationSettings'
+      component={LocationSettings}
+      options={{headerShown:false}}
+
+
+      />
+      <Drawer.Screen
+
+      name='BookParking'
+      component={BookingParking}
+      options={{headerShown:false}}
+      />
+
+      <Drawer.Screen
         name="MyMap"
-        component={MyMap}
+        component={FindParking}
         options={{headerShown: false}}
       />
       <Drawer.Screen
@@ -48,6 +72,7 @@ export default function DrawerNavigator({navigation}) {
         component={Profile}
         options={{headerShown: false}}
       />
+
     </Drawer.Navigator>
   );
 }

@@ -10,6 +10,7 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
+  TouchableWithoutFeedback
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,10 +32,8 @@ export default Home = props => {
       const value = await AsyncStorage.getItem('userdata');
 
       if (value !== null) {
-        //  {console.log("userid"+userid)}
-
         axios
-          .get(url + 'parkingBookingRecords/customer/' + 45)
+          .get(url + 'parkingBookingRecords/customer/'+value)
 
           .then(function (response) {
             console.log('object');
@@ -128,19 +127,19 @@ export default Home = props => {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}>
-      
         <SafeAreaView>
           <View style={styles.headerWrapper}>
             {console.log(props)}
             <TouchableOpacity onPress={() => props?.navigation?.openDrawer()}>
               <Feather name="menu" size={24} color={colors.themeColor} />
             </TouchableOpacity>
-         <TouchableOpacity onPress={() => props?.navigation?.navigate('Profile')}>
-            <Image
-              source={require('../../Images/user.png')}
-              style={styles.profileImage}
-              resizeMode="contain"
-            />
+            <TouchableOpacity
+              onPress={() => props?.navigation?.navigate('Profile')}>
+              <Image
+                source={require('../../Images/user.png')}
+                style={styles.profileImage}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -162,6 +161,7 @@ export default Home = props => {
           <View style={styles.categoriesListWrapper}>
             <FlatList
               data={NavItems}
+              showsHorizontalScrollIndicator={false}
               renderItem={renderCategoryItem}
               keyExtractor={item => item.id}
               horizontal={true}
@@ -170,9 +170,9 @@ export default Home = props => {
         </View>
 
         <View style={styles.popularWrapper}>
-         <Text style={styles.titlesTitle}>Recent Bookings</Text>
+          <Text style={styles.titlesTitle}>Recent Bookings</Text>
           {listOfBookings.map(item => (
-            <TouchableOpacity key={item.id}>
+            <TouchableWithoutFeedback key={item.id}>
               <View
                 style={[
                   styles.popularCardWrapper,
@@ -183,18 +183,19 @@ export default Home = props => {
                 <View>
                   <View>
                     <View style={styles.popularTopWrapper}>
-                      <MaterialCommunityIcons
+                      {/* <MaterialCommunityIcons
                         name="crown"
                         size={12}
                         color={colors.primary}
-                      />
-                      <Text style={styles.popularTopText}>
+                      /> */}
+                      {/* <Text style={styles.popularTopText}>
                         Details: {item.parking.description}
-                      </Text>
+                      </Text> */}
                     </View>
                     <View style={styles.popularTitlesWrapper}>
                       <Text style={styles.popularTitlesTitle}>
-                        {item.parking.parkingLocation}
+                        {/* {item.parking.parkingLocation.toString().subtring(0, 10)}... */}
+                        {item.parking.parkingLocation ? item.parking.parkingLocation.toString().substring(0, 50):"N/A"}
                       </Text>
                       <Text style={styles.popularTitlesWeight}>
                         {/* PKR120/hour */}
@@ -218,18 +219,7 @@ export default Home = props => {
                         color={colors.black}
                       /> */}
 
-                      <View>
-                        <TouchableOpacity>
-                          <Text style={{color: colors.themeColor}}>
-                            Check In
-                          </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                          <Text style={{color: colors.themeColor}}>
-                            Check Out
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
+                
                     </View>
                   </View>
                 </View>
@@ -238,7 +228,7 @@ export default Home = props => {
                   <Image source={item.image} style={styles.popularCardImage} />
                 </View>
               </View>
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
           ))}
         </View>
       </ScrollView>
@@ -260,7 +250,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: SCREEN_WIDTH / 10,
     height: SCREEN_HEIGHT / 15,
-    
+
     borderRadius: 35,
   },
   titlesWrapper: {
@@ -278,7 +268,7 @@ const styles = StyleSheet.create({
     fontSize: 23,
     color: colors.themeColor,
     marginTop: 5,
-    fontWeight:'700'
+    fontWeight: '700',
   },
   searchWrapper: {
     flexDirection: 'row',
@@ -314,6 +304,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5CA48',
     marginRight: 20,
     borderRadius: 20,
+   
     shadowColor: colors.black,
     shadowOffset: {
       width: 0,
@@ -321,7 +312,8 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.05,
     shadowRadius: 10,
-    elevation: 2,
+    elevation: 1,
+
   },
   categoryItemImage: {
     width: 90,
@@ -357,7 +349,7 @@ const styles = StyleSheet.create({
   },
   popularCardWrapper: {
     backgroundColor: colors.white,
-    borderRadius: 25,
+    borderRadius: 5,
     paddingTop: 20,
     paddingLeft: 20,
     flexDirection: 'row',
@@ -404,8 +396,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.themeColor,
     paddingHorizontal: 40,
     paddingVertical: 20,
-    borderTopRightRadius: 25,
-    borderBottomLeftRadius: 25,
+    // borderTopRightRadius: 25,
+    // borderBottomLeftRadius: 25,
   },
   ratingWrapper: {
     flexDirection: 'row',
