@@ -32,110 +32,132 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const FindParking = (props) => {
   const [selectedMarker, setSelectedMarker] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [mapInitialized, setMapInitialized] = useState(false);
-  const navigation = useNavigation();
-  const [location, setLocaiton] = useState('');
-  const [markers, setMarkers] = useState([]);
-  const [currentUser, setCurrentUser] = useState();
-  const [idd, setId] = useState();
-  const [uid, setUid] = useState();
-  const [charges, setCharges] = useState();
-  const [show, setShow] = useState(false);
-  const [latLong, setLatLong] = useState({
-    latitude: 24.8607333,
-    longitude: 67.001135,
-  });
+const [modalVisible, setModalVisible] = useState(false);
+const [mapInitialized, setMapInitialized] = useState(false);
+const navigation = useNavigation();
+const [location, setLocation] = useState('');
+const [markers, setMarkers] = useState([]);
+const [currentUser, setCurrentUser] = useState();
+const [idd, setId] = useState();
+const [uid, setUid] = useState();
+const [charges, setCharges] = useState();
+const [show, setShow] = useState(false);
+const [latLong, setLatLong] = useState({
+  latitude: 24.8607333,
+  longitude: 67.001135,
+});
 
 
-  const fetchLocation = useCallback(async () => {
-    try {
-      const chckLocationPermission = await PermissionsAndroid.check(
+const [locationRadius, setLocationRadius] = useState();
+
+useEffect(() => {
+
+  AsyncStorage.getItem('location').then((value) => {
+    setLocationRadius(value);
+  } 
+  );
+
+}, []);
+  
+
+const fetchLocation = useCallback(async () => {
+  try {
+    const chckLocationPermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+    if (chckLocationPermission === PermissionsAndroid.RESULTS.GRANTED) {
+      alert("You've access for the location");
+    } else {
+      const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
-      if (chckLocationPermission === PermissionsAndroid.RESULTS.GRANTED) {
-        alert("You've access for the location");
-      } else {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          Geolocation.getCurrentPosition(position => {
-            const {latitude, longitude} = position.coords;
-            console.log('latitude', latitude);
-            console.log('longitude', longitude);
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        Geolocation.getCurrentPosition(position => {
+          const {latitude, longitude} = position.coords;
+          console.log('latitude', latitude);
+          console.log('longitude', longitude);
 
-            setLatLong({
-              latitude,
-              longitude,
-            });
+          setLatLong({
+            latitude,
+            longitude,
           });
-        } else if (granted === PermissionsAndroid.RESULTS.DENIED) {
-          fetchLocation();
-          console.log('ACCESS_FINE_LOCATION permission denied');
-        } else if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-          console.log('ACCESS_FINE_LOCATION permission revoked by user');
-        }
-      }
-    } catch (err) {
-      alert(err);
-    }
-  }, []);
-
-  useEffect(() => {
-    Geolocation.getCurrentPosition(
-      position => {
-        
-      console.log('object', position)
-        setLatLong({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
         });
-      },
-      error => {
-        if (error.code === 1) {
-          console.log('error', error)
-          // show a prompt to the user to grant the location permission
-        } else if (error.code === 2) {
-          console.log('error', error)
-          // show a prompt to the user to turn on the location services
-        } else if (error.code === 3) {
-          console.log('error', error)
-          // increase the maximum age value for the location provider
-        } else {
-          // handle the error gracefully
-        }
-      },
-      {maximumAge: 10000}
+      } else if (granted === PermissionsAndroid.RESULTS.DENIED) {
+        fetchLocation();
+        console.log('ACCESS_FINE_LOCATION permission denied');
+      } else if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        console.log('ACCESS_FINE_LOCATION permission revoked by user');
+      }
+    }
+  } catch (err) {
+    alert(err);
+  }
+}, []);
 
-    );
+useEffect(() => {
+  Geolocation.getCurrentPosition(
+    position => {
+      console.log('object', position);
+      setLatLong({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      });
+    },
+    error => {
+      if (error.code === 1) {
+        console.log('error', error);
+        // show a prompt to the user to grant the location permission
+      } else if (error.code === 2) {
+        console.log('error', error);
+        // show a prompt to the user to turn on the location services
+      } else if (error.code === 3) {
+        console.log('error', error);
+        // increase the maximum age value for the location provider
+      } else {
+        // handle the error gracefully
+      }
+    },
+    {maximumAge: 10000},
+  );
 
-    fetchLocation();
-  }, [fetchLocation]);
+  fetchLocation();
+}, []);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem('userdata');
-        if (value !== null) {
-          console.log(value);
-          console.log('id' + value);
-          setCurrentUser(value);
-          axios.get(`${url}parking/${latLong?.latitude}/${latLong?.longitude}?userId=${value}`)
+useEffect(() => {
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('userdata');
+      if (value !== null) {
+        console.log(value);
+        console.log('id' + value);
+        setCurrentUser(value);
+        axios.get(`${url}parking/${latLong?.latitude}/${latLong?.longitude}?userId=${value}`)
           .then(res => {
             console.log('res', res.data);
             setMarkers(res.data);
+          })
+          .catch(err => {
+            console.log(err);
           });
-        } else {
-          console.log('no user data');
-        }
-      } catch (error) {
-        console.log(error);
+      } else {
+        console.log('no user data');
       }
-    };
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  const intervalId = setInterval(() => {
     getData();
-  }, []);
+  }, 5000); // Execute the code every 5 seconds
+
+  return () => clearInterval(intervalId); // Clear the interval on component unmount
+
+}, []); 
+
+
+
+
 
   return (
 <>

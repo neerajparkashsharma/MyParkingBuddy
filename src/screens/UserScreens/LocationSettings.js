@@ -1,24 +1,35 @@
-import { StyleSheet, Text, View,TextInput ,TouchableOpacity} from 'react-native'
-import React,{useState} from 'react'
+import { StyleSheet, Text, View,TextInput ,TouchableOpacity,Linking , ReactNative } from 'react-native'
+import React,{useState,useEffect} from 'react'
 import Headerx from '../../components/header'
 import {colors} from '../../commons/Colors'
 import {SCREEN_WIDTH,SCREEN_HEIGHT} from '../../components/units'
 import axios from 'axios'
 import url from '../../commons/axiosUrl'
+import { AppRegistry } from 'react-native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage'
 const LocationSettings = props => {
     const [location, setLocation] = useState('')  
+
+
     const submit = async () => { 
-      const value = await AsyncStorage.getItem('userdata'); // Add "await" before AsyncStorage.getItem since it returns a Promise
-      console.log("location");
-      try { // Use a try-catch block instead of .catch to handle errors
-        const res = await axios.post(`${url}update/location/${location}/${value}`); // Use "await" before the axios.post call
+      try {
+        const value = await AsyncStorage.getItem('userdata');
+        console.log("location:", value, location);  
+        const res = await axios.post(`${url}location-setting/${location}/${value}`);
+        AsyncStorage.setItem('location', location);
         console.log(res.data);
-        props.navigation.navigate('Home');
+        if (res.status === 200) {  
+          props.navigation.navigate('Home');
+       
+        } else {
+          console.log('Error: Unexpected response from server');
+        }
       } catch (err) {
         console.log(err);
       }
     };
+    
 
     return (
     <View>
@@ -28,7 +39,7 @@ const LocationSettings = props => {
             style={styles.TextInput}
             placeholder="Enter Your Desired Radius for Parking"
             placeholderTextColor="#613EEA"
-            onChange={(location) => setLocation(location)}
+            onChangeText={(location) => setLocation(location)}
             value={location}
             // onChangeText={(email)}
             // value={email}

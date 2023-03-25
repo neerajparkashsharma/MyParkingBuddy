@@ -1,3 +1,4 @@
+
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,44 +15,54 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// import categoriesData from '../assets/data/categoriesData';
-// import popularData from '../assets/data/popularData';
 import {colors} from '../../commons/Colors';
-import {color, round} from 'react-native-reanimated';
-import url from '../../commons/axiosUrl';
+// import url from '../../commons/axiosUrl';
 import axios from 'axios';
 import {SCREEN_HEIGHT, SCREEN_WIDTH} from '../../components/units';
+import url from '../../commons/axiosUrl';
 
 Feather.loadFont();
 MaterialCommunityIcons.loadFont();
 
 export default Home = props => {
+
+  const url= URL();
   const [listOfBookings, setListOfBookings] = useState([]);
+  const [userData, setUserData] = useState(null);
+
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('userdata');
-
       if (value !== null) {
-        axios
-          .get(url + 'parkingBookingRecords/customer/'+value)
-
-          .then(function (response) {
-            console.log('object');
-            setListOfBookings(response.data);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        setUserData(value);
       }
     } catch (e) {
       alert(e);
-      // error reading value
+    }
+  };
+
+const fetchBookings = () => {
+    if (userData) {
+      axios
+        .get(url + 'parkingBookingRecords/customer/' + userData)
+        .then(function (response) {
+          console.log(response.data);
+          setListOfBookings(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
   };
 
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+      // console.log(url)
+    fetchBookings();
+  }, [userData]);
 
   const NavItems = [
     {
@@ -72,12 +83,6 @@ export default Home = props => {
       image: require('../../Images/parkingbooking.png'),
       screen: 'AllBookings',
     },
-    // ,
-    // {
-    //   id: 3,
-    //   name: 'Contact Us',
-    //   image: require('../../Images/supporticon.png'),
-    // },
   ];
 
   const categoriesData = [
@@ -94,7 +99,11 @@ export default Home = props => {
   const renderCategoryItem = ({item}) => {
     return (
       <TouchableOpacity
-        onPress={() => props.navigation.navigate(item.screen)}
+        onPress={() => {
+         
+            props?.navigation?.navigate(item.screen)
+
+        }}
         style={[
           styles.categoryItemWrapper,
           {
@@ -183,18 +192,9 @@ export default Home = props => {
                 <View>
                   <View>
                     <View style={styles.popularTopWrapper}>
-                      {/* <MaterialCommunityIcons
-                        name="crown"
-                        size={12}
-                        color={colors.primary}
-                      /> */}
-                      {/* <Text style={styles.popularTopText}>
-                        Details: {item.parking.description}
-                      </Text> */}
                     </View>
                     <View style={styles.popularTitlesWrapper}>
                       <Text style={styles.popularTitlesTitle}>
-                        {/* {item.parking.parkingLocation.toString().subtring(0, 10)}... */}
                         {item.parking.parkingLocation ? item.parking.parkingLocation.toString().substring(0, 50):"N/A"}
                       </Text>
                       <Text style={styles.popularTitlesWeight}>
@@ -213,13 +213,6 @@ export default Home = props => {
                       </Text>
                     </View>
                     <View style={styles.ratingWrapper}>
-                      {/* <MaterialCommunityIcons
-                        name="star"
-                        size={10}
-                        color={colors.black}
-                      /> */}
-
-                
                     </View>
                   </View>
                 </View>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 
 import {
   SafeAreaView,
@@ -18,12 +18,30 @@ import {colors} from '../commons/Colors';
 import styles from '../styles/OnBoardingStyle';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const HeadingfontSize = SCREEN_WIDTH / 12 - 2;
 
 import Swiper from 'react-native-swiper';
 
 const OnBoarding = ({navigation}) => {
+
+  useEffect(() => {
+    const checkUserData = async () => {
+      try {
+        const value = await AsyncStorage.getItem('role');
+        if (value !== null) {
+          
+          value == 1 ? navigation.navigate('HostDrawer') : navigation.navigate('Drawer');
+        } else {
+          console.log('no user data');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    checkUserData();
+  }, []);
+
   return (
     <Swiper
       arrowColor="white"

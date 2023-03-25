@@ -17,18 +17,13 @@ export default function HostDrawer({navigation}) {
       useLegacyImplementation
       initialRouteName="ParkingBookings"
       drawerContent={props => <HostCustomDrawer {...props} />}>
-    
-
- 
-
       <Drawer.Screen
         name="ParkingBookings"
         component={AllBookings}
         options={{headerShown: false}}
       />
 
-         
-    <Drawer.Screen
+      <Drawer.Screen
         name="ParkingRegistration"
         component={ParkingRegistration}
         options={{headerShown: false}}
@@ -38,8 +33,7 @@ export default function HostDrawer({navigation}) {
         component={EWallet}
         options={{headerShown: false}}
       />
-     
-    
+
       <Drawer.Screen
         name="Profile"
         component={Profile}

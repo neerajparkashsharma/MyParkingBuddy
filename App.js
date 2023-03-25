@@ -3,7 +3,6 @@ import OnBoarding from './src/screens/OnBoarding';
 import Login from './src/screens/commonScreens/Login';
 import SignUp from './src/screens/HostScreens/SignUp';
 import MyMap from './src/screens/Map';
-// import QRScan from './QRScanning';
 import 'react-native-gesture-handler';
 import SignUpOptions from './src/screens/commonScreens/SignUpOptions';
 import GuestSignUp from './src/screens/UserScreens/GuestSignUp';
@@ -27,9 +26,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function App() {
   return (
     <NavigationContainer>
-
- 
-     
       <Stack.Navigator initialRouteName="OnBoarding">
         <Stack.Screen
           name="OnBoarding"
@@ -42,12 +38,12 @@ export default function App() {
           component={DrawerNavigator}
           options={{headerShown: false}}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="LocationSettings"
           component={LocationSettings}
           options={{headerShown: false}}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="HostDrawer"
           component={HostDrawer}
           options={{headerShown: false}}

@@ -16,7 +16,7 @@ import {colors} from '../../commons/Colors';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button} from 'react-native-paper';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {getData} from '../../commons/Data.js';
 import {useNavigation} from '@react-navigation/native';
 import {SCREEN_WIDTH} from '../../components/units.js';
@@ -87,25 +87,13 @@ const AllBookings = props => {
     getData();
   }, []);
 
-  // useEffect(() => {
-  //   // getData();
-
-  // }, []);
-
-  const renderItem = ({item}) => (
-    <Item
-      Id={item.id}
-      location={item.parking.parkingLocation}
-      descriptionm={item.parking.description}
-      charges={item.parking.charges}
-    />
-  );
+ 
 
   if (isLoading) {
     return (
       <ActivityIndicator
         size="large"
-        color="#0000ff"
+        color="#0000ff" 
         style={{alignSelf: 'center', flex: 1}}
       />
     );
@@ -116,22 +104,11 @@ const AllBookings = props => {
         navigation={props?.navigation}
         headerName={'Parking Bookings'}></Headerx>
       <View style={{marginBottom: 30}}></View>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Map')}
-        style={{
-          backgroundColor: colors.themeColor,
-          paddingHorizontal: 40,
-          paddingVertical: 20,
-          width: SCREEN_WIDTH / 2.2,
-          justifyContent: 'center',
-          alignSelf: 'center',
-        }}>
-        <Text style={{alignSelf: 'center', color: 'white'}}>Book New (+)</Text>
-      </TouchableOpacity>
+     
 
       <View style={styles.popularWrapper}>
         {listOfBookings.map(item => (
-          <TouchableOpacity key={item.id}>
+          <TouchableWithoutFeedback key={item.id}>
             <View
               style={[
                 styles.popularCardWrapper,
@@ -141,22 +118,12 @@ const AllBookings = props => {
               ]}>
               <View>
                 <View>
-                  <View style={styles.popularTopWrapper}>
-                    <MaterialCommunityIcons
-                      name="crown"
-                      size={12}
-                      color={colors.primary}
-                    />
-                    <Text style={styles.popularTopText}>
-                      Details: {item.parking.description}
-                    </Text>
-                  </View>
+                
                   <View style={styles.popularTitlesWrapper}>
                     <Text style={styles.popularTitlesTitle}>
-                      {item.parking.parkingLocation}
+                  <Text style={{fontWeight:'bold'}}>LOCATION: </Text>{item.parking.parkingLocation}
                     </Text>
                     <Text style={styles.popularTitlesWeight}>
-                      {/* PKR120/hour */}
                     </Text>
                   </View>
                 </View>
@@ -167,20 +134,18 @@ const AllBookings = props => {
                         styles.popularTitlesTitle,
                         {fontWeight: 'bold', color: colors.white},
                       ]}>
-                      PKR120/hour
+                    PKR {item.parking.parkingCharges}/hour
                     </Text>
                   </View>
                   <View style={styles.ratingWrapper}>
-                    {/* <MaterialCommunityIcons
-                        name="star"
-                        size={10}
-                        color={colors.black}
-                      /> */}
-
+                
                     <View>
-                      <TouchableOpacity onPress={() =>
-                       props?.navigation.navigate('Camera2', {
-                        bookingId: 1})}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          props?.navigation.navigate('Camera2', {
+                            bookingId: 1,
+                          })
+                        }>
                         <Text style={{color: colors.themeColor}}>Check In</Text>
                       </TouchableOpacity>
                       <TouchableOpacity>
@@ -197,7 +162,7 @@ const AllBookings = props => {
                 <Image source={item.image} style={styles.popularCardImage} />
               </View>
             </View>
-          </TouchableOpacity>
+          </TouchableWithoutFeedback>
         ))}
       </View>
     </View>
@@ -297,7 +262,7 @@ const styles = StyleSheet.create({
   },
   popularCardWrapper: {
     backgroundColor: colors.white,
-    borderRadius: 25,
+    borderRadius: 5,
     paddingTop: 20,
     paddingLeft: 20,
     flexDirection: 'row',
@@ -344,8 +309,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.themeColor,
     paddingHorizontal: 40,
     paddingVertical: 20,
-    borderTopRightRadius: 25,
-    borderBottomLeftRadius: 25,
+    // borderTopRightRadius: 25,
+    // borderBottomLeftRadius: 25,
   },
   ratingWrapper: {
     flexDirection: 'row',

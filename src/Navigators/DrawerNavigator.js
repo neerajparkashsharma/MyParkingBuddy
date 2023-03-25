@@ -19,7 +19,6 @@ export default function DrawerNavigator({navigation}) {
       useLegacyImplementation
       initialRouteName="Home"
       drawerContent={props => <UserDrawerCustom {...props} />}>
-      
       <Drawer.Screen
         name="Home"
         component={Home}
@@ -43,17 +42,14 @@ export default function DrawerNavigator({navigation}) {
       />
 
       <Drawer.Screen
-      name='LocationSettings'
-      component={LocationSettings}
-      options={{headerShown:false}}
-
-
+        name="LocationSettings"
+        component={LocationSettings}
+        options={{headerShown: false}}
       />
       <Drawer.Screen
-
-      name='BookParking'
-      component={BookingParking}
-      options={{headerShown:false}}
+        name="BookParking"
+        component={BookingParking}
+        options={{headerShown: false}}
       />
 
       <Drawer.Screen
@@ -72,7 +68,6 @@ export default function DrawerNavigator({navigation}) {
         component={Profile}
         options={{headerShown: false}}
       />
-
     </Drawer.Navigator>
   );
 }

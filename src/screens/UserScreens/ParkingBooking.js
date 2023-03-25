@@ -34,10 +34,12 @@ export default BookingParking = (props) => {
       setAddress(res.data?.parkingLocation)
       
     }
+
     ).catch((err) => {
       console.log(err);
     }
     )
+ 
   }, [])
 
 

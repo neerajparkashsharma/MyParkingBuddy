@@ -85,8 +85,8 @@ export default function Login({navigation}) {
             response.data.role == null
               ? alert('Something went wrong')
               : response.data.role.id == 1
-              ? navigation.navigate('HostDrawer')
-              : navigation.navigate('Drawer');
+              ? navigation.replace('HostDrawer')
+              : navigation.replace('Drawer');
           } else {
             alert('else - ' + response.data);
           }
@@ -98,7 +98,7 @@ export default function Login({navigation}) {
   };
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <Headerx navigation={navigation} headerName={'Login'} />
+      {/* <Headerx navigation={navigation} headerName={'Login'} /> */}
       <View style={styles.container}>
         <Text
           style={{
