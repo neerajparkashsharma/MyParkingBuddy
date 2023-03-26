@@ -26,7 +26,7 @@ MaterialCommunityIcons.loadFont();
 
 export default Home = props => {
 
-  const url= URL();
+  //   url= URL();
   const [listOfBookings, setListOfBookings] = useState([]);
   const [userData, setUserData] = useState(null);
 
