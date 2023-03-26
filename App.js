@@ -23,13 +23,26 @@ import DrawerNavigator from './src/Navigators/DrawerNavigator';
 import LocationSettings from './src/screens/UserScreens/LocationSettings';
 import HostDrawer from './src/Navigators/HostDrawer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Alerts from './src/screens/HostScreens/Alerts';
+import ProgressSteps from './src/screens/UserScreens/ProgressSteps';
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="OnBoarding">
+      <Stack.Navigator initialRouteName="ProgressSteps">
         <Stack.Screen
           name="OnBoarding"
           component={OnBoarding}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ProgressSteps"
+          component={ProgressSteps}
+          options={{headerShown: false}}
+        />
+
+ <Stack.Screen
+          name="Alerts"
+          component={Alerts}
           options={{headerShown: false}}
         />
 

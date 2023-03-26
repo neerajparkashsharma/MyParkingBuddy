@@ -1,74 +1,114 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+// import {
+//   StyleSheet,
+//   Text,
+//   View,
+//   TextInput,
+//   Image,
+//   Dimensions,ScrollView
+// } from 'react-native';
+// import React from 'react';
+// import {colors} from '../../commons/Colors';
+// // import {ScrollView} from 'react-native-gesture-handler';
+// const SCREEN_HEIGHT = Dimensions.get('window').height;
+// const SCREEN_WIDTH = Dimensions.get('window').width;
+// export default function Alerts() {
+//   return (
+//     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+//       <View>
+//         <Text
+//           style={{
+//             alignSelf: 'center',
+//             fontWeight: 'bold',
+//             fontSize: 25,
+//             color: colors.themeColor,
+//           }}>
+//           Alerts
+//         </Text>
+//        </View>
+//         <View
+//   style={{
+//     backgroundColor: 'white',
+//     width: '100%',
+//     height: 'auto',
+//     alignSelf: 'center',
+//     marginTop: 10,
+//     elevation: 15,
+//     flexDirection: 'row',
+//     padding: 10,
+//     flexWrap: 'wrap',
+//   }}>
+//   <View style={{ flexDirection: 'row', alignItems: 'center' , flexWrap:'wrap'}}>
+//     {/* <Image
+//       style={{ marginRight: 10 , width:60,height:60,borderRadius:5}}
+//       source={require('../../Images/images.jpg')}
+//     /> */}
+//     <View style={{flexDirection:'column'}}>
+//     <Text style={{fontSize:20,fontWeight:'700',color:colors.themeColor}}>Image</Text>
+//     <Text
+//       style={{
+//         fontWeight: 'bold',
+//         fontSize: 11,
+//         flexWrap: 'wrap',
+//         color: colors.themeColor,
+//       }}>
+//       You should get familiar with the components that are already built in. You
+//       are able to extend React Native to support those tags but it is weird to
+//       able to extend React Native to support those tags but it is weird to
+//       able to extend React Native to support those tags but it is weird to
+//       able to extend React Native to support those tags but it is weird to
+//       able to extend React Native to support those tags but it is weird to
 
-const TaskList = () => {
-  const [task, setTask] = useState('');
-  const [tasks, setTasks] = useState([
-  { task: 'Task 1', key: '1' },
-  { task: 'Task 2', key: '2' },
-  { task: 'Task 3', key: '3' },
-  ]);
+//     </Text>
+//     </View>
+//   </View>
+// </View>
 
+// </ScrollView>
 
-  const removeTask = (key) => {
-    setTasks(tasks.filter((t) => t.key !== key));
-  };
+//   );
+// }
 
+// const styles = StyleSheet.create({});
+import React from 'react';
+import {View, Text, Image, ScrollView} from 'react-native';
+import Headerx from '../../components/header';
+import {colors} from '../../commons/Colors';
+import {SCREEN_HEIGHT} from '../../components/units';
+
+const Alerts = (navigation) => {
   return (
-    <View style={styles.container}>
+    <View style={{backgroundColor: 'white'}}>
+      <Headerx navigation={navigation} headerName={'Alerts'}></Headerx>
 
-      <FlatList
-        style={styles.list}
-        data={tasks}
-        renderItem={({ item }) => (
-          <View style={styles.listItem}>
-            <Text>{item.task}</Text>
-            <TouchableOpacity onPress={() => removeTask(item.key)}>
-              <Text>X</Text>
-            </TouchableOpacity>
+      <ScrollView>
+        <View
+          style={{
+            BackgroundColor: 'white',
+            flexDirection: 'row',
+            height: 'auto',
+            padding: 10,
+            borderColor: 'grey',
+            borderBottomWidth: 0.5,
+          }}>
+          <Image
+            style={{marginRight: 10, width: 50, height: 50, borderRadius: 5}}
+            source={require('../../Images/icons8-warning-100.png')}
+          />
+          <View style={{flex: 0.9, flexDirection: 'column'}}>
+            <Text style={{fontSize: 20, fontWeight: '550', color: '#000000'}}>
+              Hello World!
+            </Text>
+
+            <Text style={{fontSize: 15, fontWeight: '600', color: '#595959'}}>
+              Hello World! able to extend React Native to support those tags but
+              t those t
+            </Text>
           </View>
-        )}
-      />
+        </View>
+
+      </ScrollView>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f1f8ff',
-  },
-  input: {
-    height: 40,
-    marginBottom: 10,
-    marginTop: 40,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  button: {
-    backgroundColor: '#ddd',
-    padding: 10,
-    alignItems: 'center',
-  },
-  buttonText: {
-    fontWeight: 'bold',
-  },
-  list: {
-    marginTop: 10,
-  },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 20,
-    margin: 5,
-    marginVertical: 10,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    elevation: 5,
-  },
-});
-
-export default TaskList;
+export default Alerts;
