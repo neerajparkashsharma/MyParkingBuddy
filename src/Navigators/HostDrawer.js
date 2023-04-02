@@ -9,6 +9,7 @@ import VisionCamera2 from '../screens/QRCheckout';
 import Profile from '../screens/HostScreens/Profile';
 import HostCustomDrawer from '../screens/HostScreens/HostCustomDrawer';
 import ParkingRegistration from '../screens/HostScreens/ParkingRegistration';
+import VehicleParkingRegistration from '../screens/HostScreens/VehicleParkingRegistration';
 const Drawer = createDrawerNavigator();
 
 export default function HostDrawer({navigation}) {
@@ -25,11 +26,11 @@ export default function HostDrawer({navigation}) {
 
       <Drawer.Screen
         name="ParkingRegistration"
-        component={ParkingRegistration}
+        component={VehicleParkingRegistration}
         options={{headerShown: false}}
       />
       <Drawer.Screen
-        name="EWallet"
+        name="E-Wallet"
         component={EWallet}
         options={{headerShown: false}}
       />

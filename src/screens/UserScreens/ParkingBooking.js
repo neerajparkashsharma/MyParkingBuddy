@@ -11,40 +11,48 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+// import Intl from 'react-native-intl';
 import FIcon from 'react-native-vector-icons/Feather';
-import {colors} from '../../commons/Colors';
+import { colors } from '../../commons/Colors';
 
-import {SCREEN_WIDTH, SCREEN_HEIGHT} from '../../components/units';
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../../components/units';
 import Headerx from '../../components/header';
 import axios from 'axios';
 import url from '../../commons/axiosUrl';
 
-export default BookingParking = (props) => {
-  
-  [address, setAddress] = React.useState('');
-  const id = props.route.params?.id
+export default BookingParking = props => {
+  const [data, setData] = React.useState([]);
+  const id = props.route.params?.id;
 
-  useEffect(() => {
-    console.log(props)
-    console.log(id)
+  const days = ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat'];
+  const today = new Date();
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    axios.get(`${url}parking/${id}`).then((res) => {
-      console.log(res.data);
-      setAddress(res.data?.parkingLocation)
-      
-    }
+  const dates = [];
 
-    ).catch((err) => {
-      console.log(err);
-    }
-    )
- 
-  }, [])
+  for (let i = 0; i < 7; i++) {
+    const date = new Date();
+    
+const today = new Date();
+  date.setDate(today.getDate() + i);
+  const formattedDate = `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}`;
+  dates.push(formattedDate);
+  }
 
+  useEffect(() => { 
+    axios
+      .get(`${url}parking/${id}`)
+      .then(res => {
+        console.log(res.data);
+        setData(res?.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, []);
 
   //   const item = route.params;
-  const ANIMAL_NAMES = [
+  const parking_hours = [
     {
       id: 1,
       name: '30 mins',
@@ -67,20 +75,69 @@ export default BookingParking = (props) => {
     },
     {
       id: 5,
-      name: '2.5',
+      name: '2.5 hours',
       selected: false,
     },
     {
       id: 6,
-      name: '3',
+      name: '3 hours',
       selected: false,
     },
     {
       id: 7,
-      name: '4',
+      name: '4 hours',
       selected: false,
     },
   ];
+
+  const parking_days = [
+    {
+      id: 1,
+      name: dates[0],
+      selected: true,
+    },
+    {
+      id: 2,
+      name: dates[1],
+      selected: false,
+    },
+    {
+      id: 3,
+      name: dates[2],
+      selected: false,
+    },
+    {
+      id: 4,
+      name: dates[3],
+      selected: false,
+    },
+    {
+      id: 5,
+      name: dates[4],
+      selected: false,
+    },
+    {
+      id: 6,
+      name: dates[5],
+      selected: false,
+    },
+    {
+      id: 7,
+      name: dates[6],
+      selected: false,
+    },
+    {
+      id: 8,
+      name: dates[7],
+      selected: false,
+    },
+    {
+      id: 9,
+      name: dates[8],
+      selected: false,
+    },
+  ];
+
   const Security = [
     {
       id: 1,
@@ -97,23 +154,60 @@ export default BookingParking = (props) => {
   ];
 
   const [selectedSecurity, setSelectedSecurity] = React.useState(null);
+  const [selectedDay, setSelectedDay] = React.useState(null);
+  const [selectedHour, setSelectedHour] = React.useState(null);
 
-  const handleSecuritySelection = (name) => {
+
+  const handleSecuritySelection = name => {
     setSelectedSecurity(name);
   };
 
-  const ItemRender = ({name, selected}) => (
-    <TouchableOpacity style={selected == true ? style.item2 : style.item}>
+  const handleDaySelection = name => {
+    setSelectedDay(name);
+  };
+
+  const handleHourSelection = name => {
+    setSelectedHour(name);
+  };
+
+
+  const HoursRender = ({ name, selected }) => (
+    <TouchableOpacity style={selectedHour == true ? style.item2 : style.item} 
+    onPress={() => handleHourSelection(name)}
+    >
+      <Text style={selectedHour == true ? style.itemText2 : style.itemText}>
+        {name}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const DaysRender = ({ name, selected }) => (
+
+    <TouchableOpacity style={selectedDay == true ? style.item2 : style.item}
+    onPress={() => handleDaySelection(name)}
+    >
+      <Text style={selectedDay == true ? style.itemText2 : style.itemText}>
+        {name}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const ItemRender = ({ name, selected }) => (
+
+    <TouchableOpacity style={selected == true ? style.item2 : style.item}
+    onPress={() => handleDaySelection(name)}
+    >
       <Text style={selected == true ? style.itemText2 : style.itemText}>
         {name}
       </Text>
     </TouchableOpacity>
   );
 
-  const SecurityOptions = ({name, selected, icon}) => (
-    <TouchableOpacity style={selectedSecurity == name ? style.item2 : style.item}
-    onPress={() => handleSecuritySelection(name)}
-    >
+
+  const SecurityOptions = ({ name, selected, icon }) => (
+    <TouchableOpacity
+      style={selectedSecurity == name ? style.item2 : style.item}
+      onPress={() => handleSecuritySelection(name)}>
       <FIcon
         name={icon}
         size={25}
@@ -141,7 +235,9 @@ export default BookingParking = (props) => {
         backgroundColor: 'white',
         paddingBottom: 70,
       }}>
-   <Headerx navigation={props?.navigation} headerName={'Booking Parking'}></Headerx>
+      <Headerx
+        navigation={props?.navigation}
+        headerName={'Booking Parking'}></Headerx>
       <ImageBackground
         style={style.headerImage}
         source={require('../../Images/parking.jpeg')}>
@@ -151,9 +247,8 @@ export default BookingParking = (props) => {
               backgroundColor: colors.themeColor,
               width: 50,
               height: 50,
-              borderColor: 'black',
-              borderRadius: 15,
-              borderLeftWidth: 2,
+              borderRadius: 12,
+              marginRight: 5,
               justifyContent: 'center',
               alignItems: 'center',
             }}
@@ -162,7 +257,6 @@ export default BookingParking = (props) => {
               name="phone-call"
               size={28}
               color={'white'}
-              // onPress={navigation.goBack}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -170,21 +264,39 @@ export default BookingParking = (props) => {
               backgroundColor: colors.themeColor,
               width: 50,
               height: 50,
-              borderColor: 'black',
-              borderRadius: 15,
-              borderLeftWidth: 2,
+              borderRadius: 12,
               justifyContent: 'center',
               alignItems: 'center',
+              marginRight: 5,
             }}
             onPress={() => console.log('object')}>
             <Icon name="place" size={28} color={'white'} />
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              backgroundColor: colors.silver,
+              height: 50,
+              width: 190,
+              borderRadius: 12,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => console.log('object')}>
+            <Text style={{
+              color: colors.black,
+              fontSize: 16,
+              fontWeight: 'bold',
+
+            }}>Hourly Charges: Rs. {data?.parkingCharges}</Text>
+          </TouchableOpacity>
+
         </View>
       </ImageBackground>
       <View>
         <View
-          style={{marginTop: 20, paddingHorizontal: 10, flexDirection: 'row'}}>
-          <Icon name="place" size={25} color={'red'} />
+          style={{ marginTop: 20, paddingHorizontal: 10, flexDirection: 'row' }}>
+          {/* <Icon name="place" size={25} color={'red'} />
           <Text
             style={{
               fontSize: 23,
@@ -193,13 +305,14 @@ export default BookingParking = (props) => {
               marginBottom: 15,
             }}>
             Korangi Crossing
-          </Text>
+          </Text> */}
         </View>
-        <View>
-          <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 15}}>
-           Industrial Area, Karachi
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={{ fontWeight: 'bold', fontSize: SCREEN_HEIGHT / 60, marginLeft: 15 }}>
+            <Icon name="place" size={20} color={'red'} />
+            {data?.parkingLocation}
           </Text>
-          <View style={{flexDirection: 'row', marginLeft: 15}}>
+          <View style={{ flexDirection: 'row', marginLeft: 15 }}>
             <Icon name="star" size={25} color={'orange'} />
             <Icon name="star" size={25} color={'orange'} />
             <Icon name="star" size={25} color={'orange'} />
@@ -207,7 +320,8 @@ export default BookingParking = (props) => {
             <Icon name="star" size={25} color={'orange'} />
           </View>
         </View>
-        <View style={{marginTop: 23, paddingHorizontal: 20}}>
+
+        <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
           <Text
             style={{
               fontSize: 25,
@@ -215,13 +329,55 @@ export default BookingParking = (props) => {
               color: colors.themeColor,
               marginBottom: 15,
             }}>
-            Parking Rates
+            Parking Days
           </Text>
           <ScrollView>
             <FlatList
-              data={ANIMAL_NAMES}
-              renderItem={({item}) => (
-                <ItemRender name={item.name} selected={item.selected} />
+              data={parking_days}
+              renderItem={({ item }) => (
+                <DaysRender name={item.name} selected={item.selected} />
+              )}
+              keyExtractor={item => item.id}
+              ItemSeparatorComponent={Separator}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+
+            />
+          </ScrollView>
+
+          <View
+            style={{
+              marginTop: 10,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ flexDirection: 'row' }}>
+                {/* <Icon name="star" size={20} color={'orange'} />
+                <Icon name="star" size={20} color={COLORS.orange} />
+                <Icon name="star" size={20} color={COLORS.orange} />
+                <Icon name="star" size={20} color={COLORS.orange} />
+                <Icon name="star" size={20} color={COLORS.grey} /> */}
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
+          <Text
+            style={{
+              fontSize: 25,
+              fontWeight: '600',
+              color: colors.themeColor,
+              marginBottom: 15,
+            }}>
+            Parking Hours
+          </Text>
+          <ScrollView>
+            <FlatList
+              data={parking_hours}
+              renderItem={({ item }) => (
+                <HoursRender name={item.name} selected={item.selected} />
               )}
               keyExtractor={item => item.id}
               ItemSeparatorComponent={Separator}
@@ -235,8 +391,8 @@ export default BookingParking = (props) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-            <View style={{flexDirection: 'row'}}>
-              <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ flexDirection: 'row' }}>
                 {/* <Icon name="star" size={20} color={'orange'} />
                 <Icon name="star" size={20} color={COLORS.orange} />
                 <Icon name="star" size={20} color={COLORS.orange} />
@@ -275,11 +431,11 @@ export default BookingParking = (props) => {
             </Text>
           </View>
         </View>
-        <View style={{marginTop: 20, paddingHorizontal: 20}}>
+        <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
           <ScrollView>
             <FlatList
-              data={ANIMAL_NAMES}
-              renderItem={({item}) => (
+              data={parking_hours}
+              renderItem={({ item }) => (
                 <ItemRender name={item.name} selected={item.selected} />
               )}
               keyExtractor={item => item.id}
@@ -289,7 +445,7 @@ export default BookingParking = (props) => {
           </ScrollView>
         </View>
       </View>
-      <View style={{marginTop: 23, paddingHorizontal: 20}}>
+      <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
         <Text
           style={{
             fontSize: 25,
@@ -302,7 +458,7 @@ export default BookingParking = (props) => {
         <ScrollView>
           <FlatList
             data={Security}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <SecurityOptions
                 name={item.name}
                 selected={item.selected}
@@ -321,8 +477,8 @@ export default BookingParking = (props) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <View style={{flexDirection: 'row'}}>
-            <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row' }}>
               {/* <Icon name="star" size={20} color={'orange'} />
                 <Icon name="star" size={20} color={COLORS.orange} />
                 <Icon name="star" size={20} color={COLORS.orange} />
@@ -332,7 +488,7 @@ export default BookingParking = (props) => {
           </View>
         </View>
         <View style={style.btn}>
-          <Text style={{color:'white', fontSize: 18, fontWeight: 'bold'}}>
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
             Book Now
           </Text>
         </View>
@@ -348,7 +504,7 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 40,
-    left: SCREEN_WIDTH / 6.5,   
+    left: SCREEN_WIDTH / 6.5,
     marginBottom: 70,
     backgroundColor: colors.themeColor,
     marginHorizontal: 20,
@@ -378,9 +534,9 @@ const style = StyleSheet.create({
   },
   headerImage: {
     height: 250,
-    top:15,
-    borderBottomRightRadius: 40,
-    borderBottomLeftRadius: 40,
+    top: 15,
+    // borderBottomRightRadius: 40,
+    // borderBottomLeftRadius: 40,
     overflow: 'hidden',
   },
   header: {
@@ -442,4 +598,3 @@ const style = StyleSheet.create({
     textAlign: 'center',
   },
 });
-

@@ -39,7 +39,7 @@ export const HostListOfDrawerItems = [
 
   {
     id: 2,
-    name: 'EWallet',
+    name: 'E-Wallet',
     icon: 'payment',
   }
 ];

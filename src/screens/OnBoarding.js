@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React,{useEffect,useState} from 'react';
 
 import {
   SafeAreaView,
@@ -13,6 +13,7 @@ import {
   Button,
   Alert,
   Dimensions,
+  ActivityIndicator
 } from 'react-native';
 import {colors} from '../commons/Colors';
 import styles from '../styles/OnBoardingStyle';
@@ -25,7 +26,11 @@ import Swiper from 'react-native-swiper';
 
 const OnBoarding = ({navigation}) => {
 
+  const [loading, setLoading] = useState(false);
+
+
   useEffect(() => {
+    setLoading(true);
     const checkUserData = async () => {
       try {
         const value = await AsyncStorage.getItem('role');
@@ -35,6 +40,7 @@ const OnBoarding = ({navigation}) => {
         } else {
           console.log('no user data');
         }
+        setLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -43,6 +49,15 @@ const OnBoarding = ({navigation}) => {
   }, []);
 
   return (
+
+    
+    <>
+      {loading ? (
+        <View style={{flex: 1,alignContent:'center',justifyContent:'center'}}>
+        <ActivityIndicator size="large"  color={colors.themeColor} />
+        <Text style={{alignSelf:'center',marginTop:10,color:colors.themeColor}}>Loading...</Text>
+        </View>
+      ) : (
     <Swiper
       arrowColor="white"
       style={styles.wrapper}
@@ -135,6 +150,10 @@ const OnBoarding = ({navigation}) => {
         </TouchableOpacity>
       </View>
     </Swiper>
+
+      )}
+    </>
+
   );
 };
 

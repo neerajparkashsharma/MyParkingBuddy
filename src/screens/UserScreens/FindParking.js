@@ -8,7 +8,8 @@ import {
   Fragment,
   Dimensions,
   TouchableOpacity,
-  FlatList
+  FlatList,
+  ActivityIndicator
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import useFocusEffect from '@react-navigation/native';
@@ -47,6 +48,7 @@ const [latLong, setLatLong] = useState({
   longitude: 67.001135,
 });
 
+const [Loading, setLoading] = useState(false);
 
 const [locationRadius, setLocationRadius] = useState();
 
@@ -124,8 +126,10 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
+    setLoading(true);
   const getData = async () => {
     try {
+
       const value = await AsyncStorage.getItem('userdata');
       if (value !== null) {
         console.log(value);
@@ -135,9 +139,12 @@ useEffect(() => {
           .then(res => {
             console.log('res', res.data);
             setMarkers(res.data);
+            setLoading(false);
           })
+       
           .catch(err => {
             console.log(err);
+            setLoading(false);
           });
       } else {
         console.log('no user data');
@@ -148,7 +155,9 @@ useEffect(() => {
   };
 
   const intervalId = setInterval(() => {
+    // setLoading(true);
     getData();
+    
   }, 5000); // Execute the code every 5 seconds
 
   return () => clearInterval(intervalId); // Clear the interval on component unmount
@@ -230,10 +239,27 @@ useEffect(() => {
     </Text>
   </View>
 
+ {Loading ? (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+      }}
+    >
+      <ActivityIndicator size="large" color={colors.themeColor} />
+    </View>
+  ) : (
+
+
   <FlatList
     style={{ flex: 0.8 }}
     data={markers}
     renderItem={({ item }) => (
+
+     <>
+     
       <TouchableOpacity style={EWalletStyles.popularCardWrapper}>
         <View>
           <View style={EWalletStyles.popularTopWrapper}>
@@ -259,6 +285,7 @@ useEffect(() => {
                 left: SCREEN_WIDTH / 2.5,
               }}
               onPress={() => {
+                console.log('parking id', item?.id);
                 props.navigation.navigate('BookParking', { id:  item?.id })
               }}
               
@@ -279,9 +306,12 @@ useEffect(() => {
           </View>
         </View>
       </TouchableOpacity>
+      </>
     )}
     keyExtractor={(item) => item.id.toString()}
   />
+  )}
+
 </>
   );
 };

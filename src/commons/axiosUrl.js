@@ -29,4 +29,4 @@
 
 // export default App().url;
  
-export default url = 'http://172.15.2.135:8042/';
+export default url = 'http://172.15.2.27:8042/';

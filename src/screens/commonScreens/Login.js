@@ -40,8 +40,6 @@ export default function Login({navigation}) {
     }
   };
 
-
-
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('userdata');

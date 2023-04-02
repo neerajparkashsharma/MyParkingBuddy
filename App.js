@@ -25,22 +25,25 @@ import HostDrawer from './src/Navigators/HostDrawer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Alerts from './src/screens/HostScreens/Alerts';
 import ProgressSteps from './src/screens/UserScreens/ProgressSteps';
+import VehicleParkingRegistration from './src/screens/HostScreens/VehicleParkingRegistration';
+
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="ProgressSteps">
+      <Stack.Navigator initialRouteName="Onboarding">
         <Stack.Screen
           name="OnBoarding"
           component={OnBoarding}
           options={{headerShown: false}}
         />
-        <Stack.Screen
+        
+        {/* <Stack.Screen
           name="ProgressSteps"
           component={ProgressSteps}
           options={{headerShown: false}}
-        />
+        /> */}
 
- <Stack.Screen
+        <Stack.Screen
           name="Alerts"
           component={Alerts}
           options={{headerShown: false}}
@@ -128,6 +131,11 @@ export default function App() {
           options={{headerShown: false}}
         />
 
+        <Stack.Screen
+          name="VehicleParkingRegistration"
+          component={VehicleParkingRegistration}
+          options={{headerShown: false}}
+        />
         {/* <Stack.Screen name="QRScan" component={Scan} options={{headerShown: false}}/> */}
         {/* <Stack.Screen name="QRScan" component={QRScan} options={{headerShown: false}}/> */}
       </Stack.Navigator>
