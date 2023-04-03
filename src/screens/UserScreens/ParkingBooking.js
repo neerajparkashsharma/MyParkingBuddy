@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ImageBackground,
   ScrollView,
@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   Text,
   FlatList,
-  View,
+  View, TimePickerAndroid, Button
 } from 'react-native';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // import Intl from 'react-native-intl';
@@ -21,6 +22,18 @@ import axios from 'axios';
 import url from '../../commons/axiosUrl';
 
 export default BookingParking = props => {
+
+  // const [selectedTime, setSelectedTime] = useState(null);
+  // const [showTimePicker, setShowTimePicker] = useState(false);
+
+  // const onTimeChange = (event, selected) => {
+  //   if (selected) {
+  //     setSelectedTime(`${selected.getHours()}:${selected.getMinutes()}`);
+  //   }
+  //   setShowTimePicker(Platform.OS === 'ios');
+  // };
+
+
   const [data, setData] = React.useState([]);
   const id = props.route.params?.id;
 
@@ -32,14 +45,15 @@ export default BookingParking = props => {
 
   for (let i = 0; i < 7; i++) {
     const date = new Date();
-    
-const today = new Date();
-  date.setDate(today.getDate() + i);
-  const formattedDate = `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}`;
-  dates.push(formattedDate);
+
+    const today = new Date();
+    date.setDate(today.getDate() + i);
+    const formattedDate = `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}`;
+    dates.push(formattedDate);
   }
 
-  useEffect(() => { 
+
+  useEffect(() => {
     axios
       .get(`${url}parking/${id}`)
       .then(res => {
@@ -51,42 +65,41 @@ const today = new Date();
       });
   }, []);
 
-  //   const item = route.params;
   const parking_hours = [
     {
       id: 1,
       name: '30 mins',
-      selected: true,
+      selected: selectedHour === '30 mins' ? true : false,
     },
     {
       id: 2,
       name: '1 hour',
-      selected: false,
+      selected: selectedHour === '1 hour' ? true : false,
     },
     {
       id: 3,
       name: '1.5 hours',
-      selected: false,
+      selected: selectedHour === '1.5 hours' ? true : false,
     },
     {
       id: 4,
       name: '2 hours',
-      selected: false,
+      selected: selectedHour === '2 hours' ? true : false,
     },
     {
       id: 5,
       name: '2.5 hours',
-      selected: false,
+      selected: selectedHour === '2.5 hours' ? true : false,
     },
     {
       id: 6,
       name: '3 hours',
-      selected: false,
+      selected: selectedHour === '3 hours' ? true : false,
     },
     {
       id: 7,
       name: '4 hours',
-      selected: false,
+      selected: selectedHour === '4 hours' ? true : false,
     },
   ];
 
@@ -94,7 +107,7 @@ const today = new Date();
     {
       id: 1,
       name: dates[0],
-      selected: true,
+      selected: false,
     },
     {
       id: 2,
@@ -111,32 +124,7 @@ const today = new Date();
       name: dates[3],
       selected: false,
     },
-    {
-      id: 5,
-      name: dates[4],
-      selected: false,
-    },
-    {
-      id: 6,
-      name: dates[5],
-      selected: false,
-    },
-    {
-      id: 7,
-      name: dates[6],
-      selected: false,
-    },
-    {
-      id: 8,
-      name: dates[7],
-      selected: false,
-    },
-    {
-      id: 9,
-      name: dates[8],
-      selected: false,
-    },
-  ];
+  ]
 
   const Security = [
     {
@@ -153,9 +141,9 @@ const today = new Date();
     },
   ];
 
-  const [selectedSecurity, setSelectedSecurity] = React.useState(null);
-  const [selectedDay, setSelectedDay] = React.useState(null);
-  const [selectedHour, setSelectedHour] = React.useState(null);
+  const [selectedSecurity, setSelectedSecurity] = React.useState('');
+  const [selectedDay, setSelectedDay] = React.useState('');
+  const [selectedHour, setSelectedHour] = React.useState('');
 
 
   const handleSecuritySelection = name => {
@@ -163,6 +151,7 @@ const today = new Date();
   };
 
   const handleDaySelection = name => {
+
     setSelectedDay(name);
   };
 
@@ -172,30 +161,31 @@ const today = new Date();
 
 
   const HoursRender = ({ name, selected }) => (
-    <TouchableOpacity style={selectedHour == true ? style.item2 : style.item} 
-    onPress={() => handleHourSelection(name)}
+    <TouchableOpacity style={selectedHour == name ? style.item2 : style.item}
+      onPress={() => handleHourSelection(name)}
     >
-      <Text style={selectedHour == true ? style.itemText2 : style.itemText}>
+      <Text style={selectedHour == name ? style.itemText2 : style.itemText}>
         {name}
       </Text>
     </TouchableOpacity>
   );
 
   const DaysRender = ({ name, selected }) => (
-
-    <TouchableOpacity style={selectedDay == true ? style.item2 : style.item}
-    onPress={() => handleDaySelection(name)}
+    <TouchableOpacity
+      style={selectedDay == name ? style.item2 : style.item}
+      onPress={() => handleDaySelection(name)}
     >
-      <Text style={selectedDay == true ? style.itemText2 : style.itemText}>
+      <Text style={selectedDay == name ? style.itemText2 : style.itemText}>
         {name}
       </Text>
     </TouchableOpacity>
   );
 
+
   const ItemRender = ({ name, selected }) => (
 
-    <TouchableOpacity style={selected == true ? style.item2 : style.item}
-    onPress={() => handleDaySelection(name)}
+    <TouchableOpacity style={selected == name ? style.item2 : style.item}
+      onPress={() => handleDaySelection(name)}
     >
       <Text style={selected == true ? style.itemText2 : style.itemText}>
         {name}
@@ -228,6 +218,34 @@ const today = new Date();
       />
     );
   };
+
+
+  const handleBooking = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userdata');
+      const response = await axios.post('https://example.com/booking', {
+        parking: {
+          id: data?.id,
+
+        },
+        customer: {
+          id: userId
+        },
+        parkFromDate: selectedDay,
+
+      }
+      );
+      console.log(response.data);
+      // handle the response data as needed
+    } catch (error) {
+      console.error(error);
+      // handle errors as needed
+    }
+  };
+
+
+
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -296,22 +314,13 @@ const today = new Date();
       <View>
         <View
           style={{ marginTop: 20, paddingHorizontal: 10, flexDirection: 'row' }}>
-          {/* <Icon name="place" size={25} color={'red'} />
-          <Text
-            style={{
-              fontSize: 23,
-              fontWeight: '600',
-              color: colors.themeColor,
-              marginBottom: 15,
-            }}>
-            Korangi Crossing
-          </Text> */}
+
         </View>
         <View style={{ flexDirection: 'row' }}>
           <Text style={{ fontWeight: 'bold', fontSize: SCREEN_HEIGHT / 60, marginLeft: 15 }}>
             <Icon name="place" size={20} color={'red'} />
             {data?.parkingLocation}
-          </Text>
+          </Text> 
           <View style={{ flexDirection: 'row', marginLeft: 15 }}>
             <Icon name="star" size={25} color={'orange'} />
             <Icon name="star" size={25} color={'orange'} />
@@ -363,7 +372,7 @@ const today = new Date();
           </View>
         </View>
 
-        <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
+        {/* <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
           <Text
             style={{
               fontSize: 25,
@@ -393,16 +402,12 @@ const today = new Date();
             }}>
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flexDirection: 'row' }}>
-                {/* <Icon name="star" size={20} color={'orange'} />
-                <Icon name="star" size={20} color={COLORS.orange} />
-                <Icon name="star" size={20} color={COLORS.orange} />
-                <Icon name="star" size={20} color={COLORS.orange} />
-                <Icon name="star" size={20} color={COLORS.grey} /> */}
+
               </View>
             </View>
           </View>
-        </View>
-        <View
+        </View> */}
+        {/* <View
           style={{
             marginTop: 20,
             flexDirection: 'row',
@@ -430,8 +435,11 @@ const today = new Date();
               $200
             </Text>
           </View>
-        </View>
-        <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
+        </View> */}
+
+
+
+        {/* <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
           <ScrollView>
             <FlatList
               data={parking_hours}
@@ -443,7 +451,7 @@ const today = new Date();
               horizontal={true}
             />
           </ScrollView>
-        </View>
+        </View> */}
       </View>
       <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
         <Text
