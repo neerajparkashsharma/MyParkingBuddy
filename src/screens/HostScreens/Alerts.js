@@ -75,10 +75,10 @@ import Headerx from '../../components/header';
 import {colors} from '../../commons/Colors';
 import {SCREEN_HEIGHT} from '../../components/units';
 
-const Alerts = (navigation) => {
+const Alerts = (props) => {
   return (
     <View style={{backgroundColor: 'white'}}>
-      <Headerx navigation={navigation} headerName={'Alerts'}></Headerx>
+      <Headerx navigation={props?.navigation} headerName={'Alerts'}></Headerx>
 
       <ScrollView>
         <View

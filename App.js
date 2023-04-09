@@ -26,23 +26,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Alerts from './src/screens/HostScreens/Alerts';
 import ProgressSteps from './src/screens/UserScreens/ProgressSteps';
 import VehicleParkingRegistration from './src/screens/HostScreens/VehicleParkingRegistration';
+// import TextClassifier from './src/components/NLP';
+import VoiceInputForm from './src/components/NLP';
+import ParkingBooking from './src/screens/UserScreens/ParkingBooking';
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Onboarding">
+      <Stack.Navigator initialRouteName="ParkingBooking">
         <Stack.Screen
           name="OnBoarding"
           component={OnBoarding}
           options={{headerShown: false}}
         />
-        
+          
+          <Stack.Screen
+          name="TextClassifier"
+          component={VoiceInputForm}
+          options={{headerShown: false}}
+        />
         {/* <Stack.Screen
           name="ProgressSteps"
           component={ProgressSteps}
           options={{headerShown: false}}
         /> */}
 
+        <Stack.Screen
+        name="ParkingBooking"
+        component={ParkingBooking}
+        options={{headerShown: false}}
+      />
         <Stack.Screen
           name="Alerts"
           component={Alerts}

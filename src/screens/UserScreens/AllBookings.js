@@ -6,6 +6,7 @@ import {
   FlatList,
   ActivityIndicator,
   Image,
+  ScrollView
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {black} from 'react-native-paper/lib/typescript/styles/colors';
@@ -16,7 +17,7 @@ import {colors} from '../../commons/Colors';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button} from 'react-native-paper';
-import {TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import { TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {getData} from '../../commons/Data.js';
 import {useNavigation} from '@react-navigation/native';
 import {SCREEN_WIDTH} from '../../components/units.js';
@@ -106,7 +107,7 @@ const AllBookings = props => {
       <View style={{marginBottom: 30}}></View>
      
 
-      <View style={styles.popularWrapper}>
+      <ScrollView style={styles.popularWrapper}>
         {listOfBookings.map(item => (
           <TouchableWithoutFeedback key={item.id}>
             <View
@@ -164,7 +165,7 @@ const AllBookings = props => {
             </View>
           </TouchableWithoutFeedback>
         ))}
-      </View>
+      </ScrollView>
     </View>
 
     // <View>
