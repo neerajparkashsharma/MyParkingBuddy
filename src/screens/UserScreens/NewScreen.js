@@ -31,7 +31,7 @@ import {color} from 'react-native-reanimated';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const FindParking = (props) => {
+const NewScreen = (props) => {
   const [selectedMarker, setSelectedMarker] = useState(null);
 const [modalVisible, setModalVisible] = useState(false);
 const [mapInitialized, setMapInitialized] = useState(false);
@@ -260,34 +260,52 @@ useEffect(() => {
 
      <>
      
-     <TouchableOpacity style={EWalletStyles.popularCardWrapper}>
-    <View>
-      <View style={EWalletStyles.popularTopWrapper}>
-        <Text style={EWalletStyles.popularTopText}>
-          {item.parkingLocation?.substring(0, 70)}...
-        </Text>
-      </View>
-      <View style={EWalletStyles.popularTitlesWrapper}>
-        <Text style={EWalletStyles.popularTitlesTitle}>
-          PKR {item.parkingCharges}
-        </Text>
-        <Text style={EWalletStyles.parkingDescription}>
-          {item.description}
-        </Text>
-        <TouchableOpacity
-          style={EWalletStyles.bookNowButton}
-          onPress={() => {
-            console.log('parking id', item?.id);
-            props.navigation.navigate('BookParking', { id: item?.id });
-          }}
-        >
-          <Text style={EWalletStyles.bookNowButtonText}>BOOK NOW</Text>
-        </TouchableOpacity>
-        <Text style={EWalletStyles.popularTitlesWeight}></Text>
-      </View>
-    </View>
-  </TouchableOpacity>
-        
+      <TouchableOpacity style={EWalletStyles.popularCardWrapper}>
+        <View>
+          <View style={EWalletStyles.popularTopWrapper}>
+            <Text style={EWalletStyles.popularTopText}>
+                
+              {item.parkingLocation?.substring(0, 70)}...
+            </Text>
+          </View>
+
+          <View style={EWalletStyles.popularTitlesWrapper}>
+            <Text style={EWalletStyles.popularTitlesTitle}>
+              PKR {item.parkingCharges}
+            </Text>
+            <TouchableOpacity
+              style={{
+                backgroundColor: colors.white,
+                width: 120,
+                position: 'absolute',
+                height: 30,
+                marginTop: SCREEN_HEIGHT / 300,
+                borderRadius: 15,
+                borderColor: 'black',
+                left: SCREEN_WIDTH / 2.5,
+              }}
+              onPress={() => {
+                console.log('parking id', item?.id);
+                props.navigation.navigate('BookParking', { id:  item?.id })
+              }}
+              
+              >
+              <Text
+                style={{
+                  textAlign: 'center',
+                  top: 5,
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                  color: colors.themeColor,
+                }}>
+                BOOK NOW
+              </Text>
+            </TouchableOpacity>
+
+            <Text style={EWalletStyles.popularTitlesWeight}></Text>
+          </View>
+        </View>
+      </TouchableOpacity>
       </>
     )}
     keyExtractor={(item) => item.id.toString()}
@@ -298,7 +316,7 @@ useEffect(() => {
   );
 };
 
-export default FindParking;
+export default NewScreen;
 const EWalletStyles = StyleSheet.create({
   popularTitle: {
     fontFamily: 'Montserrat-Bold',

@@ -195,7 +195,7 @@ const fetchBookings = () => {
                     </View>
                     <View style={styles.popularTitlesWrapper}>
                       <Text style={styles.popularTitlesTitle}>
-                        {item.parking.parkingLocation ? item.parking.parkingLocation.toString().substring(0, 50):"N/A"}
+                        {item.parking?.parkingLocation ? item.parking.parkingLocation.toString().substring(0, 50):"N/A"}
                       </Text>
                       <Text style={styles.popularTitlesWeight}>
                         {/* PKR120/hour */}

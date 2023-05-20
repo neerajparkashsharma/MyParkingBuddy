@@ -15,8 +15,24 @@ export const UserListOfDrawerItems = [
     name: 'E-Wallet',
     icon: 'payment',
   },
+
   {
     id: 3,
+    name: 'Vehicle Detection',
+    icon: 'local-car-wash',
+  },
+
+  {
+    id: 4,
+    name: 'Number Plate Detection',
+    icon: 'local-parking',
+  },
+
+
+
+  
+  {
+    id: 5,
     name:'Settings',
     icon:'settings'
   }

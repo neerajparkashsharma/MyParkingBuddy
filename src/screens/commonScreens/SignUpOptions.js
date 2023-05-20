@@ -22,7 +22,7 @@ const SignUpOptions = ({navigation}) => {
 <Headerx navigation={navigation} headerName={"Sign Up Options"}/>
 <Text style={{flex:0.2, fontSize:SCREEN_WIDTH/19,color:colors.black,fontWeight:'500',textAlign:'center',top:SCREEN_WIDTH/7}}>Who are <Text style={{color:colors.themeColor,fontWeight:'bold', fontSize:SCREEN_WIDTH/11}}> YOU?</Text> </Text>
      <View style={{ flex: 0.5,justifyContent:'space-between'}}>
-      <TouchableOpacity  onPress={() => navigation.navigate('SignUp')}>
+      <TouchableWithoutFeedback  onPress={() => navigation.navigate('SignUp')}>
         <View style={homecardstyles.container}>
           <Image
             resizeMode="contain"
@@ -33,10 +33,10 @@ const SignUpOptions = ({navigation}) => {
           /> 
         </View>
        
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
       <Text style={{alignSelf:'center', fontSize: 20, fontWeight: 'bold', color: colors.themeColor}}>PARKING HOST</Text>
        
-      <TouchableOpacity  onPress={() => navigation.navigate('GuestSignUp')}>
+      <TouchableWithoutFeedback  onPress={() => navigation.navigate('GuestSignUp')}>
         <View style={homecardstyles.container2}>
           <Image
             resizeMode="contain"
@@ -46,7 +46,7 @@ const SignUpOptions = ({navigation}) => {
             style={homecardstyles.image}
           />
         </View>
-      </TouchableOpacity> 
+      </TouchableWithoutFeedback> 
       <Text style={{alignSelf:'center', fontSize: 20, fontWeight: 'bold', color: colors.themeColor}}>SPACE USER</Text>
        
     </View>
@@ -230,8 +230,8 @@ const homecardstyles = StyleSheet.create({
     marginLeft: SCREEN_WIDTH / 47,
   },
   image: {
-    height: SCREEN_HEIGHT / 6,
-    width: SCREEN_WIDTH / 2,
+    height: SCREEN_HEIGHT / 3,
+    width: SCREEN_WIDTH / 1.2,
   },
 });
 const categorycardstyles = StyleSheet.create({

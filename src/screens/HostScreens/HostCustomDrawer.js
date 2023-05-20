@@ -126,13 +126,35 @@ import {
             renderItem={renderItem}></FlatList>
         </View>
         <TouchableOpacity
-          style={{position: 'absolute', bottom: 30, left: SCREEN_WIDTH / 4.5}}
-          onPress={() => props?.navigation.navigate('Login')}>
-          <Text style={{fontSize: 18, fontWeight: 'bold'}}>Logout</Text>
-        </TouchableOpacity>
+      style={styles.container}
+      onPress={() => props?.navigation.navigate('Login')}>
+      <Icon name="logout" size={25} style={styles.icon} />
+      <Text style={styles.text}>Logout</Text>
+    </TouchableOpacity>
       </View>
     );
   };
   export default HostCustomDrawer;
-  const styles = StyleSheet.create({});
+  const styles = StyleSheet.create({
+
+
+    container: {
+      position: 'absolute',
+      bottom: 30,
+      left: SCREEN_WIDTH / 4.5,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    icon: {
+      color: colors.themeColor,
+   alignSelf:'flex-start',
+   right:70
+    },
+    text: {
+      color:'#585858',
+      fontSize: 18,
+      fontWeight: 'bold',
+      right:60
+    },
+  });
   

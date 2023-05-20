@@ -11,6 +11,10 @@ import FindParking from '../screens/UserScreens/FindParking';
 import Settings from '../screens/UserScreens/Settings';
 import LocationSettings from '../screens/UserScreens/LocationSettings';
 import BookingParking from '../screens/UserScreens/ParkingBooking';
+import NumberPlateDetections from '../screens/UserScreens/NumberPlateDetections';
+import VehicleDetections from '../screens/UserScreens/VehicleDetections';
+import UserPayment from '../screens/UserScreens/UserPayment';
+import VoiceToText from '../screens/UserScreens/test';
 const Drawer = createDrawerNavigator();
 
 export default function DrawerNavigator({navigation}) {
@@ -32,9 +36,19 @@ export default function DrawerNavigator({navigation}) {
       />
       <Drawer.Screen
         name="E-Wallet"
-        component={EWallet}
+        component={UserPayment}
         options={{headerShown: false}}
       />
+      <Drawer.Screen
+       name="VehicleDetection"
+       component={VehicleDetections}
+       options={{headerShown: false}}/>
+
+      <Drawer.Screen
+       name="NumberPlatesDetection"
+       component={NumberPlateDetections}
+       options={{headerShown: false}}/>
+
       <Drawer.Screen
         name="Settings"
         component={Settings}
@@ -68,6 +82,11 @@ export default function DrawerNavigator({navigation}) {
         component={Profile}
         options={{headerShown: false}}
       />
+      <Drawer.Screen
+        name="UserPayment"
+        component={UserPayment}
+        options={{headerShown: false}}
+        />
     </Drawer.Navigator>
   );
 }

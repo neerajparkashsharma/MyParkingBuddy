@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   SafeAreaView,
@@ -10,10 +10,8 @@ import {
   View,
   Image,
   TouchableOpacity,
-  Button,
-  Alert,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import {colors} from '../commons/Colors';
 import styles from '../styles/OnBoardingStyle';
@@ -25,9 +23,7 @@ const HeadingfontSize = SCREEN_WIDTH / 12 - 2;
 import Swiper from 'react-native-swiper';
 
 const OnBoarding = ({navigation}) => {
-
   const [loading, setLoading] = useState(false);
-
 
   useEffect(() => {
     setLoading(true);
@@ -35,8 +31,9 @@ const OnBoarding = ({navigation}) => {
       try {
         const value = await AsyncStorage.getItem('role');
         if (value !== null) {
-          
-          value == 1 ? navigation.navigate('HostDrawer') : navigation.navigate('Drawer');
+          value == 1
+            ? navigation.navigate('HostDrawer')
+            : navigation.navigate('Drawer');
         } else {
           console.log('no user data');
         }
@@ -49,111 +46,115 @@ const OnBoarding = ({navigation}) => {
   }, []);
 
   return (
-
-    
     <>
       {loading ? (
-        <View style={{flex: 1,alignContent:'center',justifyContent:'center'}}>
-        <ActivityIndicator size="large"  color={colors.themeColor} />
-        <Text style={{alignSelf:'center',marginTop:10,color:colors.themeColor}}>Loading...</Text>
+        <View
+          style={{flex: 1, alignContent: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator size="large" color={colors.themeColor} />
+          <Text
+            style={{
+              alignSelf: 'center',
+              marginTop: 10,
+              color: colors.themeColor,
+            }}>
+            Loading...
+          </Text>
         </View>
       ) : (
-    <Swiper
-      arrowColor="white"
-      style={styles.wrapper}
-      loop={false}
-      dotStyle={{color: colors.themeColor}}
-      showsButtons={true}>
-      <View style={styles.slide}>
-        <Image style={styles.logo} source={require('../Images/logo.png')} />
+        <Swiper
+          arrowColor="white"
+          style={styles.wrapper}
+          loop={false}
+          dotStyle={{color: colors.themeColor}}
+          showsButtons={true}>
+          <View style={styles.slide}>
+            <Image style={styles.logo} source={require('../Images/logo.png')} />
 
-        <Text
-          style={{
-            marginTop: SCREEN_HEIGHT / 47,
-            color: 'black',
-            fontSize: HeadingfontSize,
-            fontWeight: 'bold',
-          }}>
-          WELCOME
-        </Text>
-        <Text
-          style={{
-            fontSize: SCREEN_WIDTH / 20 - 5,
-            marginTop: 20,
-            fontWeight: '500',
-            color: colors.themeColor,
-          }}>
-          TO PARKING BUDDY
-        </Text>
+            <Text
+              style={{
+                marginTop: SCREEN_HEIGHT / 47,
+                color: 'black',
+                fontSize: HeadingfontSize,
+                fontWeight: 'bold',
+              }}>
+              WELCOME
+            </Text>
+            <Text
+              style={{
+                fontSize: SCREEN_WIDTH / 20 - 5,
+                marginTop: 20,
+                fontWeight: '500',
+                color: colors.themeColor,
+              }}>
+              TO PARKING BUDDY
+            </Text>
 
-        <Image
-          style={styles.picture4}
-          source={require('../Images/Picture4.png')}
-        />
+            <Image
+              style={styles.picture4}
+              source={require('../Images/Picture4.png')}
+            />
 
-        <TouchableOpacity
-          style={styles.skip}
-          onPress={() => navigation.navigate('Login')}>
-          <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
-            SKIP{' '}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.slide}>
-        <Image
-          style={styles.picture1}
-          source={require('../Images/Picture1.png')}
-        />
-        <Text style={styles.text}>Best Parking Spots</Text>
-        <Text>Be our parking Buddy!</Text>
-        <TouchableOpacity
-          style={styles.skip}
-          onPress={() => navigation.navigate('Login')}>
-          <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
-            SKIP
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.slide}>
-        <Image
-          style={styles.picture2}
-          source={require('../Images/Picture2.png')}
-        />
-        <Text style={styles.text}>Quick Navigation</Text>
-        <Text style={{fontSize: 15, marginTop: 20, color: 'black'}}>
-          Be our parking Buddy!
-        </Text>
-        <TouchableOpacity
-          style={styles.skip}
-          onPress={() => navigation.navigate('Login')}>
-          <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
-            SKIP
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.slide}>
-        <Image
-          style={styles.picture3}
-          source={require('../Images/Picture3.png')}
-        />
-        <Text style={styles.text}>Easy Payment</Text>
-        <Text style={{fontSize: 15, marginTop: 20, color: 'black'}}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit
-        </Text>
+            <TouchableOpacity
+              style={styles.skip}
+              onPress={() => navigation.navigate('Login')}>
+              <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
+                SKIP{' '}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.slide}>
+            <Image
+              style={styles.picture1}
+              source={require('../Images/Picture1.png')}
+            />
+            <Text style={styles.text}>Best Parking Spots</Text>
+            <Text>Be our parking Buddy!</Text>
+            <TouchableOpacity
+              style={styles.skip}
+              onPress={() => navigation.navigate('Login')}>
+              <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
+                SKIP
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.slide}>
+            <Image
+              style={styles.picture2}
+              source={require('../Images/Picture2.png')}
+            />
+            <Text style={styles.text}>Quick Navigation</Text>
+            <Text style={{fontSize: 15, marginTop: 20, color: 'black'}}>
+              Be our parking Buddy!
+            </Text>
+            <TouchableOpacity
+              style={styles.skip}
+              onPress={() => navigation.navigate('Login')}>
+              <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
+                SKIP
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.slide}>
+            <Image
+              style={styles.picture3}
+              source={require('../Images/Picture3.png')}
+            />
+            <Text style={styles.text}>Easy Payment</Text>
+            <Text style={{fontSize: 15, marginTop: 20, color: 'black'}}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit
+            </Text>
 
-        <TouchableOpacity
-          style={styles.skip}
-          onPress={() => navigation.navigate('Login')}>
-          <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
-            SKIP
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </Swiper>
-
+            <TouchableOpacity
+              style={styles.skip}
+              onPress={() => navigation.navigate('Login')}>
+              <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
+                SKIP
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Swiper>
       )}
     </>
-
   );
 };
 

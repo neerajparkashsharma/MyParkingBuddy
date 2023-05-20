@@ -270,7 +270,7 @@ left:240,
                       </Text>
 
                       <Text style={styles.popularTitlesTitle}>
-                        {item.parking.parkingLocation}
+                        {item.parking?.parkingLocation}
                       </Text>
                     </View>
                   </View>

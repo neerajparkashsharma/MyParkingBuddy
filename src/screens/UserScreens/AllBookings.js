@@ -122,7 +122,7 @@ const AllBookings = props => {
                 
                   <View style={styles.popularTitlesWrapper}>
                     <Text style={styles.popularTitlesTitle}>
-                  <Text style={{fontWeight:'bold'}}>LOCATION: </Text>{item.parking.parkingLocation}
+                  <Text style={{fontWeight:'bold'}}>LOCATION: </Text>{item.parking?.parkingLocation}
                     </Text>
                     <Text style={styles.popularTitlesWeight}>
                     </Text>

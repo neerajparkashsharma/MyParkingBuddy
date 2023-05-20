@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ImageBackground,
   ScrollView,
@@ -17,26 +17,19 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // import Intl from 'react-native-intl';
 import FIcon from 'react-native-vector-icons/Feather';
-import {colors} from '../../commons/Colors';
+import { colors } from '../../commons/Colors';
 
-import {SCREEN_WIDTH, SCREEN_HEIGHT} from '../../components/units';
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../../components/units';
 import Headerx from '../../components/header';
 import axios from 'axios';
 import url from '../../commons/axiosUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {Calendar, LocaleConfig} from 'react-native-calendars';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
+import Slider from '@react-native-community/slider';
+import { color } from 'react-native-reanimated';
 
 export default BookingParking = props => {
-  // const [selectedTime, setSelectedTime] = useState(null);
-  // const [showTimePicker, setShowTimePicker] = useState(false);
-
-  // const onTimeChange = (event, selected) => {
-  //   if (selected) {
-  //     setSelectedTime(`${selected.getHours()}:${selected.getMinutes()}`);
-  //   }
-  //   setShowTimePicker(Platform.OS === 'ios');
-  // };
 
   const [bookingDate, setBookingDate] = useState(new Date());
 
@@ -51,6 +44,9 @@ export default BookingParking = props => {
     setShowPicker(false);
     setDate(selectedDate || date);
   };
+  const [fromValue, setFromValue] = useState(0);
+  const [toValue, setToValue] = useState(0);
+  const [value, setValue] = useState(0);
   const [date1, setDate1] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
 
@@ -105,9 +101,8 @@ export default BookingParking = props => {
 
     const today = new Date();
     date.setDate(today.getDate() + i);
-    const formattedDate = `${days[date.getDay()]}, ${
-      months[date.getMonth()]
-    } ${date.getDate()}`;
+    const formattedDate = `${days[date.getDay()]}, ${months[date.getMonth()]
+      } ${date.getDate()}`;
     dates.push(formattedDate);
   }
 
@@ -201,7 +196,7 @@ export default BookingParking = props => {
 
   const [time, setTime] = useState('');
 
-  const handleTimeChange = (newTime) => {
+  const handleTimeChange = newTime => {
     // Ensure that the input only contains numbers
     const regex = /^[0-9]*$/;
     if (regex.test(newTime)) {
@@ -216,7 +211,6 @@ export default BookingParking = props => {
   const [selectedSecurity, setSelectedSecurity] = React.useState('');
   const [selectedDay, setSelectedDay] = React.useState('');
   const [selectedHour, setSelectedHour] = React.useState('');
-  // const [selectedDates, setSelectedDates] = useState({}  );
   const [selectedDates, setSelectedDates] = useState({});
   const [lastPressedDate, setLastPressedDate] = useState(null);
   const [lastPressedTime, setLastPressedTime] = useState(0);
@@ -233,7 +227,7 @@ export default BookingParking = props => {
     setSelectedHour(name);
   };
 
-  const HoursRender = ({name, selected}) => (
+  const HoursRender = ({ name, selected }) => (
     <TouchableOpacity
       style={selectedHour == name ? style.item2 : style.item}
       onPress={() => handleHourSelection(name)}>
@@ -243,7 +237,7 @@ export default BookingParking = props => {
     </TouchableOpacity>
   );
 
-  const DaysRender = ({name, selected}) => (
+  const DaysRender = ({ name, selected }) => (
     <TouchableOpacity
       style={selectedDay == name ? style.item2 : style.item}
       onPress={() => handleDaySelection(name)}>
@@ -253,7 +247,7 @@ export default BookingParking = props => {
     </TouchableOpacity>
   );
 
-  const ItemRender = ({name, selected}) => (
+  const ItemRender = ({ name, selected }) => (
     <TouchableOpacity
       style={selected == name ? style.item2 : style.item}
       onPress={() => handleDaySelection(name)}>
@@ -263,7 +257,7 @@ export default BookingParking = props => {
     </TouchableOpacity>
   );
 
-  const SecurityOptions = ({name, selected, icon}) => (
+  const SecurityOptions = ({ name, selected, icon }) => (
     <TouchableOpacity
       style={selectedSecurity == name ? style.item2 : style.item}
       onPress={() => handleSecuritySelection(name)}>
@@ -298,24 +292,22 @@ export default BookingParking = props => {
       console.log('booking parking id', data?.id);
 
       const userId = await AsyncStorage.getItem('userdata');
-      const response = await axios
-        .post(`${url}parkingBookingRecords/`, {
-          parkingId: data?.id,
-          customerId: userId,
-          bookingDate: bookingDate,
-          bookingStartTime: startTime,
-          bookingEndTime: endTime,
-        })
-        .then(res => {
-          console.log(res.data);
+      // const response = await axios
+      //   .post(`${url}parkingbooking/`, {
+      //     parkingId: data?.id,
+      //     customerId: userId,
+      //     bookingDate: bookingDate,
+      //     bookingStartTime: startTime,
+      //     bookingEndTime: endTime,
+      //   })
+      //   .then(res => {
+      //     console.log(res.data);
 
-          alert('Booking Successful');
-          props?.navigation.navigate('Home');
-        });
-      // handle the response data as needed
+      //     alert('Booking Successful');
+      //     props?.navigation.navigate('Home');
+      //   });
     } catch (error) {
       console.error(error);
-      // handle errors as needed
     }
   };
 
@@ -333,13 +325,14 @@ export default BookingParking = props => {
         navigation={props?.navigation}
         headerName={'Booking Parking'}></Headerx>
       <ScrollView>
+
         <ImageBackground
           style={style.headerImage}
-          source={require('../../Images/parking.jpeg')}>
+          source={require('../../Images/bg.jpg')}>
           <View style={style.header}>
             <TouchableOpacity
               style={{
-                backgroundColor: colors.themeColor,
+                backgroundColor:'#0000ff',
                 width: 50,
                 height: 50,
                 borderRadius: 12,
@@ -352,7 +345,7 @@ export default BookingParking = props => {
             </TouchableOpacity>
             <TouchableOpacity
               style={{
-                backgroundColor: colors.themeColor,
+                backgroundColor: '#cc0000',
                 width: 50,
                 height: 50,
                 borderRadius: 12,
@@ -366,7 +359,7 @@ export default BookingParking = props => {
 
             <TouchableOpacity
               style={{
-                backgroundColor: colors.silver,
+                backgroundColor:'#e67300',
                 height: 50,
                 width: 190,
                 borderRadius: 12,
@@ -376,7 +369,7 @@ export default BookingParking = props => {
               onPress={() => console.log('object')}>
               <Text
                 style={{
-                  color: colors.black,
+                  color: "#fff",
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}>
@@ -393,23 +386,18 @@ export default BookingParking = props => {
               paddingHorizontal: 10,
               flexDirection: 'row',
             }}></View>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Text
               style={{
-                fontWeight: 'bold',
-                fontSize: SCREEN_HEIGHT / 60,
+                fontWeight: '700',
+                fontSize: SCREEN_HEIGHT / 45,
                 marginLeft: 15,
+                color:'#333333',
               }}>
-              <Icon name="place" size={20} color={'red'} />
+              <Icon name="place" size={25} color={'#cc0000'} />
               {data?.parkingLocation}
             </Text>
-            <View style={{flexDirection: 'row', marginLeft: 15}}>
-              <Icon name="star" size={25} color={'orange'} />
-              <Icon name="star" size={25} color={'orange'} />
-              <Icon name="star" size={25} color={'orange'} />
-              <Icon name="star" size={25} color={'orange'} />
-              <Icon name="star" size={25} color={'orange'} />
-            </View>
+           
           </View>
 
           {/* <View
@@ -439,10 +427,10 @@ export default BookingParking = props => {
             />
           </View> */}
 
-          <View style={{marginTop: 23, paddingHorizontal: 20}}>
+          <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
             <Text
               style={{
-                fontSize: 25,
+                fontSize: 20,
                 fontWeight: '600',
                 color: colors.themeColor,
                 marginBottom: 15,
@@ -451,6 +439,15 @@ export default BookingParking = props => {
             </Text>
 
             <Calendar
+              theme={{
+                selectedDayBackgroundColor: colors.themeColor,
+                monthTextColor: colors.themeColor,
+                todayTextColor: colors.themeColor,
+                arrowColor: colors.themeColor,
+                // calendarContainerStyle: styles.calendarContainer,
+                monthTextFontSize: 20,
+                dayTextColor: colors.themeColor,
+              }}
               onDayPress={day => {
                 const selectedDate = day.dateString;
                 const currentTime = new Date().getTime();
@@ -458,13 +455,13 @@ export default BookingParking = props => {
                   selectedDate === lastPressedDate &&
                   currentTime - lastPressedTime < 500
                 ) {
-                  const selectedDatesCopy = {...selectedDates};
+                  const selectedDatesCopy = { ...selectedDates };
                   delete selectedDatesCopy[selectedDate];
                   setSelectedDates(selectedDatesCopy);
                   setLastPressedDate(null);
                   setLastPressedTime(0);
                 } else {
-                  const selectedDatesCopy = {...selectedDates};
+                  const selectedDatesCopy = { ...selectedDates };
                   selectedDatesCopy[selectedDate] = {
                     selected: true,
                     disableTouchEvent: true,
@@ -510,75 +507,76 @@ export default BookingParking = props => {
                 // justifyContent: 'space-between',
               }}>
               <View style={styles.bodyContainer}>
-                <View style={{marginTop: SCREEN_HEIGHT / 50}}>
+                <View style={{ marginTop: SCREEN_HEIGHT / 50 }}>
                   <Text
                     style={{
-                      fontSize: 25,
+                      fontSize: 20,
                       fontWeight: '600',
                       color: colors.themeColor,
                       marginBottom: 15,
                     }}>
                     Duration
                   </Text>
-                  <TextInput
-                    style={styles.fieldContainer}
-                    value={bookingDate}
-                    onChangeText={text => setBookingDate(text)}
-                    placeholder={'Enter Booking Date (yyyy/MM/dd) '}
-                  />
+                </View>
+              </View>
+
+              <View style={{backgroundColor:"#fff",  borderRadius:15,height:SCREEN_HEIGHT/4}}>
+                <View style={{ flex: 1, flexDirection: 'row',marginTop:30 }}>
+        
+                <Slider
+  style={{width: 370, height: 40,}}
+  minimumValue={1}
+  maximumValue={100}
+  minimumTrackTintColor="black"
+  maximumTrackTintColor="#000000"
+/>
+
+
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'center',marginBottom:20 }}>
+                  <Text style={{ fontSize: 16, fontWeight: '600',color:'#333333' }}>Your Charges: </Text>
+                  <Text style={{ fontSize: 16, fontWeight: '600',color:'#333333' }}>{value * data.parkingCharges }</Text>
                 </View>
               </View>
 
               <View style={styles.bodyContainer}>
-                <View style={{flex: 1, flexDirection: 'row'}}></View>
-              </View>
-
-              <View style={styles.bodyContainer}>
-                <View style={{marginTop: SCREEN_HEIGHT / 50}}>
+                <View style={{ marginTop: SCREEN_HEIGHT / 50 }}>
                   <Text
                     style={{
-                      fontSize: 25,
+                      fontSize: 20,
                       fontWeight: '600',
                       color: colors.themeColor,
                       marginBottom: 15,
                     }}>
-                    Check Out Time
+                    Check-Out-Time
                   </Text>
-                 
                 </View>
-                <View style={styles.container1}>
-   
-
-      <TextInput
-      placeholder={"Select Time"}
-      value={date.toLocaleString()}
-      // editable={false}
-     onFocus={() => setShowPicker(true)}
-      //onBlur={() => setShowPicker(true)}
-      />
-   {/* <TouchableOpacity style={style.btn}   onPress={() => setShowPicker(true)}>
-            <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>
-           Select Time
-            </Text>
-          </TouchableOpacity> */}
-      {showPicker && (
-        <DateTimePicker
-          value={date1}
-          mode="time"
-          display="default"
-          onChange={handleDateChange}
-        />
-      )}
-    </View>
+                <View style={{backgroundColor:"#fff",borderRadius:10,}}>
+                  <TextInput
+                    placeholder={'Select Time'}
+                    value={date.toLocaleString()}
+                    onFocus={() => setShowPicker(true)}
+                  />
+                   
+                  {showPicker && (
+                    <DateTimePicker
+                      value={date1}
+                      mode="time"
+                      display="default"
+                      onChange={handleDateChange}
+                      style={{ color: '#007AFF' }}
+                    />
+                  )}
+                </View>
               </View>
             </View>
           </View>
         </View>
 
-        <View style={{marginTop: 23, paddingHorizontal: 20}}>
+        <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
           <Text
             style={{
-              fontSize: 25,
+              fontSize: 20,
               fontWeight: '600',
               color: colors.themeColor,
               marginBottom: 15,
@@ -588,7 +586,7 @@ export default BookingParking = props => {
           <ScrollView>
             <FlatList
               data={Security}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <SecurityOptions
                   name={item.name}
                   selected={item.selected}
@@ -606,13 +604,14 @@ export default BookingParking = props => {
               marginTop: 10,
               flexDirection: 'row',
               justifyContent: 'space-between',
+              backgroundColor:'#fff'
             }}>
-            <View style={{flexDirection: 'row'}}>
-              <View style={{flexDirection: 'row'}}></View>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ flexDirection: 'row' }}></View>
             </View>
           </View>
           <TouchableOpacity style={style.btn} onPress={handleBooking}>
-            <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>
+            <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
               Book Now
             </Text>
           </TouchableOpacity>
@@ -643,10 +642,19 @@ const style = StyleSheet.create({
     flex: 1,
     marginRight: 10,
   },
-container1:{
-  flexDirection: 'row',
+  container1: {
+    flexDirection: 'row',
     alignItems: 'center',
-},
+  },
+  calendarContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    width: 300, height: 200,
+
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+  },
   priceTag: {
     height: 40,
     alignItems: 'center',
@@ -671,8 +679,8 @@ container1:{
   headerImage: {
     height: 250,
     top: 15,
-    // borderBottomRightRadius: 40,
-    // borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 30,
+    borderBottomLeftRadius: 30,
     overflow: 'hidden',
   },
   header: {
@@ -722,8 +730,8 @@ container1:{
   item: {
     padding: 8,
 
-    width: 120,
-    height: 80,
+    width: 100,
+    height: 50,
 
     borderColor: '#c0c0c0',
     borderRadius: 5,
@@ -735,8 +743,8 @@ container1:{
   item2: {
     padding: 8,
 
-    width: 120,
-    height: 80,
+    width: 100,
+    height: 50,
     backgroundColor: colors.themeColor,
 
     borderColor: '#c0c0c0',
