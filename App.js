@@ -31,11 +31,17 @@ import ParkingBooking from './src/screens/UserScreens/ParkingBooking';
 import LiveStreaming from './src/screens/UserScreens/LivesSreaming';
 import UserPayment from './src/screens/UserScreens/UserPayment';
 import NewScreen from './src/screens/UserScreens/NewScreen';
+import SplashScreen from './src/screens/commonScreens/SplashScreen';
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="OnBoarding">
+      <Stack.Navigator initialRouteName="SplashScreen">
   
+  <Stack.Screen
+  name= "SplashScreen"
+  component={SplashScreen}
+  options={{headerShown: false}}
+  />
         <Stack.Screen
           name="NewScreen"
           component={NewScreen}

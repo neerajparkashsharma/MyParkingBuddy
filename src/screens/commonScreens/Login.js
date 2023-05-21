@@ -139,20 +139,23 @@ export default function Login({navigation}) {
       /> */}
         {/* <Text style={{marginLeft: -180, color: '#613EEA'}}>Remember Me</Text> */}
 
-        <TouchableOpacity onPress={() => navigation.navigate('OnBoarding')}>
-          <Text style={{color: '#613EEA'}}>Forgot Password?</Text>
-        </TouchableOpacity>
-
+       
         <TouchableOpacity
           style={styles.loginBtn}
           onPress={() => handleClick(this)}>
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.push('SignUpOptions')}>
-          <Text>
-            or <Text style={styles.SignUp}>Sign Up</Text>{' '}
-          </Text>
+<View style={{flexDirection:'row',justifyContent:'space-around'}}>
+        <TouchableOpacity onPress={() => navigation.navigate('OnBoarding')}>
+          <Text style={{color: '#613EEA',right:60, fontSize: 16,}}>Forgot Password</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.push('SignUpOptions')}>
+        
+            <Text style={styles.SignUp}>Sign Up</Text>
+          
+        </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -175,7 +178,7 @@ const styles = StyleSheet.create({
   inputView: {
     backgroundColor: colors.lightgray,
     borderRadius: 5,
-
+    elevation:15,
     width: SCREEN_WIDTH / 1.2,
     height: SCREEN_HEIGHT / 15,
 
@@ -197,6 +200,9 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT - 630,
     marginBottom: 80,
     color: '#613EEA',
+    left:60,
+    fontSize: 16,
+
   },
 
   loginBtn: {
@@ -206,7 +212,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 70,
-    top: 30,
+    top: 10,
     backgroundColor: '#613EEA',
   },
 

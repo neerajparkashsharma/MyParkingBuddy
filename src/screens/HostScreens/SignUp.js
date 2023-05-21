@@ -71,7 +71,7 @@ export default function SignUp({navigation}) {
           fontWeight: '600',
           fontSize: SCREEN_WIDTH/20,
           backgroundColor: 'white',
-          marginBottom: 10,
+          marginBottom: 40,
         }}>
         Register as a Parking Host
       </Text>
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   inputView: {
     backgroundColor: colors.lightgray,
     borderRadius: 5,
-
+elevation:15,
     width: SCREEN_WIDTH/1.2,
     height: SCREEN_HEIGHT/15,
 

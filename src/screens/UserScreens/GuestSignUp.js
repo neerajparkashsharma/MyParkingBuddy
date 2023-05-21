@@ -88,7 +88,8 @@ export default function GuestSignUp({navigation}) {
             fontWeight: '600',
             fontSize: SCREEN_WIDTH / 20,
             backgroundColor: 'white',
-            marginBottom: 10,
+            marginBottom: 40,
+
           }}>
           Register as a Space User
         </Text>
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT / 15,
 
     marginBottom: 30,
-
+    elevation:15,
     alignItems: 'flex-start',
   },
 
