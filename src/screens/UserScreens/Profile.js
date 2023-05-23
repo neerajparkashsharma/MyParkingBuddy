@@ -43,11 +43,14 @@ const Profile = props => {
       <ScrollView>
         <Headerx navigation={props.navigation} headerName={'Your Profile'} />
         <View style={styles.titleContainer}>
+        <Image source={require('../../Images/926459.png')} style={{width: 120,
+    height: 120,
+    borderRadius: 60,}}/>
           <Text
             style={{
-              fontSize: 26,
+              fontSize: 21,
               fontWeight: 'bold',
-              marginTop: 50,
+              marginTop: 10,
               color: colors.themeColor,
               textTransform: 'uppercase',
             }}>
@@ -135,13 +138,13 @@ const styles = StyleSheet.create({
     right: 0,
   },
   userName: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
-    color: colors.gray,
+    color: '#505050'
   },
   titleContainer: {
     alignItems: 'center',
-    marginTop: SCREEN_HEIGHT / -500,
+    top:10,
   },
   editText: {
     color: colors.gray,
@@ -150,17 +153,17 @@ const styles = StyleSheet.create({
   fieldContainer: {
     borderWidth: 1,
     borderColor: colors.gray,
-    borderRadius: 10,
+    borderRadius: 5,
     paddingVertical: SCREEN_HEIGHT / 48,
     paddingLeft: SCREEN_WIDTH / 23,
     marginTop: SCREEN_HEIGHT / 67,
   },
   bodyContainer: {
     marginHorizontal: SCREEN_WIDTH / 21,
-    marginTop: SCREEN_HEIGHT / 25,
+    
   },
   fieldTitle: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.themeColor,
   },

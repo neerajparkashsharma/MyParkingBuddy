@@ -313,7 +313,7 @@ const ParkingRegistration = props => {
           <TextInput
             style={styles.TextInput}
             placeholder="Enter parking Charges (per hr.)"
-            placeholderTextColor={'#613EEA'}
+            placeholderTextColor={'#505050'}
             onChangeText={charges => setCharges(charges)}></TextInput>
         </View>
         <View style={styles.inputView}>
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
   TextInput: {
     height: 50,
     flex: 1,
-    color: '#613EEA',
+    color:'#505050',
 
     padding: 10,
     marginLeft: 20,
