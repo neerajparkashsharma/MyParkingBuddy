@@ -19,23 +19,37 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const HeadingfontSize = SCREEN_WIDTH / 12 - 2;
-
+import axios from 'axios';
 import Swiper from 'react-native-swiper';
+import url from '../commons/axiosUrl';
 
 const OnBoarding = ({navigation}) => {
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     setLoading(true);
     const checkUserData = async () => {
       try {
-        const value = await AsyncStorage.getItem('role');
-        if (value !== null) {
-          value == 1
-            ? navigation.navigate('HostDrawer')
-            : navigation.navigate('Drawer');
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+           
+          console.log("token",token)
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          
+          
+          axios.post(`${url}authenticate/token`)
+            .then(response => {
+              
+              const role = response.data.role;
+              role === 1 ? navigation.navigate('HostDrawer') : navigation.navigate('Drawer');
+            })
+            .catch(error => {
+              navigation.navigate("Login")
+              
+              console.log(error.response.data)
+              console.log('Authentication failed:', error);
+            });
         } else {
-          console.log('no user data');
+          console.log('No token found');
         }
         setLoading(false);
       } catch (error) {
@@ -44,6 +58,7 @@ const OnBoarding = ({navigation}) => {
     };
     checkUserData();
   }, []);
+  
 
   return (
     <>

@@ -32,16 +32,17 @@ import LiveStreaming from './src/screens/UserScreens/LivesSreaming';
 import UserPayment from './src/screens/UserScreens/UserPayment';
 import NewScreen from './src/screens/UserScreens/NewScreen';
 import SplashScreen from './src/screens/commonScreens/SplashScreen';
+import VehicleDetections from './src/screens/UserScreens/VehicleDetections';
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="SplashScreen">
-  
-  <Stack.Screen
-  name= "SplashScreen"
-  component={SplashScreen}
-  options={{headerShown: false}}
-  />
+
+        <Stack.Screen
+          name="SplashScreen"
+          component={SplashScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="NewScreen"
           component={NewScreen}
@@ -79,6 +80,14 @@ export default function App() {
           component={ParkingBooking}
           options={{ headerShown: false }}
         />
+
+        <Stack.Screen
+          name="VehicleDetections"
+          component={VehicleDetections}
+          options={{ headerShown: false }}
+        />
+
+
         <Stack.Screen
           name="Alerts"
           component={Alerts}

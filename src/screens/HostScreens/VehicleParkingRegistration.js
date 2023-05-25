@@ -50,6 +50,23 @@ const VehicleParkingRegistration = props => {
   };
 
   const handleSubmit = async () => {
+
+
+    if (
+      parkingCharges === null ||
+      checkInCode === null ||
+      checkOutCode === null ||
+      
+      address === null ||
+      region.latitude === null ||
+      region.longitude === null ||
+      hostId === null
+    ) {
+      console.log('One or more fields are null');
+      return;
+    }
+
+
     // Handle form submission logic here
     const hostId = await AsyncStorage.getItem('userdata');
     console.log('Submitting form...');

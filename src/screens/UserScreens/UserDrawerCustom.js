@@ -147,24 +147,30 @@ const UserDrawerCustom = props => {
           data={UserListOfDrawerItems}
           renderItem={renderItem}></FlatList>
       </View>
-      {/* <TouchableOpacity
-  style={{position: 'absolute', bottom: 30, left: SCREEN_WIDTH / 4.5}}
+      <TouchableOpacity
+  style={{ position: 'absolute', bottom: 30, left: SCREEN_WIDTH / 4.5 }}
   onPress={async () => {
-    await AsyncStorage.removeItem('userdata');
-    await AsyncStorage.removeItem('token');
-    await AsyncStorage.removeItem('role');
-    
-    props?.navigation.dispatch(StackActions.popToTop());
-    props?.navigation.navigate('Login');
-  }}>
-  <Text style={{fontSize: 18, fontWeight: 'bold'}}>Logout</Text>
-</TouchableOpacity> */}
-   <TouchableOpacity
+    try {
+      await AsyncStorage.removeItem('userdata');
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('role');
+
+      props?.navigation.dispatch(StackActions.popToTop());
+      props?.navigation.navigate('Login');
+    } catch (error) {
+      console.log('Error occurred while logging out:', error);
+    }
+  }}
+>
+  <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Logout</Text>
+</TouchableOpacity>
+
+   {/* <TouchableOpacity
       style={styles.container}
       onPress={() => props?.navigation.navigate('Login')}>
       <Icon name="logout" size={25} style={styles.icon} />
       <Text style={styles.text}>Logout</Text>
-    </TouchableOpacity>
+    </TouchableOpacity> */}
     </View>
   );
 };

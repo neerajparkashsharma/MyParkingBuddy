@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,17 +14,17 @@ import {
   Dimensions,
 } from 'react-native';
 import Headerx from '../../components/header.js';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import url from '../../commons/axiosUrl.js';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {colors} from '../../commons/Colors.js';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors } from '../../commons/Colors.js';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-export default function Login({navigation}) {
+export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -53,49 +53,60 @@ export default function Login({navigation}) {
   };
 
   const handleClick = async () => {
-    //validation
-    if (email == '' || password == '') {
-      alert('Please fill all the fields');
-      return false;
-    } else {
-      axios
-        .post(
-          url + 'api/authenticate',
-          {username: email, password: password},
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          },
-        )
-        .then(response => {
-          console.log(response.data);
-          if (response.data == 'User not found') {
-            alert('User not found!');
-          }
+    try {
+      // Validation
+      if (email === '' || password === '') {
+        alert('Please fill all the fields');
+        return;
+      }
 
-          if (response.data.token) {
-            setEmail('');
-            setPassword('');
-            storeData(response.data.id);
-            AsyncStorage.setItem('token', response.data.token);
-            AsyncStorage.setItem('role', response.data.role.id.toString());
-            response.data.role == null
-              ? alert('Something went wrong')
-              : response.data.role.id == 1
-              ? navigation.replace('HostDrawer')
-              : navigation.replace('Drawer');
-          } else {
-            alert('else - ' + response.data);
-          }
-        })
-        .catch(error =>
-          alert(error.response.status == 404 ? 'Invalid Credentials' : error),
-        );
+      const response = await axios.post(
+        `${url}api/authenticate`,
+        { username: email, password: password },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      if (response.data === 'User not found') {
+        alert('User not found!');
+        return;
+      }
+
+      const { token, role } = response.data;
+
+      if (!token) {
+        alert('Invalid response: ' + response.data);
+        return;
+      }
+
+      setEmail('');
+      setPassword('');
+
+      await AsyncStorage.setItem('userdata',JSON.stringify(response.data?.id))
+      await AsyncStorage.setItem('token', token);
+      await AsyncStorage.setItem('role', role?.id?.toString() || '');
+
+      if (role?.id === 1) {
+        navigation.replace('HostDrawer');
+      } else {
+        navigation.replace('Drawer');
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        alert('Invalid Credentials');
+      } else {
+        alert('Error: ' + error);
+      }
     }
   };
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
       {/* <Headerx navigation={navigation} headerName={'Login'} /> */}
       <View style={styles.container}>
         <Text
@@ -139,22 +150,22 @@ export default function Login({navigation}) {
       /> */}
         {/* <Text style={{marginLeft: -180, color: '#613EEA'}}>Remember Me</Text> */}
 
-       
+
         <TouchableOpacity
           style={styles.loginBtn}
           onPress={() => handleClick(this)}>
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
-<View style={{flexDirection:'row',justifyContent:'space-around'}}>
-        <TouchableOpacity onPress={() => navigation.navigate('OnBoarding')}>
-          <Text style={{color: '#613EEA',right:60, fontSize: 16,}}>Forgot Password</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('OnBoarding')}>
+            <Text style={{ color: '#613EEA', right: 60, fontSize: 16, }}>Forgot Password</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.push('SignUpOptions')}>
-        
+          <TouchableOpacity onPress={() => navigation.push('SignUpOptions')}>
+
             <Text style={styles.SignUp}>Sign Up</Text>
-          
-        </TouchableOpacity>
+
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
@@ -170,6 +181,7 @@ const styles = StyleSheet.create({
     backgroundGradient: 'vertical',
     backgroundGradientTop: '#333333',
     backgroundGradientBottom: '#666666',
+    top: 60,
   },
 
   image: {
@@ -178,7 +190,7 @@ const styles = StyleSheet.create({
   inputView: {
     backgroundColor: colors.lightgray,
     borderRadius: 5,
-    elevation:15,
+    elevation: 15,
     width: SCREEN_WIDTH / 1.2,
     height: SCREEN_HEIGHT / 15,
 
@@ -200,7 +212,7 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT - 630,
     marginBottom: 80,
     color: '#613EEA',
-    left:60,
+    left: 60,
     fontSize: 16,
 
   },

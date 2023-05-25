@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, ScrollView, StyleSheet, Text } from 'react-native';
-// import RNFS from 'react-native-fs';
-import Headerx from '../../components/header';
+import axios from 'axios';
+import url from '../../commons/axiosUrl';
 
 const VehicleDetections = (props) => {
   const [dateTime, setDateTime] = useState('');
+  const [imageNames, setImageNames] = useState([]);
+  const folderPath = 'D%3A%5CNew%20folder%20%289%29%5CMyParkingBuddy%5Csrc%5Ccar_detection_images';
+
 
   useEffect(() => {
     const getCurrentDateTime = () => {
@@ -16,17 +19,37 @@ const VehicleDetections = (props) => {
       setDateTime(`${formattedDate} ${formattedTime}`);
     }
     getCurrentDateTime();
+
+    axios.get(`${url}images?directoryPath=${folderPath}`)
+      .then(response => {
+        // Assuming the response is an array of image names
+        setImageNames(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching image names:', error);
+      });
   }, []);
 
   return (
     <ScrollView>
-      <Headerx headerName={"Detected Vehicles"} navigation={props?.navigation} />
       <View style={styles.container}>
         <Text style={styles.dateTime}>Detected on: {dateTime}</Text>
         <Text style={styles.title}>Your Detected Vehicles</Text>
-        <Image source={require('../../car_detection_images/0b30f6e0-deb5-4204-b270-06c7963c902b.jpg')} style={styles.image} />
-        <Text style={styles.label}>Vehicle Type: Car</Text>
-        <Text style={styles.label}>License Plate: XYZ-1234</Text>
+        {imageNames.map(imageName => (
+          <View key={imageName}>
+
+
+            <Image
+              source={{
+                uri: `${folderPath}%2F${imageName}?raw=true}`
+              }}
+            
+
+              style={styles.image}
+            />
+            <Text style={styles.label}>Image Name: {imageName}</Text>
+          </View>
+        ))}
       </View>
     </ScrollView>
   );

@@ -2,21 +2,20 @@ import React, { useEffect } from 'react';
 import { View, Animated, StyleSheet, ImageBackground, Image } from 'react-native';
 
 const SplashScreen = ({ navigation }) => {
+
   const carPosition = new Animated.ValueXY({ x: -100, y: 0 });
 
   useEffect(() => {
-    // Start the animation on component mount
     startDrivingAnimation();
   }, []);
 
   const startDrivingAnimation = () => {
     Animated.timing(carPosition, {
-      toValue: { x: 400, y: 0 }, // Destination position of the car
-      duration: 3000, // Duration of the animation in milliseconds
-      useNativeDriver: false, // Make sure to set this to false for position animations
+      toValue: { x: 400, y: 0 },
+      duration: 3000,
+      useNativeDriver: false,
     }).start(() => {
-      // Animation completed, navigate to the desired screen
-      navigation.navigate('OnBoarding'); // Replace 'Home' with the screen you want to navigate to
+      navigation.navigate('OnBoarding');
     });
   };
 
@@ -26,11 +25,11 @@ const SplashScreen = ({ navigation }) => {
         <Image source={require('../../Images/logo.png')} style={styles.logo} />
       </View>
       <ImageBackground
-        source={require('../../Images/road1.png')} // Replace with the path to your scenery image
+        source={require('../../Images/road1.png')}
         style={styles.backgroundImage}
       >
         <Animated.Image
-          source={require('../../Images/carr.png')} // Replace with the image of the car
+          source={require('../../Images/carr.png')}
           style={[styles.car, { transform: [{ translateX: carPosition.x }, { translateY: carPosition.y }] }]}
         />
       </ImageBackground>

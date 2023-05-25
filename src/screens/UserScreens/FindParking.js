@@ -21,13 +21,14 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import Geocoder from 'react-native-geocoding';
 import {white} from 'react-native-paper/lib/typescript/styles/colors.js';
-import {Button} from 'react-native-paper';
+import {Button, TouchableRipple} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import url from '../../commons/axiosUrl.js';
 import {useNavigation} from '@react-navigation/native';
 import {colors} from '../../commons/Colors.js';
 import Headerx from '../../components/header.js';
 import {color} from 'react-native-reanimated';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -126,10 +127,10 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-    setLoading(true);
+  setLoading(true);
+  
   const getData = async () => {
     try {
-
       const value = await AsyncStorage.getItem('userdata');
       if (value !== null) {
         console.log(value);
@@ -141,7 +142,6 @@ useEffect(() => {
             setMarkers(res.data);
             setLoading(false);
           })
-       
           .catch(err => {
             console.log(err);
             setLoading(false);
@@ -154,15 +154,19 @@ useEffect(() => {
     }
   };
 
-  const intervalId = setInterval(() => {
-    // setLoading(true);
-    getData();
+  getData(); // Call the getData function immediately
+
+}, [latLong]); // Specify the dependency array correctly
+
+//   const intervalId = setInterval(() => {
+//     // setLoading(true);
+//     getData();
     
-  }, 5000); // Execute the code every 5 seconds
+//   }, 5000); // Execute the code every 5 seconds
 
-  return () => clearInterval(intervalId); // Clear the interval on component unmount
+//   return () => clearInterval(intervalId); // Clear the interval on component unmount
 
-}, []); 
+// }, []); 
 
 
 
@@ -173,7 +177,7 @@ useEffect(() => {
   <Headerx headerName="Find Parking Places" navigation={navigation} />
   <View style={{ marginTop: 20 }} />
 
-  <MapView
+   <MapView
     customMapStyle={mapStyle}
     mapType="standard"
     showsUserLocation={true}
@@ -219,15 +223,15 @@ useEffect(() => {
         </Marker>
       );
     })}
-  </MapView>
+  </MapView> 
 
-  <View>
+  <View style={{backgroundColor:colors.themeColor}}>
     <Text
       style={[
         EWalletStyles.popularTitlesTitle,
-        {
-          color: colors.themeColor,
-          left: SCREEN_WIDTH / 10,
+        {alignSelf:'center',
+          color: colors.white,
+
           marginTop: 20,
           marginBottom: 10,
           fontWeight: 'bold',
@@ -260,34 +264,95 @@ useEffect(() => {
 
      <>
      
-     <TouchableOpacity style={EWalletStyles.popularCardWrapper}>
-    <View>
-      <View style={EWalletStyles.popularTopWrapper}>
-        <Text style={EWalletStyles.popularTopText}>
-          {item.parkingLocation?.substring(0, 70)}...
-        </Text>
-      </View>
-      <View style={EWalletStyles.popularTitlesWrapper}>
-        <Text style={EWalletStyles.popularTitlesTitle}>
-          PKR {item.parkingCharges}
-        </Text>
-        <Text style={EWalletStyles.parkingDescription}>
-          {item.description}
-        </Text>
-        <TouchableOpacity
-          style={EWalletStyles.bookNowButton}
-          onPress={() => {
-            console.log('parking id', item?.id);
-            props.navigation.navigate('BookParking', { id: item?.id });
-          }}
-        >
-          <Text style={EWalletStyles.bookNowButtonText}>BOOK NOW</Text>
-        </TouchableOpacity>
-        <Text style={EWalletStyles.popularTitlesWeight}></Text>
-      </View>
+     <TouchableOpacity style={{
+  flex: 1,
+  borderWidth: 1,
+  borderColor: '#fff',
+  borderRadius: 8,
+ 
+
+  elevation:2,
+  paddingHorizontal: 20,
+  paddingVertical: 10,
+  margin: 10,
+  backgroundColor: 'white', // Set the background color of the main view to blue
+  justifyContent: 'space-between', // Align items vertically with space between them
+}}>
+  <View>
+  <TouchableWithoutFeedback style={{backgroundColor:'#D3990A',
+
+borderRadius: 4,
+width:100,
+height:30
+}}>
+<Text style={{
+  fontSize: 14,
+  marginBottom: 10,
+  fontSize: 16,
+  fontWeight: 'bold',
+  marginRight: 10,
+  top:3,
+  alignSelf:'center',
+  color: '#fff' // Set the text color to white
+}}>
+  PKR {item.parkingCharges}
+</Text>
+</TouchableWithoutFeedback>
+    <View style={{
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 10,
+      marginBottom: 10,
+    }}>
+      <Text style={{
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginRight: 10,
+        color: '#3E3C3F'// Set the text color to white
+      }}>
+        {item.parkingLocation?.substring(0, 70)}...
+      </Text>
     </View>
+    <View>
+   
+      
+     
+    </View>
+  </View>
+  <TouchableOpacity
+    style={{
+      backgroundColor: colors.themeColor, // Set the background color of the button to white
+   width: 190,
+   height: 50,
+      borderRadius: 4,
+      top: 10,
+      left: 25,
+      alignSelf: 'flex-end', // Align the button to the right side
+      borderTopWidth: 1, // Add top border to the button
+      borderRightWidth: 1, 
+      borderStartEndRadius:10,// Add right border to the button
+      borderColor: '#ccc', // Set the border color
+    }}
+    onPress={() => {
+      console.log('parking id', item?.id);
+      props.navigation.navigate('BookParking', { id: item?.id });
+    }}
+  >
+    <Text style={{
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: 'white', // Set the text color to blue
+      textAlign: 'center',
+      top: 10,
+    }}>
+      BOOK NOW
+    </Text>
   </TouchableOpacity>
-        
+</TouchableOpacity>
+
+
+
+
       </>
     )}
     keyExtractor={(item) => item.id.toString()}
