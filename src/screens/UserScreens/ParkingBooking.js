@@ -322,8 +322,253 @@ export default BookingParking = props => {
   return (
   
     <>
-    
-    </>
+    <Headerx
+      navigation={props?.navigation}
+      headerName={'Booking Parking'}></Headerx>
+    <ScrollView>
+
+      <ImageBackground
+        style={style.headerImage}
+        source={require('../../Images/bg.jpg')}>
+        <View style={style.header}>
+          <TouchableOpacity
+            style={{
+              backgroundColor:'#0000ff',
+              width: 50,
+              height: 50,
+              borderRadius: 12,
+              marginRight: 5,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => console.log('object2')}>
+            <FIcon name="phone-call" size={28} color={'white'} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#cc0000',
+              width: 50,
+              height: 50,
+              borderRadius: 12,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: 5,
+            }}
+            onPress={() => console.log('object')}>
+            <Icon name="place" size={28} color={'white'} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              backgroundColor:'#e67300',
+              height: 50,
+              width: 190,
+              borderRadius: 12,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => console.log('object')}>
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 16,
+                fontWeight: 'bold',
+              }}>
+              Hourly Charges: Rs. {data?.parkingCharges}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+
+      <View>
+        <View
+          style={{
+            marginTop: 20,
+            paddingHorizontal: 10,
+            flexDirection: 'row',
+          }}></View>
+        <View style={{ flexDirection: 'row' }}>
+          <Text
+            style={{
+              fontWeight: '700',
+              fontSize: SCREEN_HEIGHT / 45,
+              marginLeft: 15,
+              color:'#333333',
+            }}>
+            <Icon name="place" size={25} color={'#cc0000'} />
+            {data?.parkingLocation}
+          </Text>
+         
+        </View>
+
+        <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: '600',
+              color: colors.themeColor,
+              marginBottom: 15,
+            }}>
+            Parking Days
+          </Text>
+
+          <Calendar
+            theme={{
+              selectedDayBackgroundColor: colors.themeColor,
+              monthTextColor: colors.themeColor,
+              todayTextColor: colors.themeColor,
+              arrowColor: colors.themeColor,
+              // calendarContainerStyle: styles.calendarContainer,
+              monthTextFontSize: 20,
+              dayTextColor: colors.themeColor,
+            }}
+            onDayPress={day => {
+              const selectedDate = day.dateString;
+              const currentTime = new Date().getTime();
+              if (
+                selectedDate === lastPressedDate &&
+                currentTime - lastPressedTime < 500
+              ) {
+                const selectedDatesCopy = { ...selectedDates };
+                delete selectedDatesCopy[selectedDate];
+                setSelectedDates(selectedDatesCopy);
+                setLastPressedDate(null);
+                setLastPressedTime(0);
+              } else {
+                const selectedDatesCopy = { ...selectedDates };
+                selectedDatesCopy[selectedDate] = {
+                  selected: true,
+                  disableTouchEvent: true,
+                  selectedDotColor: 'orange',
+                };
+                setSelectedDates(selectedDatesCopy);
+                setLastPressedDate(selectedDate);
+                setLastPressedTime(currentTime);
+              }
+            }}
+            markedDates={selectedDates}
+          />
+
+      
+
+          <View
+            style={{
+              marginTop: 10,
+              // flexDirection: 'row',
+              // justifyContent: 'space-between',
+            }}>
+            <View style={styles.bodyContainer}>
+              <View style={{ marginTop: SCREEN_HEIGHT / 50 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: '600',
+                    color: colors.themeColor,
+                    marginBottom: 15,
+                  }}>
+                  Duration
+                </Text>
+              </View>
+            </View>
+
+            <View style={{backgroundColor:"#fff",  borderRadius:15,height:SCREEN_HEIGHT/4}}>
+              <View style={{ flex: 1, flexDirection: 'row',marginTop:30 }}>
+      
+              <Slider
+style={{width: 370, height: 40,}}
+minimumValue={1}
+maximumValue={100}
+minimumTrackTintColor="black"
+maximumTrackTintColor="#000000"
+/>
+
+
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'center',marginBottom:20 }}>
+                <Text style={{ fontSize: 16, fontWeight: '600',color:'#333333' }}>Your Charges: </Text>
+                <Text style={{ fontSize: 16, fontWeight: '600',color:'#333333' }}>{value * data.parkingCharges }</Text>
+              </View>
+            </View>
+
+            <View style={styles.bodyContainer}>
+              <View style={{ marginTop: SCREEN_HEIGHT / 50 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: '600',
+                    color: colors.themeColor,
+                    marginBottom: 15,
+                  }}>
+                  Check-Out-Time
+                </Text>
+              </View>
+              <View style={{backgroundColor:"#fff",borderRadius:10,}}>
+                <TextInput
+                  placeholder={'Select Time'}
+                  value={date.toLocaleString()}
+                  onFocus={() => setShowPicker(true)}
+                />
+                 
+                {showPicker && (
+                  <DateTimePicker
+                    value={date1}
+                    mode="time"
+                    display="default"
+                    onChange={handleDateChange}
+                    style={{ color: '#007AFF' }}
+                  />
+                )}
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: '600',
+            color: colors.themeColor,
+            marginBottom: 15,
+          }}>
+          Security
+        </Text>
+        <ScrollView>
+          <FlatList
+            data={Security}
+            renderItem={({ item }) => (
+              <SecurityOptions
+                name={item.name}
+                selected={item.selected}
+                icon={item.icon}
+              />
+            )}
+            keyExtractor={item => item.id}
+            ItemSeparatorComponent={Separator}
+            horizontal={true}
+          />
+        </ScrollView>
+
+        <View
+          style={{
+            marginTop: 10,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            backgroundColor:'#fff'
+          }}>
+          <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row' }}></View>
+          </View>
+        </View>
+        <TouchableOpacity style={style.btn} onPress={handleBooking}>
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
+            Book Now
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  </>
   );
 };
 
