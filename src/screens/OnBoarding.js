@@ -24,7 +24,13 @@ import Swiper from 'react-native-swiper';
 import url from '../commons/axiosUrl';
 
 const OnBoarding = ({navigation}) => {
+
+
+
   const [loading, setLoading] = useState(false);
+
+
+  
   useEffect(() => {
     setLoading(true);
     const checkUserData = async () => {
@@ -36,22 +42,25 @@ const OnBoarding = ({navigation}) => {
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           
           
-          axios.post(`${url}authenticate/token`)
+          axios.post(`${url}api/authenticate/token`)
             .then(response => {
               
               const role = response.data.role;
               role === 1 ? navigation.navigate('HostDrawer') : navigation.navigate('Drawer');
+              setLoading(false);
             })
             .catch(error => {
               navigation.navigate("Login")
               
               console.log(error.response.data)
               console.log('Authentication failed:', error);
+              setLoading(false);
             });
         } else {
           console.log('No token found');
+          setLoading(false);
         }
-        setLoading(false);
+      
       } catch (error) {
         console.log(error);
       }

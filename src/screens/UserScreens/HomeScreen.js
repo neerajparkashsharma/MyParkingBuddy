@@ -192,6 +192,7 @@ const fetchBookings = () => {
                 <View>
                   <View>
                     <View style={styles.popularTopWrapper}>
+                      <Text style={{color:colors.themeColor}}>Total Charges: {item?.totalParkingCharges == null ? "N/A" : item.totalParkingCharges}</Text>
                     </View>
                     <View style={styles.popularTitlesWrapper}>
                       <Text style={styles.popularTitlesTitle}>
@@ -209,11 +210,36 @@ const fetchBookings = () => {
                           styles.popularTitlesTitle,
                           {fontWeight: 'bold', color: colors.white},
                         ]}>
-                        PKR120/hour
+                        PKR{item.parking?.parkingCharges}/hour
                       </Text>
                     </View>
+                   
+                  {
+                    item.isExpired ? 
                     <View style={styles.ratingWrapper}>
+                      <Text style={{ color: 'red' }}>Expired</Text>
+                      </View>
+                       : 
+            
+                  <View style={styles.ratingWrapper}>
+
+                    <View>
+                      <TouchableOpacity
+                        onPress={() =>
+                          props?.navigation.navigate('Camera2', {
+                            bookingId: 1,
+                          })
+                        }>
+                        <Text style={{ color: colors.themeColor }}>Check In</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <Text style={{ color: colors.themeColor }}>
+                          Check Out
+                        </Text>
+                      </TouchableOpacity>
                     </View>
+                  </View>
+                        }
                   </View>
                 </View>
 

@@ -24,7 +24,7 @@ const AllBookings = props => {
         axios.get(url + 'parking/host/' + value)
           .then(function (response) {
             setLoading(false);
-            console.log(response);
+            console.log("----->response....",response);
             setListOfBookings(response.data);
           })
           .catch(function (error) {
@@ -46,7 +46,7 @@ const AllBookings = props => {
       <ScrollView>
         {listOfBookings.map(item => (
           <View style={styles.container} key={item.createDate}>
-            <Text style={{ color: 'black', fontSize: 22, top: 10, fontWeight: '500', alignSelf: 'center' }}>Neeraj Parkash</Text>
+            <Text style={{ color: 'black', fontSize: 17, top: 10, fontWeight: '500', alignSelf: 'center' }}> {item.parkingLocation}</Text>
             <Divider style={{ marginTop: 20 }} color="#BEBEBE" />
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 5 }}>
               <Text style={{ fontSize: 19, fontWeight: '700', color: colors.themeColor }}>Unique ID:</Text>

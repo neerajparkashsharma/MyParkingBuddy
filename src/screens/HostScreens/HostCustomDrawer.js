@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from 'react-native';
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from '../../commons/Colors';
@@ -16,6 +16,7 @@ import { HostListOfDrawerItems } from '../../Lists/ListOfItems';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../../components/units';
 import url from '../../commons/axiosUrl';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const HostCustomDrawer = props => {
 
 
@@ -24,7 +25,7 @@ const HostCustomDrawer = props => {
   const [selectedid, setSelectedid] = useState(0);
   const [userData, setUserData] = useState([]);
 
-  
+
   useEffect(() => {
     const getUserId = async () => {
       const userId = await AsyncStorage.getItem('userdata');
@@ -143,7 +144,7 @@ const HostCustomDrawer = props => {
               color: colors.themeColor,
             }}>
             {userData?.emailAddress}
-            </Text>
+          </Text>
         </TouchableOpacity>
       </View>
       <View style={{ flex: 0.9 }}>

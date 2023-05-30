@@ -8,24 +8,24 @@ import {
   Image,
   ScrollView
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {black} from 'react-native-paper/lib/typescript/styles/colors';
+import React, { useState, useEffect } from 'react';
+import { black } from 'react-native-paper/lib/typescript/styles/colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import url from '../../commons/axiosUrl.js';
-import {colors} from '../../commons/Colors';
+import { colors } from '../../commons/Colors';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Button} from 'react-native-paper';
-import { TouchableOpacity, TouchableWithoutFeedback} from 'react-native-gesture-handler';
-import {getData} from '../../commons/Data.js';
-import {useNavigation} from '@react-navigation/native';
-import {SCREEN_WIDTH} from '../../components/units.js';
+import { Button } from 'react-native-paper';
+import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { getData } from '../../commons/Data.js';
+import { useNavigation } from '@react-navigation/native';
+import { SCREEN_WIDTH } from '../../components/units.js';
 import Headerx from '../../components/header.js';
 
 const AllBookings = props => {
   const navigation = useNavigation();
-  const Item = ({Id, location, descriptionm, charges}) => {
+  const Item = ({ Id, location, descriptionm, charges }) => {
     return (
       <View style={styles.item} key={Id}>
         {console.log(Id)}
@@ -88,14 +88,14 @@ const AllBookings = props => {
     getData();
   }, []);
 
- 
+
 
   if (isLoading) {
     return (
       <ActivityIndicator
         size="large"
-        color="#0000ff" 
-        style={{alignSelf: 'center', flex: 1}}
+        color="#0000ff"
+        style={{ alignSelf: 'center', flex: 1 }}
       />
     );
   }
@@ -104,8 +104,8 @@ const AllBookings = props => {
       <Headerx
         navigation={props?.navigation}
         headerName={'Parking Bookings'}></Headerx>
-      <View style={{marginBottom: 30}}></View>
-     
+      <View style={{ marginBottom: 30 }}></View>
+
 
       <ScrollView style={styles.popularWrapper}>
         {listOfBookings.map(item => (
@@ -119,10 +119,10 @@ const AllBookings = props => {
               ]}>
               <View>
                 <View>
-                
+
                   <View style={styles.popularTitlesWrapper}>
                     <Text style={styles.popularTitlesTitle}>
-                  <Text style={{fontWeight:'bold'}}>LOCATION: </Text>{item.parking?.parkingLocation}
+                      <Text style={{ fontWeight: 'bold' }}>LOCATION: </Text>{item.parking?.parkingLocation}
                     </Text>
                     <Text style={styles.popularTitlesWeight}>
                     </Text>
@@ -133,13 +133,21 @@ const AllBookings = props => {
                     <Text
                       style={[
                         styles.popularTitlesTitle,
-                        {fontWeight: 'bold', color: colors.white},
+                        { fontWeight: 'bold', color: colors.white },
                       ]}>
-                    PKR {item.parking.parkingCharges}/hour
+                      PKR {item.parking.parkingCharges}/hour
                     </Text>
                   </View>
+
+                  {
+                    item.isExpired ? 
+                    <View style={styles.ratingWrapper}>
+                      <Text style={{ color: 'red' }}>Expired</Text>
+                      </View>
+                       : 
+            
                   <View style={styles.ratingWrapper}>
-                
+
                     <View>
                       <TouchableOpacity
                         onPress={() =>
@@ -147,15 +155,16 @@ const AllBookings = props => {
                             bookingId: 1,
                           })
                         }>
-                        <Text style={{color: colors.themeColor}}>Check In</Text>
+                        <Text style={{ color: colors.themeColor }}>Check In</Text>
                       </TouchableOpacity>
                       <TouchableOpacity>
-                        <Text style={{color: colors.themeColor}}>
+                        <Text style={{ color: colors.themeColor }}>
                           Check Out
                         </Text>
                       </TouchableOpacity>
                     </View>
                   </View>
+                        }
                 </View>
               </View>
 
