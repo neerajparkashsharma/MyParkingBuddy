@@ -36,7 +36,7 @@ import VehicleDetections from './src/screens/UserScreens/VehicleDetections';
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SplashScreen">
+      <Stack.Navigator initialRouteName="VehicleDetections">
 
         <Stack.Screen
           name="SplashScreen"
