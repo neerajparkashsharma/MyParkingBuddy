@@ -199,12 +199,13 @@
 
 
 import React, {useEffect, useState} from 'react';
-import {ScrollView} from 'react-native';
+import {ScrollView, StyleSheet, Text,View} from 'react-native';
 import axios from 'axios';
 import url from '../../commons/axiosUrl';
 import {Card} from 'react-native-paper';
+import Headerx from '../../components/header';
 
-const VehicleDetections = ({props}) => {
+const VehicleDetections = props => {
   const [images, setImages] = useState([]);
   
 
@@ -223,8 +224,14 @@ const VehicleDetections = ({props}) => {
     }
   };
   return (
+
+    <>
+
+    <Headerx navigation={props?.navigation} headerName={'Vehicle Detection Alerts'}/>
     <ScrollView>
-      {images.map((base64Image, index) => {
+  {
+    images.length > 0 ? (
+      images.map((base64Image, index) => {
         try {
           const imageUrl = `data:image/jpeg;base64,${base64Image}`;
 
@@ -239,8 +246,29 @@ const VehicleDetections = ({props}) => {
           console.log('Error rendering image:', error);
           return null;
         }
-      })}
-    </ScrollView>
+      })
+    ) : (
+      <View style={styles.noImageContainer}>
+        <Text style={styles.noImageText}>No images available</Text>
+      </View>
+    )
+  }
+</ScrollView>
+
+
+    </>
   );
 };
 export default VehicleDetections;
+const styles = StyleSheet.create({
+  noImageContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  noImageText: {
+    fontSize: 18,
+    color: 'gray',
+  },
+});

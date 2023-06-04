@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import url from '../../commons/axiosUrl.js';
 import { colors } from '../../commons/Colors';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Button } from 'react-native-paper';
@@ -53,9 +54,7 @@ const AllBookings = props => {
     );
   };
 
-  // const { id } = route.params;
   [listOfBookings, setListOfBookings] = useState([]);
-  // const iddd = JSON.stringify(id);
   const [isLoading, setLoading] = useState(true);
   const [userid, setUserid] = useState();
   const getData = async () => {
@@ -64,7 +63,6 @@ const AllBookings = props => {
 
       if (value !== null) {
         setUserid(value);
-        console.log('> } > >  > ' + value);
 
         axios
           .get(url + 'parkingBookingRecords/customer/' + value)
@@ -104,7 +102,10 @@ const AllBookings = props => {
       <Headerx
         navigation={props?.navigation}
         headerName={'Parking Bookings'}></Headerx>
-      <View style={{ marginBottom: 30 }}></View>
+      <View style={{ marginBottom: 30 }}>
+
+
+      </View>
 
 
       <ScrollView style={styles.popularWrapper}>
@@ -116,130 +117,136 @@ const AllBookings = props => {
                 {
                   marginTop: item.id == 1 ? 10 : 20,
                 },
-              ]}>
-              <View>
-                <View>
+              ]}
+            >
 
-                  <View style={styles.popularTitlesWrapper}>
-                    <Text style={styles.popularTitlesTitle}>
-                      <Text style={{ fontWeight: 'bold' }}>LOCATION: </Text>{item.parking?.parkingLocation}
+              <View style={{ flexDirection: 'column' }}>
+                <View style={{ flexDirection: 'row' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+                    <Text style={[styles.popularTitlesTitle, {
+                      backgroundColor: item.isExpired ? '#FF0000' : '#613EEA',
+                      borderRadius: 20,
+                      paddingHorizontal: 10,
+                      paddingVertical: 4,
+                      alignSelf: 'flex-start',
+                      color: 'white',
+                      fontSize: 12,
+                      marginRight: 10,
+                    }]}>
+                      <Text style={{ fontWeight: 'bold' }}>Status: </Text>
+                      {item.isExpired ? 'Expired' : 'Active'}
                     </Text>
-                    <Text style={styles.popularTitlesWeight}>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+                    <Text style={[styles.popularTitlesTitle, {
+                      backgroundColor: item.isExpired ? '#FF0000' : '#613EEA',
+                      borderRadius: 20,
+                      paddingHorizontal: 10,
+                      paddingVertical: 4,
+                      alignSelf: 'flex-start',
+                      color: 'white',
+                      fontSize: 12,
+                      marginRight: 10,
+                    }]}>
+                      <Text style={{ fontWeight: 'bold' }}>$ Total Charges: </Text>
+                      {item?.totalParkingCharges == null ? "N/A" : "Rs. " + item.totalParkingCharges}
                     </Text>
                   </View>
                 </View>
-                <View style={styles.popularCardBottom}>
-                  <View style={styles.addPizzaButton}>
-                    <Text
-                      style={[
-                        styles.popularTitlesTitle,
-                        { fontWeight: 'bold', color: colors.white },
-                      ]}>
-                      PKR {item.parking.parkingCharges}/hour
-                    </Text>
-                  </View>
+                <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                  <Icon name="location" size={20} color="red" style={{ marginRight: 5 }} />
+                  <Text style={styles.popularTitlesTitle}>{item.parking?.parkingLocation}</Text>
+                </View>
+                {
+                  item.isExpired ? null :
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginTop: 30 }}>
+                      <TouchableOpacity style={{
+                        flexDirection: 'row', alignItems: 'center', backgroundColor: '#613EEA',
+                        borderRadius: 5,
+                        paddingHorizontal: 13,
+                        paddingVertical: 10,
+                        width: 200,
+                        
+                        fontSize: 12,
+                        marginRight: 10,
+                      }}
+                      
+                        onPress={props?.navigation.navigate('Camera', {
+                          bookingId: item.id,
+                        })
+                        }
+                      >
+                        <Icon name="checkmark-outline" size={25} color={'white'} style={{ marginRight: 5 }} />
+                        <Text style={{
+                          backgroundColor: '#613EEA',
+                          borderRadius: 5,
+                          paddingHorizontal: 13,
+                          paddingVertical: 10,
 
-                  {
-                    item.isExpired ? 
-                    <View style={styles.ratingWrapper}>
-                      <Text style={{ color: 'red' }}>Expired</Text>
-                      </View>
-                       : 
-            
-                  <View style={styles.ratingWrapper}>
-
-                    <View>
-                      <TouchableOpacity
-                        onPress={() =>
-                          props?.navigation.navigate('Camera2', {
-                            bookingId: 1,
-                          })
-                        }>
-                        <Text style={{ color: colors.themeColor }}>Check In</Text>
+                          color: 'white',
+                          fontSize: 12,
+                          marginRight: 10,
+                        }}>
+                          Check In
+                        </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity>
-                        <Text style={{ color: colors.themeColor }}>
-                          Check Out
+                      <TouchableOpacity style={{
+                        flexDirection: 'row', alignItems: 'center', backgroundColor: '#613EEA',
+                        borderRadius: 5,
+                        paddingHorizontal: 13,
+                        paddingVertical: 10,
+                        width: 200,
+
+                        color: 'white',
+                        fontSize: 12,
+                        marginRight: 10,
+                      }}>
+                        <Icon name="checkmark-done-outline" size={25} color={'white'} style={{ marginRight: 5 }} />
+                        <Text style={[styles.popularTitlesTitle, {
+                          backgroundColor: '#613EEA',
+                          borderRadius: 5,
+                          paddingHorizontal: 13,
+                          paddingVertical: 10,
+
+                          color: 'white',
+                          fontSize: 12,
+                          marginRight: 10,
+                        }]}>
+                         Check Out 
                         </Text>
                       </TouchableOpacity>
                     </View>
-                  </View>
-                        }
-                </View>
-              </View>
+                }
 
-              <View style={styles.popularCardRight}>
-                <Image source={item.image} style={styles.popularCardImage} />
+
+                <View style={styles.popularCardBottom}>
+                  {item.isExpired ? null : (
+                    <View style={styles.addPizzaButton}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center',textAlign:'center',justifyContent:'center' }}>
+                        <Text style={[styles.popularTitlesTitle, { fontWeight: 'bold', color: colors.white,fontSize:19 }]}>
+                          MORE DETAILS
+                        </Text>
+                        <Icon name="information-circle-sharp" size={22} color={colors.white} style={{ marginLeft: 5 }} />
+
+                      </View>
+                    </View>
+                  )}
+                </View>
+
               </View>
             </View>
+
+
           </TouchableWithoutFeedback>
+
         ))}
       </ScrollView>
+
     </View>
 
-    // <View>
-    //   <View style={{alignItems: 'center', top: 30}}>
-    //     <Text style={{color: 'black', fontSize: 32, fontWeight: 'bold'}}>
-    //       All Parking  Bookings
-    //       {JSON.stringify(id)}
-    //     </Text>
-    //     </View>
-    //         <View style={{alignItems:'center', top:50}}>
 
-    //   <TouchableOpacity onPress={()=>navigation.navigate("Map",{id:iddd})}
-    //      >
-    //      <Text style={{color:'black',fontSize:30,color:'grey'}}> Book New</Text>
-    //      </TouchableOpacity>
-    //    </View>
-
-    // { console.log(listOfBookings)}
-    //          {listOfBookings.map(item => (
-
-    //     <View  key={item.parking.id}
-    //       style={{
-    //         backgroundColor: 'white',
-    //         padding: 60,
-    //         top: 70,
-    //         elevation: 3,
-    //         alignItems: 'center',
-    //         margin: 2,
-    //       }}>
-    //          <Text style={{color:'black', fontSize:24, fontWeight:'bold'}}>PARKING </Text>
-
-    //       <Text
-    //         style={{
-    //           color: 'black',
-    //           fontSize: 20,
-    //           marginBottom: 5,
-    //         }}>
-    //        Location:  {item.parking.parkingLocation}
-    //       </Text>
-
-    //       <Text
-    //        style={{
-    //         color: 'black',
-    //         fontSize: 20,
-    //         marginBottom: 5,
-    //       }}>
-    //      Description:   {item.parking.description}
-    //       </Text>
-
-    //       <Text
-    //     style={{
-    //         color: 'black',
-    //         fontSize: 20,
-    //         marginBottom: 5,
-    //       }}>
-    //      Charges:   {item.parking.parkingCharges}
-    //       </Text>
-    //       <Button onPress={()=>navigation.navigate("Camera")}>
-    //         Check In
-    //     </Button>
-
-    //     </View>
-
-    //   ))}
-    // </View>
   );
 };
 
@@ -256,13 +263,11 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 16,
   },
-
   txt: {
     color: 'white',
     fontSize: 17,
     fontWeight: 'bold',
   },
-
   popularWrapper: {
     paddingHorizontal: 20,
   },
@@ -317,10 +322,10 @@ const styles = StyleSheet.create({
   },
   addPizzaButton: {
     backgroundColor: colors.themeColor,
-    paddingHorizontal: 40,
+    paddingHorizontal: SCREEN_WIDTH / 8,
     paddingVertical: 20,
-    // borderTopRightRadius: 25,
-    // borderBottomLeftRadius: 25,
+    textAlign: 'center',
+    width: SCREEN_WIDTH / 1,
   },
   ratingWrapper: {
     flexDirection: 'row',
@@ -340,5 +345,22 @@ const styles = StyleSheet.create({
     width: 210,
     height: 125,
     resizeMode: 'contain',
+  },
+  checkInOutButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkInOutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#613EEA',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginRight: 10,
+  },
+  checkInOutButtonText: {
+    color: 'white',
+    marginLeft: 5,
   },
 });

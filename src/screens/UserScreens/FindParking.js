@@ -60,7 +60,7 @@ useEffect(() => {
   } 
   );
 
-}, []);
+}, [props]);
   
 
 const fetchLocation = useCallback(async () => {

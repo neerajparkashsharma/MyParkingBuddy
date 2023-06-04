@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Animated, StyleSheet, ImageBackground, Image } from 'react-native';
+import { SCREEN_HEIGHT } from '../../components/units';
 
 const SplashScreen = ({ navigation }) => {
 
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
   car: {
     width: 200,
     height: 200,
-    top: 100,
+    top: SCREEN_HEIGHT / 10,
     resizeMode: 'contain',
   },
 });

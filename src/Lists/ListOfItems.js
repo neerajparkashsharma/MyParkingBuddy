@@ -64,14 +64,10 @@ export const HostListOfDrawerItems = [
     name: 'Profile',
     icon: 'person',
   },
-  {
-    id: 4,
-    name: 'Alerts',
-    icon: 'notifications',
-  },
-  {
-    id: 5,
-    name: 'Access For Parking',
-    icon: 'notifications',
-  },
+  // {
+  //   id: 4,
+  //   name: 'Alerts',
+  //   icon: 'notifications',
+  // }
+
 ];

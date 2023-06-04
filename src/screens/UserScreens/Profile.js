@@ -68,8 +68,8 @@ const Profile = (props) => {
   };
   return (
     <SafeAreaView style={styles.container}>
+      <Headerx navigation={props.navigation} headerName={'Your Profile'} />
       <ScrollView>
-        <Headerx navigation={props.navigation} headerName={'Your Profile'} />
         <View style={styles.titleContainer}>
           <Image
             source={require('../../Images/926459.png')}

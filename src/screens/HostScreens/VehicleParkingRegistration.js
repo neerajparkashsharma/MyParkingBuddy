@@ -65,15 +65,12 @@ const VehicleParkingRegistration = props => {
       console.log('One or more fields are null');
       return;
     }
-
-
-    // Handle form submission logic here
+ 
     const hostId = await AsyncStorage.getItem('userdata');
     console.log('Submitting form...');
     console.log('Parking Charges:', parkingCharges);
     console.log('Check-In Code:', checkInCode);
     console.log('Check-Out Code:', checkOutCode);
-    console.log('Camera IP Address:', cameraIpAddress);
     console.log('Address:', address);
     console.log('Latitude:', region.latitude);
     console.log('Longitude:', region.longitude);
@@ -82,11 +79,11 @@ const VehicleParkingRegistration = props => {
       parkingCharges: parkingCharges,
       checkInCode: checkInCode,
       checkOutCode: checkOutCode,
-      cameraIP: cameraIpAddress,
       parkingLocation: address,
       latitude: region.latitude,
       longitude: region.longitude,
       hostId: hostId,
+      createdBy: hostId,
     };
 
     axios
@@ -153,7 +150,6 @@ const VehicleParkingRegistration = props => {
       />
       <View style={{flex: 1}}>
         <ProgressSteps
-        // removeLabel={true}
           activeStepIconBorderColor={colors.themeColor}
           progressBarColor={colors.gray}
           completedProgressBarColor={colors.themeColor}
@@ -182,8 +178,10 @@ const VehicleParkingRegistration = props => {
                   <TextInput
                     style={styles.fieldContainer}
                     keyboardType="numeric"
+
                     placeholder={'Enter the Parking Charges'}
-                    onChangeText={text => setParkingCharges(text)}
+                    onChangeText={text => 
+                      setParkingCharges(text)}
                     value={parkingCharges}
                   />
                 </View>
@@ -207,18 +205,7 @@ const VehicleParkingRegistration = props => {
                     value={checkOutCode}
                   />
                 </View>
-
-                <View>
-                  <Text style={styles.fieldTitle}>
-                    Camera IP Address <Text>(Optional)</Text>
-                  </Text>
-                  <TextInput
-                    style={styles.fieldContainer}
-                    onChangeText={text => setCameraIpAddress(text)}
-                    placeholder={'Enter the Camera IP Address'}
-                    value={cameraIpAddress}
-                  />
-                </View>
+ 
               </View>
             </KeyboardAvoidingView>
           </ProgressStep>
@@ -266,106 +253,54 @@ const VehicleParkingRegistration = props => {
             </View>
           </ProgressStep>
           <ProgressStep
-            label="Confirm"
-            nextBtnTextStyle={buttonTextStyle}
-            previousBtnTextStyle={buttonTextStyle}
-            onSubmit={handleSubmit}>
-            <View style={{alignItems: 'flex-start', paddingHorizontal: 30}}>
-              <Text
-                style={{fontSize: 20, fontWeight: 'bold', marginBottom: 10}}>
-                Confirm the following details:
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 5,
-                  color: colors.black,
-                  fontWeight: '600',
-                  fontFamily: 'Roboto-Regular',
-                  fontSize: 16,
-                }}>
-                Parking Charges:{' '}
-                <Text style={{fontWeight: '400', fontSize: 15}}>
-                  {parkingCharges == '' ? 'N/A' : parkingCharges}
-                </Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 5,
-                  color: colors.black,
-                  fontWeight: '600',
-                  fontFamily: 'Roboto-Regular',
-                  fontSize: 16,
-                }}>
-                Check-In Code:{' '}
-                <Text style={{fontWeight: '400', fontSize: 15}}>
-                  {checkInCode == '' ? 'N/A' : checkInCode}
-                </Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 5,
-                  color: colors.black,
-                  fontWeight: '600',
-                  fontFamily: 'Roboto-Regular',
-                  fontSize: 16,
-                }}>
-                Check-Out Code:{' '}
-                <Text style={{fontWeight: '400', fontSize: 15}}>
-                  {checkOutCode == '' ? 'N/A' : checkOutCode}
-                </Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 5,
-                  color: colors.black,
-                  fontWeight: '600',
-                  fontFamily: 'Roboto-Regular',
-                  fontSize: 16,
-                }}>
-                Camera IP Address:{' '}
-                <Text style={{fontWeight: '400', fontSize: 15}}>
-                  {cameraIpAddress == '' ? 'N/A' : cameraIpAddress}
-                </Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 5,
-                  color: colors.black,
-                  fontWeight: '600',
-                  fontFamily: 'Roboto-Regular',
-                  fontSize: 16,
-                }}>
-                Address:{' '}
-                <Text style={{fontWeight: '400', fontSize: 15}}>{address}</Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 5,
-                  color: colors.black,
-                  fontWeight: '600',
-                  fontFamily: 'Roboto-Regular',
-                  fontSize: 16,
-                }}>
-                Latitude:{' '}
-                <Text style={{fontWeight: '400', fontSize: 15}}>
-                  {region?.latitude}
-                </Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 5,
-                  color: colors.black,
-                  fontWeight: '600',
-                  fontFamily: 'Roboto-Regular',
-                  fontSize: 16,
-                }}>
-                Longitude:{' '}
-                <Text style={{fontWeight: '400', fontSize: 15}}>
-                  {region?.longitude}
-                </Text>
-              </Text>
-            </View>
-          </ProgressStep>
+  label="Confirm"
+  nextBtnTextStyle={buttonTextStyle}
+  previousBtnTextStyle={buttonTextStyle}
+  onSubmit={handleSubmit}
+>
+  <View style={{ alignItems: 'flex-start', paddingHorizontal: 30 }}>
+    <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
+      Confirm the following details:
+    </Text>
+    <Text style={styles.detailText}>
+      Parking Charges:{' '}
+      <Text style={styles.detailValueText}>
+        {parkingCharges == '' ? 'N/A' : parkingCharges}
+      </Text>
+    </Text>
+    <Text style={styles.detailText}>
+      Check-In Code:{' '}
+      <Text style={styles.detailValueText}>
+        {checkInCode == '' ? 'N/A' : checkInCode}
+      </Text>
+    </Text>
+    <Text style={styles.detailText}>
+      Check-Out Code:{' '}
+      <Text style={styles.detailValueText}>
+        {checkOutCode == '' ? 'N/A' : checkOutCode}
+      </Text>
+    </Text>
+    <Text style={styles.detailText}>
+      Camera IP Address:{' '}
+      <Text style={styles.detailValueText}>
+        {cameraIpAddress == '' ? 'N/A' : cameraIpAddress}
+      </Text>
+    </Text>
+    <Text style={styles.detailText}>
+      Address:{' '}
+      <Text style={styles.detailValueText}>{address}</Text>
+    </Text>
+    <Text style={styles.detailText}>
+      Latitude:{' '}
+      <Text style={styles.detailValueText}>{region?.latitude}</Text>
+    </Text>
+    <Text style={styles.detailText}>
+      Longitude:{' '}
+      <Text style={styles.detailValueText}>{region?.longitude}</Text>
+    </Text>
+  </View>
+</ProgressStep>
+
         </ProgressSteps>
       </View>
     </>
@@ -423,6 +358,17 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginHorizontal: SCREEN_WIDTH / 12,
     marginTop: SCREEN_HEIGHT / 38,
+  },
+  detailText: {
+    marginBottom: 5,
+    color: colors.black,
+    fontWeight: 'bold',
+    fontFamily: 'Roboto-Regular',
+    fontSize: 16,
+  },
+  detailValueText: {
+    fontWeight: '400',
+    fontSize: 15,
   },
 });
 

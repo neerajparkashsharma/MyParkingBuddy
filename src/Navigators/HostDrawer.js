@@ -12,6 +12,7 @@ import ParkingRegistration from '../screens/HostScreens/ParkingRegistration';
 import VehicleParkingRegistration from '../screens/HostScreens/VehicleParkingRegistration';
 import Alerts from '../screens/HostScreens/Alerts';
 import AccessForParking from '../screens/HostScreens/AccessForParking';
+import ParkingBookings from '../screens/HostScreens/ParkingBookings';
 const Drawer = createDrawerNavigator();
 
 export default function HostDrawer({navigation}) {
@@ -53,6 +54,13 @@ export default function HostDrawer({navigation}) {
         component={AccessForParking}
         options={{headerShown: false}}
       />
+
+        <Drawer.Screen
+        name="ParkingBookingsDetails"
+        component={ParkingBookings}
+        options={{headerShown: false}}
+      />
+
 
     </Drawer.Navigator>
   );

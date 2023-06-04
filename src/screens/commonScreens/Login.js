@@ -11,7 +11,7 @@ import {
   Button,
   TouchableOpacity,
   Switch,
-  Dimensions,
+  Dimensions
 } from 'react-native';
 import Headerx from '../../components/header.js';
 import { Formik } from 'formik';
@@ -25,6 +25,11 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function Login({ navigation }) {
+
+ 
+
+ 
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -83,6 +88,7 @@ export default function Login({ navigation }) {
         alert('Invalid response: ' + response.data);
         return;
       }
+      
 
       setEmail('');
       setPassword('');
@@ -91,7 +97,7 @@ export default function Login({ navigation }) {
       await AsyncStorage.setItem('token', token);
       await AsyncStorage.setItem('role', role?.id?.toString() || '');
 
-      if (role?.id === 1) {
+      if (role?.id == 1) {
         navigation.replace('HostDrawer');
       } else {
         navigation.replace('Drawer');
@@ -107,7 +113,7 @@ export default function Login({ navigation }) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.white }}>
-      {/* <Headerx navigation={navigation} headerName={'Login'} /> */}
+     
       <View style={styles.container}>
         <Text
           style={{
@@ -181,7 +187,7 @@ const styles = StyleSheet.create({
     backgroundGradient: 'vertical',
     backgroundGradientTop: '#333333',
     backgroundGradientBottom: '#666666',
-    top: 60,
+    top: SCREEN_HEIGHT / 6,
   },
 
   image: {

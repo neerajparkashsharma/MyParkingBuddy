@@ -19,6 +19,7 @@ import {RNHoleView} from 'react-native-hole-view';
 
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Headerx from '../components/header.js';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 console.disableYellowBox = true;
@@ -67,20 +68,23 @@ const VisionCamera = ({route, navigation}) => {
     setIsActive(!Isactive);
   };
   return (
+    <View style={styles.container}>
+    <Headerx navigation={navigation} headerName={'Scan QR-Mark Check'} />
+
     <QRCodeScanner
       showMarker
       reactivateTimeout={4}
       onRead={onSuccess}
       reactivate={Isactive}
-      cameraStyle={{height: SCREEN_HEIGHT}}
+      cameraStyle={{ height: SCREEN_HEIGHT }}
       customMarker={
-        <View style={styles.rectangleContainer}>
-          <View style={styles.topOverlay}>
-            <Text style={{fontSize: 30, color: 'white'}}>QR CODE SCANNER</Text>
+        <View style={styles.scannerContainer}>
+          <View style={styles.scannerHeader}>
+            <Text style={styles.scannerHeaderText}>QR CODE FSCANNER</Text>
           </View>
-          <View style={{flexDirection: 'row'}}>
+          <View style={styles.scannerBody}>
             <View style={styles.leftAndRightOverlay} />
-            <View style={styles.rectangle}>
+            <View style={styles.qrCodeContainer}>
               <Icon
                 name="ios-scan-sharp"
                 size={SCREEN_WIDTH * 0.6}
@@ -100,11 +104,11 @@ const VisionCamera = ({route, navigation}) => {
             </View>
             <View style={styles.leftAndRightOverlay} />
           </View>
-
-          <View style={styles.bottomOverlay} />
+          <View style={styles.scannerFooter} />
         </View>
       }
     />
+  </View>
   );
 };
 
@@ -117,62 +121,46 @@ const scanBarHeight = SCREEN_WIDTH * 0.0025; //this is equivalent to 1 from a 39
 const scanBarColor = '#22FF00';
 const iconScanColor = 'red';
 const styles = StyleSheet.create({
-  centerText: {
+  container: {
     flex: 1,
-    fontSize: 18,
-    padding: 32,
-    color: '#777',
+    backgroundColor: 'white',
   },
-  textBold: {
-    fontWeight: '500',
-    color: '#000',
+  scannerContainer: {
+    flex: 1,
   },
-  buttonText: {
-    fontSize: 21,
-    color: 'rgb(0,122,255)',
-  },
-  buttonTouchable: {
-    padding: 16,
-  },
-  rectangleContainer: {
+  scannerHeader: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: '#000',
   },
-  rectangle: {
-    height: rectDimensions,
-    width: rectDimensions,
-    borderWidth: rectBorderWidth,
-    borderColor: rectBorderColor,
+  scannerHeaderText: {
+    fontSize: 30,
+    color: 'white',
+  },
+  scannerBody: {
+    flex: 5,
+    flexDirection: 'row',
+  },
+  qrCodeContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  topOverlay: {
-    flex: 1,
-    height: SCREEN_WIDTH,
-    width: SCREEN_WIDTH,
-    backgroundColor: overlayColor,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bottomOverlay: {
-    flex: 1,
-    height: SCREEN_WIDTH,
-    width: SCREEN_WIDTH,
-    backgroundColor: overlayColor,
-    paddingBottom: SCREEN_WIDTH * 0.25,
-  },
-  leftAndRightOverlay: {
-    height: SCREEN_WIDTH * 0.65,
-    width: SCREEN_WIDTH,
-    backgroundColor: overlayColor,
   },
   scanBar: {
-    width: scanBarWidth,
-    height: scanBarHeight,
-    backgroundColor: scanBarColor,
+    width: SCREEN_WIDTH * 0.6,
+    height: 2,
+    backgroundColor: 'white',
+  },
+  leftAndRightOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  scannerFooter: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
 });
+
+
 export default VisionCamera;

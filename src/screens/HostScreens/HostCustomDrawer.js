@@ -85,6 +85,12 @@ const HostCustomDrawer = props => {
     </TouchableOpacity>
   );
 
+
+  useEffect(() => {
+    setSelectedid(props?.state?.index);
+  }, [props?.state?.index]);
+  
+
   const renderItem = ({ item, index }) => {
     const backgroundColor = item.id == selectedid ? colors.themeColor : 'white';
     const color = item.id == selectedid ? 'white' : colors.themeColor;
@@ -95,7 +101,6 @@ const HostCustomDrawer = props => {
         icon={item.icon}
         onPress={() => {
           setSelectedid(item.id);
-
           props.navigation.navigate(props?.state?.routes[item.id].name);
         }}
         color={color}

@@ -45,8 +45,9 @@ const OnBoarding = ({navigation}) => {
           axios.post(`${url}api/authenticate/token`)
             .then(response => {
               
-              const role = response.data.role;
-              role === 1 ? navigation.navigate('HostDrawer') : navigation.navigate('Drawer');
+              console.log(response.data, 'response.data', response.data.role, 'response.data.role')
+              const role = response.data.role.id;
+              role == 1 ? navigation.navigate('HostDrawer') : navigation.navigate('Drawer');
               setLoading(false);
             })
             .catch(error => {
@@ -66,7 +67,7 @@ const OnBoarding = ({navigation}) => {
       }
     };
     checkUserData();
-  }, []);
+  }, [navigation]);
   
 
   return (

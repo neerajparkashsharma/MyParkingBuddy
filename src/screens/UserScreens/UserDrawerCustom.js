@@ -25,6 +25,12 @@ const UserDrawerCustom = props => {
   const [selectedid, setSelectedid] = useState(0);
   const [userData, setUserData] = useState([]);
 
+  
+
+  useEffect(() => {
+    setSelectedid(props?.state?.index);
+  }, [props?.state?.index]);
+  
   useEffect(() => {
     const getUserId = async () => {
       const userId = await AsyncStorage.getItem('userdata');
@@ -109,9 +115,7 @@ const UserDrawerCustom = props => {
         style={{
           flex: 0.1,
 
-          paddingTop: 50,
-          paddingHorizontal: 20,
-          paddingVertical: 0,
+          paddingTop: SCREEN_HEIGHT / 20,
         }}>
         <Icon
           name="close"
@@ -162,7 +166,7 @@ const UserDrawerCustom = props => {
     }
   }}
 >
-  <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Logout</Text>
+  <Text style={{ fontSize: 18, fontWeight: 'bold',color:'black' }}>Logout</Text>
 </TouchableOpacity>
 
    {/* <TouchableOpacity
