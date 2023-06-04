@@ -164,19 +164,19 @@ const AllBookings = props => {
                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignSelf: 'center', marginTop: 30 }}>
                       <TouchableOpacity style={{
                         flexDirection: 'row', alignItems: 'center', backgroundColor: '#613EEA',
-                        borderRadius: 5,
+                        borderRadius: 6,
                         paddingHorizontal: 13,
                         paddingVertical: 10,
                         width: 200,
-                        
+
                         fontSize: 12,
                         marginRight: 10,
                       }}
                       
-                        onPress={props?.navigation.navigate('Camera', {
-                          bookingId: item.id,
-                        })
-                        }
+                        // // onPress={props?.navigation.navigate('Camera', {
+                        // //   bookingId: item.id,
+                        // // })
+                        // }
                       >
                         <Icon name="checkmark-outline" size={25} color={'white'} style={{ marginRight: 5 }} />
                         <Text style={{

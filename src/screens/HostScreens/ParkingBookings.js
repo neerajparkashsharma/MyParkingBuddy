@@ -48,7 +48,7 @@ const ParkingBookings = (props) => {
             <Text style={styles.topTitle}>Parking Booking Details</Text>
              
         </View>
-        
+        {parkingBookings.length > 0 ? (
         <ScrollView style={styles.popularWrapper}>
         {parkingBookings.map(item => (
           <TouchableWithoutFeedback key={item.id}>
@@ -110,7 +110,17 @@ const ParkingBookings = (props) => {
           </TouchableWithoutFeedback>
 
         ))}
+       
       </ScrollView>
+        ) : 
+            (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>No Bookings Found</Text>
+                </View>
+                )}
+            
+            
+                
 
         </>
     )

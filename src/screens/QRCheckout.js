@@ -146,8 +146,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-   
-
   },
   rectangle: {
     height: rectDimensions,
@@ -157,7 +155,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-    borderRadius: 50,
   },
   topOverlay: {
     flex: 1,
@@ -166,7 +163,6 @@ const styles = StyleSheet.create({
     backgroundColor: overlayColor,
     justifyContent: 'center',
     alignItems: 'center',
-    
   },
   bottomOverlay: {
     flex: 1,
@@ -184,7 +180,6 @@ const styles = StyleSheet.create({
     width: scanBarWidth,
     height: scanBarHeight,
     backgroundColor: scanBarColor,
-    
   },
 });
 export default VisionCamera2;

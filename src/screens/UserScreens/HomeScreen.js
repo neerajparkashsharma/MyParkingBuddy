@@ -58,11 +58,9 @@ const fetchBookings = () => {
   useEffect(() => {
     getData();
   }, []);
-
   useEffect(() => {
-      // console.log(url)
     fetchBookings();
-  }, [userData]);
+  }, []);
 
   const NavItems = [
     {
@@ -138,7 +136,6 @@ const fetchBookings = () => {
         showsVerticalScrollIndicator={false}>
         <SafeAreaView>
           <View style={styles.headerWrapper}>
-            {console.log(props)}
             <TouchableOpacity onPress={() => props?.navigation?.openDrawer()}>
               <Feather name="menu" size={24} color={colors.themeColor} />
             </TouchableOpacity>
@@ -155,18 +152,10 @@ const fetchBookings = () => {
 
         <View style={styles.titlesWrapper}>
           <Text style={styles.titlesSubtitle}>Find your Parking Space!</Text>
-          {/* <Text style={styles.titlesTitle}>PARKING SPACE</Text> */}
+     
         </View>
 
-        {/* <View style={styles.searchWrapper}>
-          <Feather name="search" size={16} color={colors.black} />
-          <View style={styles.search}>
-            <Text style={styles.searchText}>Search</Text>
-          </View>
-        </View> */}
-
         <View style={styles.categoriesWrapper}>
-          {/* <Text style={styles.categoriesTitle}>Categories</Text> */}
           <View style={styles.categoriesListWrapper}>
             <FlatList
               data={NavItems}
@@ -192,7 +181,7 @@ const fetchBookings = () => {
                 <View>
                   <View>
                     <View style={styles.popularTopWrapper}>
-                      <Text style={{color:colors.themeColor}}>Total Charges: {item?.totalParkingCharges == null ? "N/A" : item.totalParkingCharges}</Text>
+                      <Text style={{color:colors.themeColor}}>Total Charges: Rs. {item?.totalParkingCharges == null ? "N/A" : item.totalParkingCharges}</Text>
                     </View>
                     <View style={styles.popularTitlesWrapper}>
                       <Text style={styles.popularTitlesTitle}>

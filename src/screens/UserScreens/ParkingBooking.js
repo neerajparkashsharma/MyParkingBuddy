@@ -79,7 +79,7 @@ export default BookingParking = props => {
       .catch(err => {
         console.log(err);
       });
-  }, []);
+  }, [props]);
 
 
 
@@ -91,7 +91,7 @@ export default BookingParking = props => {
   const [lastPressedDate, setLastPressedDate] = useState(null);
   const [lastPressedTime, setLastPressedTime] = useState(0);
   const [totalHours, setTotalHours] = useState(0);
-
+  const [error, setError] = useState(null);
 
   const handleBooking = async () => {
     try {
@@ -105,11 +105,19 @@ export default BookingParking = props => {
       const formattedStartTime = moment(fromDate + ' ' + checkInTime.toTimeString().split(' ')[0], 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
       const formattedToTime = moment(toDate + ' ' + checkOutTime.toTimeString().split(' ')[0], 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
 
-     
+      
 
 
       const userId = await AsyncStorage.getItem('userdata');
-    
+      const currentDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
+      const selectedDateTime = moment(formattedStartTime, 'YYYY-MM-DD HH:mm:ss');
+  
+      if (selectedDateTime.isBefore(currentDateTime)) {
+
+        setError('Selected time has already passed. Please choose a future time.');
+        // alert('Selected time has already passed. Please choose a future time.');
+        return;
+      }
 
 
       const payload = {
@@ -125,7 +133,8 @@ export default BookingParking = props => {
           props?.navigation.navigate('Home');
         }
       ).catch(err => {
-        console.log(err);
+        setError(err.response.data);
+        console.log(err.response.data);
       }
       )
 
@@ -413,6 +422,16 @@ export default BookingParking = props => {
 
             </View>
          
+         {
+          error && (
+            <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
+              <Text style={{ color: 'red', fontSize: 18, fontWeight: 'bold' }}>
+                {error}
+              </Text>
+            </View>
+          )
+
+         }
 
         <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
           <TouchableOpacity style={style.btn} onPress={handleBooking}>

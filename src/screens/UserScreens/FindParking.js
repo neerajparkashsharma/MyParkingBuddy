@@ -156,7 +156,7 @@ useEffect(() => {
 
   getData(); // Call the getData function immediately
 
-}, [latLong]); // Specify the dependency array correctly
+}, [props]); // Specify the dependency array correctly
 
 //   const intervalId = setInterval(() => {
 //     // setLoading(true);
