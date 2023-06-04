@@ -19,6 +19,7 @@ import {RNHoleView} from 'react-native-hole-view';
 
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Headerx from '../components/header.js';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 console.disableYellowBox = true;
@@ -68,7 +69,10 @@ const VisionCamera2 = props=> {
     setIsActive(!Isactive);
   };
   return (
-    <QRCodeScanner
+    <View>    
+      
+      <Headerx headerName={'QR CODE SCANNER'}  navigation={props?.navigation} />
+      <QRCodeScanner
       showMarker
       reactivateTimeout={4}
       onRead={onSuccess}
@@ -106,6 +110,8 @@ const VisionCamera2 = props=> {
         </View>
       }
     />
+    </View>
+
   );
 };
 
@@ -140,6 +146,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
+   
+
   },
   rectangle: {
     height: rectDimensions,
@@ -149,6 +157,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
+    borderRadius: 50,
   },
   topOverlay: {
     flex: 1,
@@ -157,6 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: overlayColor,
     justifyContent: 'center',
     alignItems: 'center',
+    
   },
   bottomOverlay: {
     flex: 1,
@@ -174,6 +184,7 @@ const styles = StyleSheet.create({
     width: scanBarWidth,
     height: scanBarHeight,
     backgroundColor: scanBarColor,
+    
   },
 });
 export default VisionCamera2;

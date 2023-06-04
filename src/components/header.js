@@ -19,7 +19,6 @@ const Headerx = ({ navigation, headerName }) => {
           (
             <TouchableOpacity
               onPress={() => {
-
                 navigation.goBack()
               }
               }>
