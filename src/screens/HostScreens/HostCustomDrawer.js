@@ -15,6 +15,7 @@ import { Button, Drawer } from 'react-native-paper';
 import { HostListOfDrawerItems } from '../../Lists/ListOfItems';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../../components/units';
 import url from '../../commons/axiosUrl';
+
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const HostCustomDrawer = props => {
@@ -142,7 +143,7 @@ const HostCustomDrawer = props => {
           />
           <Text
             style={{
-              fontSize: SCREEN_HEIGHT / 40,
+              fontSize: SCREEN_HEIGHT / 55,
               fontWeight: 'bold',
               top: 10,
               left: SCREEN_WIDTH / 50,

@@ -55,11 +55,11 @@ const AllBookings = props => {
     }).then(
       // callback function to get the result URL of the screenshot
       async (uri) => {
-        setSavedImagePath(uri);
+        // setSavedImagePath(uri);
         try {
 
 
-          setSavedImagePath(QRType);
+          // setSavedImagePath(QRType);
           await CameraRoll.save(uri, { type: 'photo', album: 'ParkingBuddy', ...(Platform.OS === 'android' && { fileName: QRType }) });
           alert("Saved to Gallery!")
           console.log('Screenshot saved to gallery');

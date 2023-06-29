@@ -16,6 +16,7 @@ import {
 import Headerx from '../../components/header.js';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { NavigationActions } from '@react-navigation/compat';
 
 import url from '../../commons/axiosUrl.js';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -97,9 +98,28 @@ export default function Login({ navigation }) {
       await AsyncStorage.setItem('token', token);
       await AsyncStorage.setItem('role', role?.id?.toString() || '');
 
+     
+
       if (role?.id == 1) {
+
+        
+      //   const resetAction = NavigationActions.reset({
+      //     index: 0,
+      //     routes: [{ name: 'HostDrawer' }],
+      //   });
+        
+        // navigation.dispatch( 
+        //   NavigationActions.navigate({
+        //     routeName: 'HostDrawer',
+        //     action: NavigationActions.navigate({ routeName: 'HostDrawer' }),
+        //   })
+        // );
+
         navigation.replace('HostDrawer');
+
       } else {
+       
+     
         navigation.replace('Drawer');
       }
     } catch (error) {
@@ -146,15 +166,7 @@ export default function Login({ navigation }) {
             onChangeText={password => setPassword(password)}
           />
         </View>
-
-        {/* <Switch
-        value={isEnabled}
-        style={{marginLeft: -240}}
-        onValueChange={() => {
-          setIsEnabled(isEnabled == true ? false : true);
-        }}
-      /> */}
-        {/* <Text style={{marginLeft: -180, color: '#613EEA'}}>Remember Me</Text> */}
+ 
 
 
         <TouchableOpacity

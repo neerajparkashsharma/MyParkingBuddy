@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   View,
@@ -15,20 +15,22 @@ import {
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors} from '../../commons/Colors';
+import { colors } from '../../commons/Colors';
 // import url from '../../commons/axiosUrl';
 import axios from 'axios';
-import {SCREEN_HEIGHT, SCREEN_WIDTH} from '../../components/units';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../components/units';
 import url from '../../commons/axiosUrl';
+import { useIsFocused } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import moment from 'moment';
 
 Feather.loadFont();
 MaterialCommunityIcons.loadFont();
 
 export default Home = props => {
-
-  //   url= URL();
   const [listOfBookings, setListOfBookings] = useState([]);
   const [userData, setUserData] = useState(null);
+  const isFocused = useIsFocused();
 
   const getData = async () => {
     try {
@@ -37,30 +39,38 @@ export default Home = props => {
         setUserData(value);
       }
     } catch (e) {
-      alert(e);
+      console.log(e);
     }
   };
 
-const fetchBookings = () => {
+  const fetchBookings = async () => {
     if (userData) {
-      axios
-        .get(url + 'parkingBookingRecords/customer/' + userData)
-        .then(function (response) {
-          console.log(response.data);
-          setListOfBookings(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      try {
+        const response = await axios.get(
+          `${url}parkingBookingRecords/customer/${userData}`
+        );
+        console.log('response');
+        console.log(response.data);
+
+        setListOfBookings(response.data);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
+
+
+
+
+  useEffect(() => {
+    fetchBookings();
+  }, [userData]);
+
 
   useEffect(() => {
     getData();
   }, []);
-  useEffect(() => {
-    fetchBookings();
-  }, []);
+
 
   const NavItems = [
     {
@@ -94,12 +104,12 @@ const fetchBookings = () => {
       id: 3,
     },
   ];
-  const renderCategoryItem = ({item}) => {
+  const renderCategoryItem = ({ item }) => {
     return (
       <TouchableOpacity
         onPress={() => {
-         
-            props?.navigation?.navigate(item.screen)
+
+          props?.navigation?.navigate(item.screen)
 
         }}
         style={[
@@ -152,7 +162,7 @@ const fetchBookings = () => {
 
         <View style={styles.titlesWrapper}>
           <Text style={styles.titlesSubtitle}>Find your Parking Space!</Text>
-     
+
         </View>
 
         <View style={styles.categoriesWrapper}>
@@ -167,77 +177,101 @@ const fetchBookings = () => {
           </View>
         </View>
 
-        <View style={styles.popularWrapper}>
-          <Text style={styles.titlesTitle}>Recent Bookings</Text>
-          {listOfBookings.map(item => (
-            <TouchableWithoutFeedback key={item.id}>
-              <View
-                style={[
-                  styles.popularCardWrapper,
-                  {
-                    marginTop: item.id == 1 ? 10 : 20,
-                  },
-                ]}>
-                <View>
-                  <View>
-                    <View style={styles.popularTopWrapper}>
-                      <Text style={{color:colors.themeColor}}>Total Charges: Rs. {item?.totalParkingCharges == null ? "N/A" : item.totalParkingCharges}</Text>
-                    </View>
-                    <View style={styles.popularTitlesWrapper}>
-                      <Text style={styles.popularTitlesTitle}>
-                        {item.parking?.parkingLocation ? item.parking.parkingLocation.toString().substring(0, 50):"N/A"}
-                      </Text>
-                      <Text style={styles.popularTitlesWeight}>
-                        {/* PKR120/hour */}
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={styles.popularCardBottom}>
-                    <View style={styles.addPizzaButton}>
-                      <Text
-                        style={[
-                          styles.popularTitlesTitle,
-                          {fontWeight: 'bold', color: colors.white},
-                        ]}>
-                        PKR{item.parking?.parkingCharges}/hour
-                      </Text>
-                    </View>
-                   
-                  {
-                    item.isExpired ? 
-                    <View style={styles.ratingWrapper}>
-                      <Text style={{ color: 'red' }}>Expired</Text>
+        <View style={[styles.popularWrapper]}>
+          <View style={styles.headerWrapper}>
+            <Text style={styles.titlesTitle}>Recent Bookings</Text>
+            <TouchableOpacity onPress={() => props?.navigation?.navigate('AllBookings')}>
+              <Text style={styles.viewAllText}>View All</Text>
+            </TouchableOpacity>
+          </View>
+
+
+          {listOfBookings.length == 0 ? (
+            <Text style={{ textAlign: 'center', marginTop: 20, fontSize: 18, color: colors.textDark }}>
+              No bookings found
+            </Text>
+
+          ) : (
+            <>
+
+              {listOfBookings
+                .filter((item, index) => index <= 4)
+                .map(item => (
+                  <TouchableWithoutFeedback key={item.id}>
+                    <View
+                      style={[
+                        styles.popularCardWrapper,
+                        {
+                          marginTop: item.id == 1 ? 10 : 20,
+                        },
+                      ]}>
+                      <View>
+                        <View style={styles.tagWrapper}>
+                          <View style={styles.tagText}>
+                            <Text style={styles.tagText}>Total Charges: Rs. {item?.parkingBookingRecords?.totalParkingCharges == null ? "N/A" : item?.parkingBookingRecords?.totalParkingCharges}</Text>
+                          </View>
+                          <View style={styles.popularTitlesWrapper}>
+                            <Text style={styles.popularTitlesTitle}>
+                              {item?.parkingBookingRecords?.parking?.parkingLocation ? item?.parkingBookingRecords?.parking?.parkingLocation.toString().substring(0, 50) : "N/A"}
+                            </Text>
+                            <Text style={styles.popularTitlesWeight}>
+                              <View style={styles.ratingWrapper}>
+
+                                <View>
+                                  <View style={{flexDirection: 'row', marginTop: 13}}>
+                                    {item?.bookingDates?.length > 1 &&
+                                      item?.bookingDates?.map((i, index) => (
+                                        <Text style={{ fontSize: 13, fontWeight: '800' }} key={i?.bookingDate || item?.id}>
+                                          {moment(i?.bookingDate).format('DD-MM-YYYY').toString()}
+                                          {index !== item?.bookingDates?.length - 1 && ', '}
+                                        </Text>
+                                      ))}
+
+                                      {item?.bookingDates?.length == 1 &&
+                                      item?.bookingDates?.map((i, index) => (
+                                        <Text style={{ fontSize: 13, fontWeight: '800' }} key={i?.bookingDate || item?.id}>
+                                          {moment(i?.bookingDate).format('DD-MM-YYYY').toString()}
+                                        </Text>
+                                      ))}
+                                  </View>
+
+
+                                </View>
+                              </View>
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.popularCardBottom}>
+                          <View style={styles.addPizzaButton}>
+                            <Text
+                              style={[
+                                styles.popularTitlesTitle,
+                                { fontWeight: 'bold', color: colors.white },
+                              ]}>
+                              PKR{item?.parkingBookingRecords?.parking?.parkingCharges}/Day
+                            </Text>
+                          </View>
+
+                          {
+                            item.isExpired ?
+                              <View style={styles.ratingWrapper}>
+                                <Text style={{ color: 'red' }}>Expired</Text>
+                              </View>
+                              :
+
+                              null
+                          }
+                        </View>
                       </View>
-                       : 
-            
-                  <View style={styles.ratingWrapper}>
 
-                    <View>
-                      <TouchableOpacity
-                        onPress={() =>
-                          props?.navigation.navigate('Camera2', {
-                            bookingId: 1,
-                          })
-                        }>
-                        <Text style={{ color: colors.themeColor }}>Check In</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity>
-                        <Text style={{ color: colors.themeColor }}>
-                          Check Out
-                        </Text>
-                      </TouchableOpacity>
+                      <View style={styles.popularCardRight}>
+                        <Image source={item.image} style={styles.popularCardImage} />
+                      </View>
                     </View>
-                  </View>
-                        }
-                  </View>
-                </View>
-
-                <View style={styles.popularCardRight}>
-                  <Image source={item.image} style={styles.popularCardImage} />
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          ))}
+                  </TouchableWithoutFeedback>
+                ))}
+            </>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -260,6 +294,26 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT / 15,
 
     borderRadius: 35,
+  }, tagWrapper: {
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    alignItems: 'flex-start',
+
+    marginBottom: 5,
+  },
+  tagText: {
+    backgroundColor: colors.themeColor,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    color: 'white',
+    marginRight: 10,
+  },
+  dateText: {
+    color: colors.themeColor,
+  },
+  timeText: {
+    color: colors.themeColor,
   },
   titlesWrapper: {
     marginTop: 30,
@@ -312,7 +366,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5CA48',
     marginRight: 20,
     borderRadius: 20,
-   
+
     shadowColor: colors.black,
     shadowOffset: {
       width: 0,

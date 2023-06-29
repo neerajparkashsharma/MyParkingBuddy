@@ -1,4 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
+import { useEffect,useState} from 'react';
+import { View, Text } from 'react-native';
 import OnBoarding from './src/screens/OnBoarding';
 import Login from './src/screens/commonScreens/Login';
 import SignUp from './src/screens/HostScreens/SignUp';
@@ -7,25 +9,20 @@ import 'react-native-gesture-handler';
 import SignUpOptions from './src/screens/commonScreens/SignUpOptions';
 import GuestSignUp from './src/screens/UserScreens/GuestSignUp';
 import Imge from './src/screens/HostScreens/ParkingRegistration';
-
 import AllBookings from './src/screens/UserScreens/AllBookings';
 import VisionCamera from './src/screens/QRScanning';
 import VisionCamera2 from './src/screens/QRCheckout';
 import AddRemoveInputField from './src/screens/dynamic';
-
 import Home from './src/screens/UserScreens/HomeScreen';
-
 const Stack = createStackNavigator();
-
+import NetInfo from '@react-native-community/netinfo';
 import { createStackNavigator } from '@react-navigation/stack';
-import CardDetails from './src/screens/UserScreens/CardDetails';
-// import HomeScreen from './src/screens/UserScreens/HomeScreen';
+import CardDetails from './src/screens/UserScreens/CardDetails'; 
 import DrawerNavigator from './src/Navigators/DrawerNavigator';
 import LocationSettings from './src/screens/UserScreens/LocationSettings';
 import HostDrawer from './src/Navigators/HostDrawer';
 import Alerts from './src/screens/HostScreens/Alerts';
-import VehicleParkingRegistration from './src/screens/HostScreens/VehicleParkingRegistration';
-// import TextClassifier from './src/components/NLP';
+import VehicleParkingRegistration from './src/screens/HostScreens/VehicleParkingRegistration'; 
 import VoiceInputForm from './src/components/NLP';
 import ParkingBooking from './src/screens/UserScreens/ParkingBooking';
 import LiveStreaming from './src/screens/UserScreens/LivesSreaming';
@@ -34,6 +31,29 @@ import NewScreen from './src/screens/UserScreens/NewScreen';
 import SplashScreen from './src/screens/commonScreens/SplashScreen';
 import VehicleDetections from './src/screens/UserScreens/VehicleDetections';
 export default function App() {
+
+  const [isConnected, setIsConnected] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+
+  if (!isConnected) {
+    return (
+      <View>
+        <Text>No internet connection</Text>
+      </View>
+    );
+  }
+
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="SplashScreen">

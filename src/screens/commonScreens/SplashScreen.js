@@ -59,10 +59,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   car: {
-    width: 200,
-    height: 200,
-    top: SCREEN_HEIGHT / 10,
+    width: 0.2 * SCREEN_HEIGHT,
+    height: 0.2 * SCREEN_HEIGHT,
     resizeMode: 'contain',
+    bottom: -0.1 * SCREEN_HEIGHT - 15,
   },
 });
 

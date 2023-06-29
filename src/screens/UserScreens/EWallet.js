@@ -185,28 +185,7 @@ const EWallet = props => {
           <View style={EWalletStyles.popularTitlesWrapper}>
             <Text style={EWalletStyles.popularTitlesTitle}>PKR 1200</Text>
 
-            <TouchableOpacity
-              onPress={toggleModalVisibility}
-              style={{
-               backgroundColor:colors.white,
-                width: 120,
-                height: 30,
-left:240,
-                borderRadius: 15,
-                borderColor: 'black',
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  top: 5,
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                  color: colors.themeColor,
-                }}>
-                + Add Card
-              </Text>
-            </TouchableOpacity>
-
+     
             <Text style={EWalletStyles.popularTitlesWeight}>
               {/* PKR120/hour */}
             </Text>
@@ -249,7 +228,7 @@ left:240,
           <Text style={styles.titlesTitle}>Recent Transactions</Text>
 
           {listOfBookings.map(item => (
-            <TouchableOpacity key={item.id}>
+            <View key={item.id}>
               <View
                 style={[
                   styles.popularCardWrapper,
@@ -261,7 +240,7 @@ left:240,
                   <View>
                     <View style={styles.popularTopWrapper}>
                       <Text style={styles.popularTopText}>
-                        Transaction # {item.id}
+                        Transaction # {item?.id}
                       </Text>
                     </View>
                     <View style={styles.popularTitlesWrapper}>
@@ -270,7 +249,7 @@ left:240,
                       </Text>
 
                       <Text style={styles.popularTitlesTitle}>
-                        {item.parking?.parkingLocation}
+                        {item?.parking?.parkingLocation}
                       </Text>
                     </View>
                   </View>
@@ -281,12 +260,12 @@ left:240,
                           styles.popularTitlesTitle,
                           {fontWeight: 'bold', color: colors.white},
                         ]}>
-                        PKR 120
+                        PKR {item?.totalParkingCharges}
                       </Text>
                     </View>
                     <Text style={[styles.popularTopText, {left: 30}]}>
                       {' '}
-                      12/Dec/2023, 12:30PM
+                   On {item?.createdDate?.toString().substring(0, 10)}  at {item?.createdDate?.toString().substring(11, 16)}
                     </Text>
                     <View style={styles.ratingWrapper}>
                       {/* <MaterialCommunityIcons
@@ -312,10 +291,10 @@ left:240,
                 </View>
 
                 <View style={styles.popularCardRight}>
-                  <Image source={item.image} style={styles.popularCardImage} />
+                  <Image source={item?.image} style={styles.popularCardImage} />
                 </View>
               </View>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
       </ScrollView>
@@ -695,7 +674,7 @@ const EWalletStyles = StyleSheet.create({
   popularCardWrapper: {
     backgroundColor: colors.themeColor,
     borderRadius: 5,
-    height: SCREEN_HEIGHT / 4.5,
+    height: SCREEN_HEIGHT / 6,
     paddingTop: 20,
     paddingLeft: 20,
     width: '95%',
@@ -714,6 +693,7 @@ const EWalletStyles = StyleSheet.create({
   popularTopWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+    width:SCREEN_HEIGHT/3
   },
   popularTopText: {
     fontWeight: '700',

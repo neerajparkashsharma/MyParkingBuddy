@@ -6,10 +6,20 @@ import {SCREEN_WIDTH,SCREEN_HEIGHT} from '../../components/units'
 import axios from 'axios'
 import url from '../../commons/axiosUrl'
 import { AppRegistry } from 'react-native';
+import { useIsFocused } from '@react-navigation/native'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 const LocationSettings = props => {
     const [location, setLocation] = useState('')  
+    const isFocused = useIsFocused();
+
+    useEffect(() => {
+      AsyncStorage.getItem('location').then((value) => {
+        if (value !== null) {
+          setLocation(value);
+        }
+      });
+    }, [isFocused]);
 
 
     const submit = async () => { 
@@ -41,8 +51,7 @@ const LocationSettings = props => {
             placeholderTextColor="#613EEA"
             onChangeText={(location) => setLocation(location)}
             value={location}
-            // onChangeText={(email)}
-            // value={email}
+          
           />
         </View>
 

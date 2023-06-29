@@ -8,12 +8,14 @@ import {
   Text,
   FlatList,
   View,
+  TouchableWithoutFeedback,
   TimePickerAndroid,
   Button,
   TextInput,
+  Linking,
+  ActivityIndicator,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { debounce } from 'lodash';
+import { debounce, set } from 'lodash';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // import Intl from 'react-native-intl';
@@ -27,43 +29,44 @@ import url from '../../commons/axiosUrl';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import Slider from '@react-native-community/slider';
-import { color } from 'react-native-reanimated';
+import { useIsFocused } from '@react-navigation/native';
+ 
 
 export default BookingParking = props => {
-  // Adjust the debounce delay as needed (e.g., 500 milliseconds)
+  const isFocused = useIsFocused();
 
-  const [bookingDate, setBookingDate] = useState(new Date());
-
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-
-  const handleCheckInChange = (event, selectedDate) => {
-    setShowPicker(false);
-    setCheckInTime(selectedDate);
-  };
-
-
-  const handleCheckoutChange = (event, selectedDate) => {
-    setShowPicker(false);
-    setCheckOutTime(selectedDate);
-  };
-  const [value, setValue] = useState(0);
-  const [date1, setDate1] = useState(new Date());
-  const [showPicker, setShowPicker] = useState(false);
-
-  const [checkInTime, setCheckInTime] = useState(new Date());
-  const [checkOutTime, setCheckOutTime] = useState(new Date());
-
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
-
-
+  const [calenderLoading, setCalenderLoading] = useState(true);
+ 
   const [data, setData] = React.useState([]);
-  const [showCheckInTime, setShowCheckInTime] = useState(false);
-  const [showCheckOutTime, setShowCheckOutTime] = useState(false);
-
   const id = props.route.params?.id;
+  const [booked, setBooked] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${url}parking_dates_occupied/${id}`);
+        const { data } = response;
+        console.log(data, 'data');
+        const bookedDates = data.map((item) => moment(item.bookingDate).format('YYYY-MM-DD')); // Adjusted the date property name to 'bookingDate' and applied formatting
+        console.log(bookedDates, 'bookedDates');
+        setBooked(bookedDates);
+        setCalenderLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+
+    const interval = setInterval(fetchData, 60000); // Fetch data every 1 minute
+
+    return () => {
+      clearInterval(interval); // Clean up the interval on component unmount
+    };
+  }, [id]);
+
+
+
 
 
 
@@ -79,152 +82,150 @@ export default BookingParking = props => {
       .catch(err => {
         console.log(err);
       });
-  }, [props]);
+  }, [isFocused]);
 
 
-
-
-
-
-  const [selectedHour, setSelectedHour] = React.useState('');
-  const [selectedDates, setSelectedDates] = useState({});
-  const [lastPressedDate, setLastPressedDate] = useState(null);
-  const [lastPressedTime, setLastPressedTime] = useState(0);
-  const [totalHours, setTotalHours] = useState(0);
-  const [error, setError] = useState(null);
+ 
+  const [selectedDates, setSelectedDates] = useState([]); 
 
   const handleBooking = async () => {
     try {
 
-      calculateTotalHours();
-      const filteredDates = Object.entries(selectedDates)
-      .filter(([_, value]) => value.selected)
-      .map(([date]) => date);
+ 
 
-      console.log('booking DAte', filteredDates);
-      const formattedStartTime = moment(fromDate + ' ' + checkInTime.toTimeString().split(' ')[0], 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
-      const formattedToTime = moment(toDate + ' ' + checkOutTime.toTimeString().split(' ')[0], 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
-
-      
-
-
-      const userId = await AsyncStorage.getItem('userdata');
-      const currentDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
-      const selectedDateTime = moment(formattedStartTime, 'YYYY-MM-DD HH:mm:ss');
-  
-      if (selectedDateTime.isBefore(currentDateTime)) {
-
-        setError('Selected time has already passed. Please choose a future time.');
-        // alert('Selected time has already passed. Please choose a future time.');
-        return;
-      }
-
+      const userId = await AsyncStorage.getItem('userdata'); 
+      console.log("inside handle booking")
 
       const payload = {
-        parkingId:data?.id,
-        customerId:userId,
-        bookingFromDateTime : formattedStartTime,
-        bookingToDateTime : formattedToTime
+        parkingId: data?.id,
+        customerId: userId,
+        bookingDates: selectedDates,
       }
-      const response = axios.post(`${url}book-parking`,payload).then(
-        res => {
-          console.log(res.data);
-          alert('Booking Successful');
-          props?.navigation.navigate('Home');
-        }
-      ).catch(err => {
-        setError(err.response.data);
-        console.log(err.response.data);
+      console.log(payload, 'payload')
+
+
+      const response = await axios.post(`${url}book-parking`, payload);
+
+      if(response.data === 'Parking Booked Successfully'){
+        alert('Parking Booked Successfully');
+        props?.navigation.navigate('Home');
       }
-      )
+      else{
+        alert('Parking Already Booked');
+        props?.navigation.navigate('Home');
+      }
+
+
+      setBooked(null);
+      setSelectedDates([]);
+      setData(null);
+      
+
+      // axios.post(`${url}book-parking`, payload).then(
+      //   res => {
+      //     console.log(res.data);
+      //     if (res.data === 'Parking Booked Successfully')
+      //       alert('Parking Booked Successfully');
+      //     props?.navigation.navigate('Home');
+      //   }
+
+
+      // ).catch(err => {
+      //   setError(err.response.data);
+
+
+      // }
+      // )
 
     } catch (error) {
       console.error(error);
     }
+
+  
+
   };
 
 
-  const formatTime = (time) => {
-    const options = { hour: 'numeric', minute: '2-digit', hour12: true };
-    return time.toLocaleTimeString('en-US', options);
-  };
 
 
 
-  const LocalformatTime = (time) => {
-    const options = { hour: 'numeric', minute: '2-digit', hour12: false };
-    return time.toLocaleTimeString([], options);
-  };
+  // const handleDayPress = (day) => {
+  //   const selectedDate = day.dateString;
 
-  const calculateTotalHours = () => {
-    console.log('from-date', fromDate, 'to-date', toDate);
-  
-    // Validate if both from and to dates are selected
-    if (!fromDate || !toDate) {
-      console.log('Please select both from and to dates.');
-      return;
-    }
-  
-    const [fromYear, fromMonth, fromDay] = fromDate.split('-');
-    const [toYear, toMonth, toDay] = toDate.split('-');
-  
-    const checkInDate = new Date(fromYear, fromMonth - 1, fromDay, checkInTime.getHours(), checkInTime.getMinutes(), checkInTime.getSeconds());
-    const checkOutDate = new Date(toYear, toMonth - 1, toDay, checkOutTime.getHours(), checkOutTime.getMinutes(), checkOutTime.getSeconds());
-  
-    const timeDifferenceMs = checkOutDate - checkInDate;
-    const hours = timeDifferenceMs / (1000 * 60 * 60);
-  
-    console.log('Total hours:', hours);
-  
-    return hours;
-  };
-  
-  const debouncedCalculateTotalHours = debounce(calculateTotalHours, 500);
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
+  //   // Check if both from and to dates are already selected
+  //   if (fromDate && toDate) {
+  //     // Clear the selections if a new date is pressed
+  //     setFromDate(null);
+  //     setToDate(null);
+  //     setSelectedDates({});
+  //   } else if (!fromDate) {
+  //     // Select the first date (from date)
+  //     setFromDate(selectedDate);
+  //     const selectedDatesCopy = { [selectedDate]: { selected: true, selectedDotColor: 'orange' } };
+  //     setSelectedDates(selectedDatesCopy);
+  //   } else {
+  //     // Select the second date (to date)
+  //     setToDate(selectedDate);
+  //     const selectedDatesCopy = { ...selectedDates };
+  //     selectedDatesCopy[selectedDate] = { selected: true, selectedDotColor: 'orange' };
+  //     setSelectedDates(selectedDatesCopy);
 
-
-  const handleDayPress = (day) => {
-    const selectedDate = day.dateString;
-
-    // Check if both from and to dates are already selected
-    if (fromDate && toDate) {
-      // Clear the selections if a new date is pressed
-      setFromDate(null);
-      setToDate(null);
-      setSelectedDates({});
-    } else if (!fromDate) {
-      // Select the first date (from date)
-      setFromDate(selectedDate);
-      const selectedDatesCopy = { [selectedDate]: { selected: true, selectedDotColor: 'orange' } };
-      setSelectedDates(selectedDatesCopy);
-    } else {
-      // Select the second date (to date)
-      setToDate(selectedDate);
-      const selectedDatesCopy = { ...selectedDates };
-      selectedDatesCopy[selectedDate] = { selected: true, selectedDotColor: 'orange' };
-      setSelectedDates(selectedDatesCopy);
-
-      // Validate the date range (optional)
-      if (new Date(selectedDate) < new Date(fromDate)) {
-        console.log('Invalid date range. "To" date should be after "From" date.');
-        // You can show an error message or perform any other action here
-        // You can also clear the selections and allow the user to select new dates
-        setFromDate(null);
-        setToDate(null);
-        setSelectedDates({});
-      } else {
-        // Valid date range, perform any necessary actions here
-        // You can calculate the duration, update the UI, etc.
-        console.log('Selected date range:', fromDate, 'to', selectedDate);
-      }
-    }
-  };
+  //     // Validate the date range (optional)
+  //     if (new Date(selectedDate) < new Date(fromDate)) {
+  //       console.log('Invalid date range. "To" date should be after "From" date.');
+  //       // You can show an error message or perform any other action here
+  //       // You can also clear the selections and allow the user to select new dates
+  //       setFromDate(null);
+  //       setToDate(null);
+  //       setSelectedDates({});
+  //     } else {
+  //       // Valid date range, perform any necessary actions here
+  //       // You can calculate the duration, update the UI, etc.
+  //       console.log('Selected date range:', fromDate, 'to', selectedDate);
+  //     }
+  //   }
+  // };
 
   const currentDate = moment().format('YYYY-MM-DD');
 
+  const handleDateSelect = (date) => {
+    const updatedDates = [...selectedDates];
+    if (selectedDates.includes(date)) {
+      // Date already selected, remove it
+      const index = updatedDates.indexOf(date);
+      updatedDates.splice(index, 1);
+    } else {
+      // Date not selected, add it
+      updatedDates.push(date);
+    }
+    setSelectedDates(updatedDates);
+  };
+
+  const getMarkedDates = (dates) => {
+
+    const markedDates = {};
 
 
+    booked?.forEach((date) => {
+
+   
+
+      markedDates[date] = { disabled: true, disableTouchEvent: true, dotColor: 'red', selectedDotColor: 'red', selected: false, 
+      selectedColor: 'red'
+    };
+    });
+    
+    dates?.forEach((date) => {
+      markedDates[date] = { selected: true, selectedColor:  colors.themeColor };
+    });
+
+   
+
+    return markedDates;
+  };
+
+
+ 
 
   return (
 
@@ -248,7 +249,12 @@ export default BookingParking = props => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onPress={() => console.log('object2')}>
+              onPress={() =>
+
+
+                Linking.openURL(`tel:${data?.contactNumber}`)
+
+              }>
               <FIcon name="phone-call" size={28} color={'white'} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -261,30 +267,37 @@ export default BookingParking = props => {
                 alignItems: 'center',
                 marginRight: 5,
               }}
-              onPress={() => console.log('object')}>
+              onPress={() =>
+
+
+                //google maps
+
+                Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${data?.latitude},${data?.longitude}`)
+
+              }>
               <Icon name="place" size={28} color={'white'} />
             </TouchableOpacity>
 
-            <TouchableOpacity
+            <View
               style={{
-                backgroundColor: '#e67300',
+                backgroundColor: colors.themeColor,
                 height: 50,
-                width: 190,
+                width: SCREEN_WIDTH/2,
                 borderRadius: 12,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onPress={() => console.log('object')}>
-              <Text
+>
+                <Text
                 style={{
                   color: "#fff",
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}>
 
-              Hourly Charges: Rs. {data?.parkingCharges}
+                Per Day Charges: Rs. {data?.parkingCharges*24}
               </Text>
-            </TouchableOpacity>
+            </View>
           </View>
         </ImageBackground>
 
@@ -317,121 +330,53 @@ export default BookingParking = props => {
                 color: colors.themeColor,
                 marginBottom: 15,
               }}>
-              Select From Date & To Date 
+              Select Dates
             </Text>
 
-            <Calendar
-              theme={{
-                selectedDayBackgroundColor: colors.themeColor,
-                monthTextColor: colors.themeColor,
-                todayTextColor: colors.themeColor,
-                arrowColor: colors.themeColor,
-                monthTextFontSize: 20,
-                dayTextColor: colors.themeColor,
-              }}
-              onDayPress={handleDayPress}
-              minDate={currentDate} 
-              markedDates={selectedDates}
-            />
+ 
+            <View
+  style={{
+    borderRadius: 12,
+  }}
+>
+  {calenderLoading ? (
+    <ActivityIndicator size="large" color={colors.themeColor} />
+  ) : (
+    <Calendar
+      theme={{
+        selectedDayBackgroundColor: colors.themeColor,
+        monthTextColor: colors.themeColor,
+        todayTextColor: colors.themeColor,
+        arrowColor: colors.themeColor,
+        monthTextFontSize: 20,
+        dayTextColor: colors.themeColor,
+        disabledArrowColor: colors.themeColor,
+        textDayFontWeight: 'bold',
+        textMonthFontWeight: 'bold',
+        textDayHeaderFontWeight: 'bold',
+        textDayFontSize: 16,
+        textMonthFontSize: 16,
+        textDayHeaderFontSize: 16,
+      }}
+      disableAllTouchEventsForDisabledDays={true}
+      minDate={currentDate}
+      markedDates={getMarkedDates(selectedDates)}
+      onDayPress={(day) => handleDateSelect(day.dateString)}
+      hideExtraDays={true}
+      showWeekNumbers={true}
+      hideDayNames={false}
+    />
+  )}
+</View>
+
+
+          </View>
+        </View>
 
 
 
-           
 
-              
-              <View style={{ marginTop: SCREEN_HEIGHT / 50 }}>
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: '600',
-                      color: colors.themeColor,
-                      marginBottom: 15,
-                    }}>
-                    Check-In-Time
-                  </Text>
-                </View>
-
-                <View style={{ backgroundColor: "#fff", borderRadius: 10, flexDirection: 'row', alignItems: 'center' }}>
-                  <MIcon name="sort-clock-descending-outline" color={colors.themeColor} size={30} style={{ marginLeft: 10, marginRight: 5 }} />
-                  <TextInput
-                    placeholder={'Select Time'}
-                    value={formatTime(checkInTime)}
-                    onFocus={() =>{ 
-                      setShowCheckInTime(true);
-                      debouncedCalculateTotalHours();
-                    
-                    }}
-                    style={{ flex: 1,color:colors.themeColor }}
-                  />
-                </View>
-
-
-                <View style={{ marginTop: SCREEN_HEIGHT / 50 }}>
-                  <Text
-                    style={{
-                      fontSize: 20,
-                      fontWeight: '600',
-                      color: colors.themeColor,
-                      marginBottom: 15,
-                    }}>
-                    Check-Out-Time
-                  </Text>
-                </View>
-                <View style={{ backgroundColor: "#fff", borderRadius: 10, flexDirection: 'row', alignItems: 'center' }}>
-                  <MIcon name="sort-clock-ascending-outline" color={colors.themeColor} size={30} style={{ marginLeft: 10, marginRight: 5 }} />
-                  <TextInput
-                    placeholder={'Select Time'}
-                    value={formatTime(checkOutTime)}
-                    onFocus={() => {
-                      setShowCheckOutTime(true)
-                      debouncedCalculateTotalHours();
-
-                    }}
-                    style={{ flex: 1,color:colors.themeColor }}
-                  />
-                </View>
-
-             
-
-                {showCheckOutTime && (
-                  <DateTimePicker
-                    value={checkOutTime}
-                    mode="time"
-                    display="default"
-                    onChange={(event, selectedTime) => {
-                      setShowCheckOutTime(false);
-                      setCheckOutTime(selectedTime || checkOutTime);
-                    }}
-                    style={{ color: colors.themeColor }}
-                  />
-                )}
-
-                {showCheckInTime && (
-                  <DateTimePicker
-                    value={checkInTime}
-                    mode="time"
-                    display="default"
-                    onChange={(event, selectedTime) => {
-                      setShowCheckInTime(false);
-                      setCheckInTime(selectedTime || checkInTime);
-                    }}
-                    style={{ color: colors.themeColor }}
-                  />
-                )}
-              </View>
-
-            </View>
-         
-         {
-          error && (
-            <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
-              <Text style={{ color: 'red', fontSize: 18, fontWeight: 'bold' }}>
-                {error}
-              </Text>
-            </View>
-          )
-
-         }
+       
 
         <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
           <TouchableOpacity style={style.btn} onPress={handleBooking}>
@@ -506,8 +451,6 @@ const style = StyleSheet.create({
   headerImage: {
     height: 250,
     top: 15,
-    borderBottomRightRadius: 30,
-    borderBottomLeftRadius: 30,
     overflow: 'hidden',
   },
   header: {

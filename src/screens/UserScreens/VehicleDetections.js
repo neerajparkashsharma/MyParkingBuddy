@@ -204,17 +204,26 @@ import axios from 'axios';
 import url from '../../commons/axiosUrl';
 import {Card} from 'react-native-paper';
 import Headerx from '../../components/header';
+import { useIsFocused } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const VehicleDetections = props => {
   const [images, setImages] = useState([]);
-  
-
+  const isFocused = useIsFocused();
+ 
   useEffect(() => {
-    fetchImages();
-  }, [props]);
+   
+  AsyncStorage.getItem('userId').then((value) => {
+    console.log("...............",value)
+    fetchImages(value);
+  })
+
+  }, [isFocused]);
 
 
-  const fetchImages = async () => {
+
+
+  const fetchImages = async (value) => {
     try {
       const response = await axios.get(`${url}all`);
       setImages(response.data);

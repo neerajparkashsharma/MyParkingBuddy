@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import url from '../commons/axiosUrl.js';
+import url from '../../commons/axiosUrl';
 import axios from 'axios';
 import {
   View,
@@ -13,44 +13,52 @@ import {
   Button,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import {RNCamera} from 'react-native-camera';
-// import {Camera, useCameraDevices} from 'react-native-vision-camera';
+import {RNCamera} from 'react-native-camera'; 
 import {RNHoleView} from 'react-native-hole-view';
 
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Headerx from '../components/header.js';
+import Headerx from '../../components/header.js';
+import { set } from 'lodash';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 console.disableYellowBox = true;
-const VisionCamera = ({route, navigation}) => {
-  const {bookingId} = route.params;
+const CheckOutQR =  props => {
+    
+    const {bookingId,userId,parkingId} = props.route.params;
+    const [isActive, setIsActive] = useState(true);
 
-  const camera = useRef(null);
-  const [Isactive, setIsActive] = useState(false);
-
-  const [loading, setLoading] = useState(true);
 
   const onSuccess = e => {
-    console.log(e.data);
+    // console.log(e.data);
      
+setIsActive(false);
       axios
-        .post(url + 'bookingVehicles', {
-          parkingBookingRecords: {id: JSON.stringify(bookingId)},
+        .post(url + 'booking/checkout', {
+        parkingId:parkingId,
+        checkOutCode: e.data,
+          bookingId:bookingId,
+          userId:userId,
 
-          checkIn: Date.now(),
-          checkInInput: e.data,
         })
 
         .then(function (response) {
-          alert('WAITING FOR VECHICLE TO BE PARKED');
+            setIsActive(false);
+            alert('Check Out Successful')
         })
         .catch(function (error) {
+        
+            alert('Please scan the correct QR code')
+            setIsActive(true);
+        
+        
+
+        props.navigation.navigate('Home');
           console.log('error' + error);
         });
     
    
-    Alert.alert(e.data);
+    // Alert.alert(e.data);
   };
   const makeSlideOutTranslation = (translationType, fromValue) => {
     return {
@@ -64,18 +72,17 @@ const VisionCamera = ({route, navigation}) => {
   };
   const startScan = () => {
     console.log('first');
-    setIsActive(!Isactive);
+    setIsActive(!isActive);
   };
   return (
-    <View style={{ flex: 1, padding: 10, justifyContent: 'space-around', alignItems: 'center' }}>
-    <Headerx navigation={navigation} headerName={'QR SCANNING'}/>
-
+    <View style={{ flex: 1, padding: 10, justifyContent: 'flex-start', alignItems: 'center' }}>
+ 
       <QRCodeScanner
-        showMarker
-        reactivateTimeout={4}
-        onRead={onSuccess}
-        reactivate={Isactive}
-        cameraStyle={{height: SCREEN_HEIGHT}}
+      showMarker
+      reactivateTimeout={4}
+      onRead={onSuccess}
+      reactivate={true}
+      cameraStyle={{ height: SCREEN_HEIGHT }}
         customMarker={
           <View style={styles.rectangleContainer}>
             <View style={styles.topOverlay}>
@@ -180,4 +187,4 @@ const styles = StyleSheet.create({
     backgroundColor: scanBarColor,
   },
 });
-export default VisionCamera;
+export default CheckOutQR;
