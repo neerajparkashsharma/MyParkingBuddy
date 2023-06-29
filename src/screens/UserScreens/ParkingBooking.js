@@ -104,16 +104,17 @@ export default BookingParking = props => {
       console.log(payload, 'payload')
 
 
-      const response = await axios.post(`${url}book-parking`, payload);
+      
+      // const response = await axios.post(`${url}book-parking`, payload);
 
-      if(response.data === 'Parking Booked Successfully'){
-        alert('Parking Booked Successfully');
-        props?.navigation.navigate('Home');
-      }
-      else{
-        alert('Parking Already Booked');
-        props?.navigation.navigate('Home');
-      }
+      // if(response.data === 'Parking Booked Successfully'){
+      //   alert('Parking Booked Successfully');
+      //   props?.navigation.navigate('Home');
+      // }
+      // else{
+      //   alert('Parking Already Booked');
+      //   props?.navigation.navigate('Home');
+      // }
 
 
       setBooked(null);
