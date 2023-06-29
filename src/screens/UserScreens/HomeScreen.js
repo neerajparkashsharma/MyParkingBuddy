@@ -11,7 +11,8 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  BackHandler
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,6 +32,22 @@ export default Home = props => {
   const [listOfBookings, setListOfBookings] = useState([]);
   const [userData, setUserData] = useState(null);
   const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const backAction = () => {
+      BackHandler.exitApp(); // Exit the app when back button is pressed
+      return true; // Return true to prevent default back button behavior
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove(); // Clean up the event listener on unmount
+  }, []);
+
+
 
   const getData = async () => {
     try {
@@ -93,17 +110,7 @@ export default Home = props => {
     },
   ];
 
-  const categoriesData = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-  ];
+
   const renderCategoryItem = ({ item }) => {
     return (
       <TouchableOpacity
@@ -197,12 +204,12 @@ export default Home = props => {
               {listOfBookings
                 .filter((item, index) => index <= 4)
                 .map(item => (
-                  <TouchableWithoutFeedback key={item.id}>
+                  <TouchableWithoutFeedback key={item?.parkingBookingRecords?.id}>
                     <View
                       style={[
                         styles.popularCardWrapper,
                         {
-                          marginTop: item.id == 1 ? 10 : 20,
+                          marginTop: item?.parkingBookingRecords?.id == 1 ? 10 : 20,
                         },
                       ]}>
                       <View>
@@ -218,18 +225,18 @@ export default Home = props => {
                               <View style={styles.ratingWrapper}>
 
                                 <View>
-                                  <View style={{flexDirection: 'row', marginTop: 13}}>
+                                  <View style={{ flexDirection: 'row', marginTop: 13 }}>
                                     {item?.bookingDates?.length > 1 &&
                                       item?.bookingDates?.map((i, index) => (
-                                        <Text style={{ fontSize: 13, fontWeight: '800' }} key={i?.bookingDate || item?.id}>
+                                        <Text key={i?.bookingDate || item?.id}>
                                           {moment(i?.bookingDate).format('DD-MM-YYYY').toString()}
                                           {index !== item?.bookingDates?.length - 1 && ', '}
                                         </Text>
                                       ))}
 
-                                      {item?.bookingDates?.length == 1 &&
+                                    {item?.bookingDates?.length == 1 &&
                                       item?.bookingDates?.map((i, index) => (
-                                        <Text style={{ fontSize: 13, fontWeight: '800' }} key={i?.bookingDate || item?.id}>
+                                        <Text key={i?.bookingDate || item?.id}>
                                           {moment(i?.bookingDate).format('DD-MM-YYYY').toString()}
                                         </Text>
                                       ))}

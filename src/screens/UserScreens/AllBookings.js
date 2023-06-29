@@ -19,11 +19,11 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../components/units.js';
 import { useIsFocused } from '@react-navigation/native';
 import Headerx from '../../components/header.js';
 import moment from 'moment';
+import uuid from 'react-native-uuid';
 
 
 const AllBookings = props => {
-  const isFocused = useIsFocused();
-
+  const isFocused = useIsFocused(); 
   const [listOfBookings, setListOfBookings] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [userid, setUserid] = useState();
@@ -216,7 +216,7 @@ const AllBookings = props => {
                         }]}>
 
                           {item?.bookingDates?.length > 1 && item?.bookingDates?.map((i) => (
-                            <Text style={{ fontSize: 13, fontWeight: '800' }} key={i?.bookingDate || item?.id}>
+                            <Text style={{ fontSize: 13, fontWeight: '800' }} key={uuid.v4()}>
                               {
                                 moment(i?.bookingDate).format('DD-MM-YYYY').toString()
                               }
@@ -226,7 +226,7 @@ const AllBookings = props => {
                           }
 
                           {item?.bookingDates?.length == 1 && item?.bookingDates?.map((i) => (
-                            <Text style={{ fontSize: 13, fontWeight: '800' }} key={i?.bookingDate || item?.id}>
+                            <Text style={{ fontSize: 13, fontWeight: '800' }} key={item?.id}>
                               {
                                 moment(i?.bookingDate).format('DD-MM-YYYY').toString()
                               }
@@ -243,7 +243,7 @@ const AllBookings = props => {
                       </View>
 
 
-                      {item?.parkingBookingRecords?.isExpired ? null : (
+                      {item?.parkingBookingRecords?.isExpired  ? null : (
                         <View style={{ flexDirection: 'row', marginTop: 30 }}>
                           <TouchableOpacity
                             style={{
@@ -481,7 +481,7 @@ const AllBookings = props => {
                                 props?.navigation.navigate('Check In QR Scanner', {
                                   bookingId: item?.parkingBookingRecords?.id,
                                   userId: userid,
-                                  parkingId: item?.parkingBookingRecordsparking?.id,
+                                  parkingId: item?.parkingBookingRecords?.parking?.id,
 
                                 });
                               }}
@@ -540,9 +540,9 @@ const AllBookings = props => {
 
                               onPress={() => {
                                 props?.navigation.navigate('ChatRoom', {
-                                  bookingId: item?.parkingBookingRecordsid,
+                                  bookingId: item?.parkingBookingRecords?.id,
                                   userId: userid,
-                                  parki8ngId: item?.parkingBookingRecordsparking?.id,
+                                  parki8ngId: item?.parkingBookingRecords?.parking?.id,
 
                                 });
                               }}

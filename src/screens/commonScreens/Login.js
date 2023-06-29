@@ -11,7 +11,8 @@ import {
   Button,
   TouchableOpacity,
   Switch,
-  Dimensions
+  Dimensions,
+  BackHandler
 } from 'react-native';
 import Headerx from '../../components/header.js';
 import { Formik } from 'formik';
@@ -27,37 +28,24 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function Login({ navigation }) {
 
- 
+  useEffect(() => {
+    const backAction = () => {
+      BackHandler.exitApp(); // Exit the app when back button is pressed
+      return true; // Return true to prevent default back button behavior
+    };
 
- 
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove(); // Clean up the event listener on unmount
+  }, []);
+
+
 
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [idd, setId] = useState();
-
-  const storeData = async value => {
-    try {
-      console.log('VALUES LoGIN =>>', value);
-      await AsyncStorage.setItem('userdata', value.toString());
-    } catch (e) {
-      // saving error
-    }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('userdata');
-      if (value !== null) {
-        value = JSON.parse(value);
-        console.log(value);
-      }
-    } catch (e) {
-      // error reading value
-    }
-  };
-
+  const [password, setPassword] = useState(''); 
   const handleClick = async () => {
     try {
       // Validation
@@ -101,25 +89,11 @@ export default function Login({ navigation }) {
      
 
       if (role?.id == 1) {
-
-        
-      //   const resetAction = NavigationActions.reset({
-      //     index: 0,
-      //     routes: [{ name: 'HostDrawer' }],
-      //   });
-        
-        // navigation.dispatch( 
-        //   NavigationActions.navigate({
-        //     routeName: 'HostDrawer',
-        //     action: NavigationActions.navigate({ routeName: 'HostDrawer' }),
-        //   })
-        // );
+ 
 
         navigation.replace('HostDrawer');
 
       } else {
-       
-     
         navigation.replace('Drawer');
       }
     } catch (error) {

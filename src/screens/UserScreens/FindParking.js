@@ -57,8 +57,7 @@ const FindParking = (props) => {
 
   const [locationRadius, setLocationRadius] = useState();
 
-  useEffect(() => {
-
+  useEffect(() => { 
     AsyncStorage.getItem('location').then((value) => {
       setLocationRadius(value);
     }

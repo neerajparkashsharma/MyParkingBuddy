@@ -69,6 +69,11 @@ const OnBoarding = ({navigation}) => {
     checkUserData();
   }, [navigation]);
   
+  const handleSkip = () => {
+    navigation.pop(); 
+    navigation.navigate('Login');
+  };
+
 
   return (
     <>
@@ -121,7 +126,7 @@ const OnBoarding = ({navigation}) => {
 
             <TouchableOpacity
               style={styles.skip}
-              onPress={() => navigation.navigate('Login')}>
+              onPress={handleSkip}>
               <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
                 SKIP{' '}
               </Text>
@@ -136,7 +141,7 @@ const OnBoarding = ({navigation}) => {
             <Text>Be our parking Buddy!</Text>
             <TouchableOpacity
               style={styles.skip}
-              onPress={() => navigation.navigate('Login')}>
+              onPress={handleSkip}>
               <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
                 SKIP
               </Text>
@@ -153,7 +158,7 @@ const OnBoarding = ({navigation}) => {
             </Text>
             <TouchableOpacity
               style={styles.skip}
-              onPress={() => navigation.navigate('Login')}>
+              onPress={handleSkip}>
               <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
                 SKIP
               </Text>
@@ -171,7 +176,7 @@ const OnBoarding = ({navigation}) => {
 
             <TouchableOpacity
               style={styles.skip}
-              onPress={() => navigation.navigate('Login')}>
+              onPress={handleSkip}>
               <Text style={{color: colors.themeColor, fontWeight: 'bold'}}>
                 SKIP
               </Text>

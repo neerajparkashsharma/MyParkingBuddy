@@ -8,7 +8,7 @@ const SplashScreen = ({ navigation }) => {
 
   useEffect(() => {
     startDrivingAnimation();
-  }, []);
+  }, [navigation]);
 
   const startDrivingAnimation = () => {
     Animated.timing(carPosition, {
@@ -16,7 +16,8 @@ const SplashScreen = ({ navigation }) => {
       duration: 3000,
       useNativeDriver: false,
     }).start(() => {
-      navigation.navigate('OnBoarding');
+
+      navigation.replace('OnBoarding');
     });
   };
 
