@@ -1,16 +1,15 @@
-import {ProgressSteps, ProgressStep} from 'react-native-progress-steps';
+import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 
-import React, {useState, useEffect, useRef} from 'react';
-import {colors} from '../../commons/Colors';
-import {View, Text, StyleSheet, TextInput, Dimensions} from 'react-native';
-import {SCREEN_HEIGHT, SCREEN_WIDTH} from '../../components/units';
-import MapView, {Marker} from 'react-native-maps';
+import React, { useState, useEffect, useRef } from 'react';
+import { colors } from '../../commons/Colors';
+import { View, Text, StyleSheet, TextInput, Dimensions } from 'react-native';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../components/units';
+import MapView, { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import KeyboardAvoidingView from 'react-native/Libraries/Components/Keyboard/KeyboardAvoidingView';
 import Headerx from '../../components/header';
 import axios from 'axios';
-import url from '../../commons/axiosUrl';
-import {color} from 'react-native-reanimated';
+import url from '../../commons/axiosUrl'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const VehicleParkingRegistration = props => {
@@ -56,7 +55,7 @@ const VehicleParkingRegistration = props => {
       parkingCharges === null ||
       checkInCode === null ||
       checkOutCode === null ||
-      
+
       address === null ||
       region.latitude === null ||
       region.longitude === null ||
@@ -65,7 +64,7 @@ const VehicleParkingRegistration = props => {
       console.log('One or more fields are null');
       return;
     }
- 
+
     const hostId = await AsyncStorage.getItem('userdata');
     console.log('Submitting form...');
     console.log('Parking Charges:', parkingCharges);
@@ -104,7 +103,7 @@ const VehicleParkingRegistration = props => {
   useEffect(() => {
     Geolocation.getCurrentPosition(
       position => {
-        const {latitude, longitude} = position.coords;
+        const { latitude, longitude } = position.coords;
         setRegion({
           latitude: latitude ? latitude : 0,
           longitude: longitude ? longitude : 0,
@@ -148,7 +147,7 @@ const VehicleParkingRegistration = props => {
         headerName={'Parking Registration'}
         navigation={props?.navigation}
       />
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <ProgressSteps
           activeStepIconBorderColor={colors.themeColor}
           progressBarColor={colors.gray}
@@ -168,9 +167,9 @@ const VehicleParkingRegistration = props => {
             previousBtnTextStyle={buttonTextStyle}
             nextBtnDisabled={nextButtonDisabled}
 
-            >
+          >
 
-        
+
             <KeyboardAvoidingView>
               <View style={styles.bodyContainer}>
                 <View>
@@ -180,7 +179,7 @@ const VehicleParkingRegistration = props => {
                     keyboardType="numeric"
 
                     placeholder={'Enter the Parking Charges'}
-                    onChangeText={text => 
+                    onChangeText={text =>
                       setParkingCharges(text)}
                     value={parkingCharges}
                   />
@@ -205,7 +204,7 @@ const VehicleParkingRegistration = props => {
                     value={checkOutCode}
                   />
                 </View>
- 
+
               </View>
             </KeyboardAvoidingView>
           </ProgressStep>
@@ -253,53 +252,53 @@ const VehicleParkingRegistration = props => {
             </View>
           </ProgressStep>
           <ProgressStep
-  label="Confirm"
-  nextBtnTextStyle={buttonTextStyle}
-  previousBtnTextStyle={buttonTextStyle}
-  onSubmit={handleSubmit}
->
-  <View style={{ alignItems: 'flex-start', paddingHorizontal: 30 }}>
-    <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
-      Confirm the following details:
-    </Text>
-    <Text style={styles.detailText}>
-      Parking Charges:{' '}
-      <Text style={styles.detailValueText}>
-        {parkingCharges == '' ? 'N/A' : parkingCharges}
-      </Text>
-    </Text>
-    <Text style={styles.detailText}>
-      Check-In Code:{' '}
-      <Text style={styles.detailValueText}>
-        {checkInCode == '' ? 'N/A' : checkInCode}
-      </Text>
-    </Text>
-    <Text style={styles.detailText}>
-      Check-Out Code:{' '}
-      <Text style={styles.detailValueText}>
-        {checkOutCode == '' ? 'N/A' : checkOutCode}
-      </Text>
-    </Text>
-    <Text style={styles.detailText}>
-      Camera IP Address:{' '}
-      <Text style={styles.detailValueText}>
-        {cameraIpAddress == '' ? 'N/A' : cameraIpAddress}
-      </Text>
-    </Text>
-    <Text style={styles.detailText}>
-      Address:{' '}
-      <Text style={styles.detailValueText}>{address}</Text>
-    </Text>
-    <Text style={styles.detailText}>
-      Latitude:{' '}
-      <Text style={styles.detailValueText}>{region?.latitude}</Text>
-    </Text>
-    <Text style={styles.detailText}>
-      Longitude:{' '}
-      <Text style={styles.detailValueText}>{region?.longitude}</Text>
-    </Text>
-  </View>
-</ProgressStep>
+            label="Confirm"
+            nextBtnTextStyle={buttonTextStyle}
+            previousBtnTextStyle={buttonTextStyle}
+            onSubmit={handleSubmit}
+          >
+            <View style={{ alignItems: 'flex-start', paddingHorizontal: 30 }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
+                Confirm the following details:
+              </Text>
+              <Text style={styles.detailText}>
+                Parking Charges:{' '}
+                <Text style={styles.detailValueText}>
+                  {parkingCharges == '' ? 'N/A' : parkingCharges}
+                </Text>
+              </Text>
+              <Text style={styles.detailText}>
+                Check-In Code:{' '}
+                <Text style={styles.detailValueText}>
+                  {checkInCode == '' ? 'N/A' : checkInCode}
+                </Text>
+              </Text>
+              <Text style={styles.detailText}>
+                Check-Out Code:{' '}
+                <Text style={styles.detailValueText}>
+                  {checkOutCode == '' ? 'N/A' : checkOutCode}
+                </Text>
+              </Text>
+              <Text style={styles.detailText}>
+                Camera IP Address:{' '}
+                <Text style={styles.detailValueText}>
+                  {cameraIpAddress == '' ? 'N/A' : cameraIpAddress}
+                </Text>
+              </Text>
+              <Text style={styles.detailText}>
+                Address:{' '}
+                <Text style={styles.detailValueText}>{address}</Text>
+              </Text>
+              <Text style={styles.detailText}>
+                Latitude:{' '}
+                <Text style={styles.detailValueText}>{region?.latitude}</Text>
+              </Text>
+              <Text style={styles.detailText}>
+                Longitude:{' '}
+                <Text style={styles.detailValueText}>{region?.longitude}</Text>
+              </Text>
+            </View>
+          </ProgressStep>
 
         </ProgressSteps>
       </View>

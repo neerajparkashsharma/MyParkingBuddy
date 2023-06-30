@@ -19,6 +19,7 @@ import ParkingDetails from '../screens/UserScreens/ParkingDetails';
 import CheckInQR from '../screens/UserScreens/CheckInQR';
 import CheckOutQR from '../screens/UserScreens/CheckOutQR';
 import ChatRoom from '../screens/UserScreens/BookingChat';
+import PaymentBookingConfirmation from '../screens/UserScreens/PaymentBookingConfirmation';
 const Drawer = createDrawerNavigator();
 
 export default function DrawerNavigator({navigation}) {
@@ -69,7 +70,7 @@ export default function DrawerNavigator({navigation}) {
       />
       <Drawer.Screen
         name="BookParking"
-        component={BookingParking}
+        component={PaymentBookingConfirmation}
         options={{headerShown: false}}
       />
 

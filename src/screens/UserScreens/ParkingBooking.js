@@ -13,7 +13,6 @@ import {
   Button,
   TextInput,
   Linking,
-  ActivityIndicator,
 } from 'react-native';
 import { debounce, set } from 'lodash';
 import moment from 'moment';
@@ -30,12 +29,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { useIsFocused } from '@react-navigation/native';
- 
 
-export default BookingParking = props => {
+export default ParkingBooking = props => {
   const isFocused = useIsFocused();
 
-  const [calenderLoading, setCalenderLoading] = useState(true);
  
   const [data, setData] = React.useState([]);
   const id = props.route.params?.id;
@@ -46,11 +43,10 @@ export default BookingParking = props => {
       try {
         const response = await axios.get(`${url}parking_dates_occupied/${id}`);
         const { data } = response;
-        console.log(data, 'data');
-        const bookedDates = data.map((item) => moment(item.bookingDate).format('YYYY-MM-DD')); // Adjusted the date property name to 'bookingDate' and applied formatting
-        console.log(bookedDates, 'bookedDates');
+        
+        const bookedDates = data.map((item) => moment(item.date).format('YYYY-MM-DD'));
+
         setBooked(bookedDates);
-        setCalenderLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -104,17 +100,16 @@ export default BookingParking = props => {
       console.log(payload, 'payload')
 
 
-      
-      // const response = await axios.post(`${url}book-parking`, payload);
+      const response = await axios.post(`${url}book-parking`, payload);
 
-      // if(response.data === 'Parking Booked Successfully'){
-      //   alert('Parking Booked Successfully');
-      //   props?.navigation.navigate('Home');
-      // }
-      // else{
-      //   alert('Parking Already Booked');
-      //   props?.navigation.navigate('Home');
-      // }
+      if(response.data === 'Parking Booked Successfully'){
+        alert('Parking Booked Successfully');
+        props?.navigation.navigate('Home');
+      }
+      else{
+        alert('Parking Already Booked');
+        props?.navigation.navigate('Home');
+      }
 
 
       setBooked(null);
@@ -334,42 +329,39 @@ export default BookingParking = props => {
               Select Dates
             </Text>
 
- 
             <View
-  style={{
-    borderRadius: 12,
-  }}
->
-  {calenderLoading ? (
-    <ActivityIndicator size="large" color={colors.themeColor} />
-  ) : (
-    <Calendar
-      theme={{
-        selectedDayBackgroundColor: colors.themeColor,
-        monthTextColor: colors.themeColor,
-        todayTextColor: colors.themeColor,
-        arrowColor: colors.themeColor,
-        monthTextFontSize: 20,
-        dayTextColor: colors.themeColor,
-        disabledArrowColor: colors.themeColor,
-        textDayFontWeight: 'bold',
-        textMonthFontWeight: 'bold',
-        textDayHeaderFontWeight: 'bold',
-        textDayFontSize: 16,
-        textMonthFontSize: 16,
-        textDayHeaderFontSize: 16,
-      }}
-      disableAllTouchEventsForDisabledDays={true}
-      minDate={currentDate}
-      markedDates={getMarkedDates(selectedDates)}
-      onDayPress={(day) => handleDateSelect(day.dateString)}
-      hideExtraDays={true}
-      showWeekNumbers={true}
-      hideDayNames={false}
-    />
-  )}
-</View>
 
+              style={{
+                borderRadius: 12,
+
+              }}
+            >
+              <Calendar
+                theme={{
+                  selectedDayBackgroundColor: colors.themeColor,
+                  monthTextColor: colors.themeColor,
+                  todayTextColor: colors.themeColor,
+                  arrowColor: colors.themeColor,
+                  monthTextFontSize: 20,
+                  dayTextColor: colors.themeColor,
+                  disabledArrowColor: colors.themeColor,
+                  textDayFontWeight: 'bold',
+                  textMonthFontWeight: 'bold',
+                  textDayHeaderFontWeight: 'bold',
+                  textDayFontSize: 16,
+                  textMonthFontSize: 16,
+                  textDayHeaderFontSize: 16,
+
+                }}
+                disableAllTouchEventsForDisabledDays={true}
+                minDate={currentDate}
+                markedDates={getMarkedDates(selectedDates)}
+                onDayPress={(day) => handleDateSelect(day.dateString)}
+                hideExtraDays={true}
+                showWeekNumbers={true}
+                hideDayNames={false}
+              />
+            </View>
 
           </View>
         </View>
