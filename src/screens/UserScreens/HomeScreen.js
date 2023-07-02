@@ -17,7 +17,7 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors } from '../../commons/Colors';
-// import url from '../../commons/axiosUrl';
+import uuid from 'react-native-uuid';
 import axios from 'axios';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../components/units';
 import url from '../../commons/axiosUrl';
@@ -27,6 +27,8 @@ import moment from 'moment';
 
 Feather.loadFont();
 MaterialCommunityIcons.loadFont();
+
+
 
 export default Home = props => {
   const [listOfBookings, setListOfBookings] = useState([]);
@@ -91,19 +93,19 @@ export default Home = props => {
 
   const NavItems = [
     {
-      id: 1,
+      id: 123,
       name: 'Find Parking',
       image: require('../../Images/icons8-parking-100.png'),
       screen: 'MyMap',
     },
     {
-      id: 2,
+      id: 234,
       name: 'Your Wallet',
       image: require('../../Images/wallete.png'),
       screen: 'E-Wallet',
     },
     {
-      id: 3,
+      id: 345,
       name: 'Your Bookings',
       image: require('../../Images/parkingbooking.png'),
       screen: 'AllBookings',
@@ -183,7 +185,6 @@ export default Home = props => {
             />
           </View>
         </View>
-
         <View style={[styles.popularWrapper]}>
           <View style={styles.headerWrapper}>
             <Text style={styles.titlesTitle}>Recent Bookings</Text>
@@ -192,91 +193,93 @@ export default Home = props => {
             </TouchableOpacity>
           </View>
 
-
-          {listOfBookings.length == 0 ? (
+          {listOfBookings.length === 0 ? (
             <Text style={{ textAlign: 'center', marginTop: 20, fontSize: 18, color: colors.textDark }}>
               No bookings found
             </Text>
-
           ) : (
             <>
-
               {listOfBookings
                 .filter((item, index) => index <= 4)
-                .map(item => (
-                  <TouchableWithoutFeedback key={item?.parkingBookingRecords?.id}>
-                    <View
-                      style={[
-                        styles.popularCardWrapper,
-                        {
-                          marginTop: item?.parkingBookingRecords?.id == 1 ? 10 : 20,
-                        },
-                      ]}>
-                      <View>
-                        <View style={styles.tagWrapper}>
-                          <View style={styles.tagText}>
-                            <Text style={styles.tagText}>Total Charges: Rs. {item?.parkingBookingRecords?.totalParkingCharges == null ? "N/A" : item?.parkingBookingRecords?.totalParkingCharges}</Text>
-                          </View>
-                          <View style={styles.popularTitlesWrapper}>
-                            <Text style={styles.popularTitlesTitle}>
-                              {item?.parkingBookingRecords?.parking?.parkingLocation ? item?.parkingBookingRecords?.parking?.parkingLocation.toString().substring(0, 50) : "N/A"}
-                            </Text>
-                            <Text style={styles.popularTitlesWeight}>
-                              <View style={styles.ratingWrapper}>
+                .map((item, index) => {
+                  const key = `${uuid.v4().toString()}${index.toString()}`;  
 
-                                <View>
-                                  <View style={{ flexDirection: 'row', marginTop: 13 }}>
-                                    {item?.bookingDates?.length > 1 &&
-                                      item?.bookingDates?.map((i, index) => (
-                                        <Text key={i?.bookingDate || item?.id}>
-                                          {moment(i?.bookingDate).format('DD-MM-YYYY').toString()}
-                                          {index !== item?.bookingDates?.length - 1 && ', '}
-                                        </Text>
-                                      ))}
-
-                                    {item?.bookingDates?.length == 1 &&
-                                      item?.bookingDates?.map((i, index) => (
-                                        <Text key={i?.bookingDate || item?.id}>
-                                          {moment(i?.bookingDate).format('DD-MM-YYYY').toString()}
-                                        </Text>
-                                      ))}
-                                  </View>
-
-
-                                </View>
-                              </View>
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.popularCardBottom}>
-                          <View style={styles.addPizzaButton}>
-                            <Text
-                              style={[
-                                styles.popularTitlesTitle,
-                                { fontWeight: 'bold', color: colors.white },
-                              ]}>
-                              PKR{item?.parkingBookingRecords?.parking?.parkingCharges}/Day
-                            </Text>
-                          </View>
-
+                  console.log(key);
+                  return (
+                    <TouchableWithoutFeedback key={key}>
+                      <View
+                        style={[
+                          styles.popularCardWrapper,
                           {
-                            item.isExpired ?
-                              <View style={styles.ratingWrapper}>
-                                <Text style={{ color: 'red' }}>Expired</Text>
-                              </View>
-                              :
+                            marginTop: item?.parkingBookingRecords?.id == 1 ? 10 : 20,
+                          },
+                        ]}>
+                        <View>
+                          <View style={styles.tagWrapper}>
+                            <View style={styles.tagText}>
+                              <Text style={styles.tagText}>Total Charges: Rs. {item?.parkingBookingRecords?.totalParkingCharges == null ? "N/A" : item?.parkingBookingRecords?.totalParkingCharges}</Text>
+                            </View>
+                            <View style={styles.popularTitlesWrapper}>
+                              <Text style={styles.popularTitlesTitle}>
+                                {item?.parkingBookingRecords?.parking?.parkingLocation ? item?.parkingBookingRecords?.parking?.parkingLocation.toString().substring(0, 50) : "N/A"}
+                              </Text>
+                              <Text style={styles.popularTitlesWeight}>
+                                <View style={styles.ratingWrapper}>
 
-                              null
-                          }
+                                  <View>
+                                    <View style={{ flexDirection: 'row', marginTop: 13 }}>
+                                      {item?.bookingDates?.length > 1 &&
+                                        item?.bookingDates?.map((i, index) => (
+                                          <Text key={uuid.v4()}>
+                                            {moment(i?.bookingDate).format('DD-MM-YYYY').toString()}
+                                            {index !== item?.bookingDates?.length - 1 && ', '}
+                                          </Text>
+                                        ))}
+
+                                      {item?.bookingDates?.length == 1 &&
+                                        item?.bookingDates?.map((i, index) => (
+                                          <Text key={uuid.v4()}>
+                                            {moment(i?.bookingDate).format('DD-MM-YYYY').toString()}
+                                          </Text>
+                                        ))}
+                                    </View>
+
+
+                                  </View>
+                                </View>
+                              </Text>
+                            </View>
+                          </View>
+                          <View style={styles.popularCardBottom}>
+                            <View style={styles.addPizzaButton}>
+                              <Text
+                                style={[
+                                  styles.popularTitlesTitle,
+                                  { fontWeight: 'bold', color: colors.white },
+                                ]}>
+                                PKR{item?.parkingBookingRecords?.parking?.parkingCharges}/Day
+                              </Text>
+                            </View>
+
+                            {
+                              item.isExpired ?
+                                <View style={styles.ratingWrapper}>
+                                  <Text style={{ color: 'red' }}>Expired</Text>
+                                </View>
+                                :
+
+                                null
+                            }
+                          </View>
+                        </View>
+
+                        <View style={styles.popularCardRight}>
+                          <Image source={item.image} style={styles.popularCardImage} />
                         </View>
                       </View>
-
-                      <View style={styles.popularCardRight}>
-                        <Image source={item.image} style={styles.popularCardImage} />
-                      </View>
-                    </View>
-                  </TouchableWithoutFeedback>
-                ))}
+                    </TouchableWithoutFeedback>
+                  );
+                })}
             </>
           )}
         </View>

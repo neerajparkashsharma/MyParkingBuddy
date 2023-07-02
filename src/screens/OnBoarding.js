@@ -70,8 +70,7 @@ const OnBoarding = ({navigation}) => {
   }, [navigation]);
   
   const handleSkip = () => {
-    navigation.pop(); 
-    navigation.navigate('Login');
+    navigation?.replace('Login');
   };
 
 

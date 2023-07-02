@@ -1,4 +1,4 @@
-export default url = 'http://192.168.10.24:8042/';
+export default url = 'http://192.168.10.3:8042/';
 
 
     

@@ -171,45 +171,45 @@ const PaymentBookingConfirmation = (props) => {
   const [expirationDateError, setExpirationDateError] = useState('');
   const [cvvError, setCVVError] = useState('');
   const [showActivityIndicator, setShowActivityIndicator] = useState(false);
-  
-  
+
+
   // Method for handling cardholder name change
   const handleCardholderNameChange = (cardholderName) => {
     // Update the state variable for cardholder name
     setCardholderName(cardholderName);
   };
-  
+
   // Method for handling expiration date change
   const handleExpirationDateChange = (expirationDate) => {
     // Update the state variable for expiration date
     setExpirationDate(expirationDate);
   };
-  
+
   // Method for handling CVV change
   const handleCVVChange = (cvv) => {
     // Update the state variable for CVV
     setCVV(cvv);
   };
-  
+
   // Event handlers
   const handleUseExistingCard = () => {
     setShowCardList(true);
     setShowPaymentForm(false);
   };
-  
+
   const handleAddNewCard = () => {
     setShowCardList(false);
     setShowPaymentForm(true);
   };
-  
+
   const handleSelectCard = (cardId) => {
     setSelectedCard(cardId);
   };
-  
+
   const handleCardNumberChange = (value) => {
     setCardNumber(value);
   };
-  
+
   const handleSubmitPayment = () => {
     // Perform validation on the entered card details
     let isValid = true;
@@ -219,46 +219,56 @@ const PaymentBookingConfirmation = (props) => {
     } else {
       setCardNumberError('');
     }
-  
+
     if (cardholderName === '') {
       setCardholderNameError('Please enter cardholder name');
       isValid = false;
     } else {
       setCardholderNameError('');
     }
-  
+
     if (expirationDate === '') {
       setExpirationDateError('Please enter expiration date');
       isValid = false;
     } else {
       setExpirationDateError('');
     }
-  
+
     if (cvv === '') {
       setCVVError('Please enter CVV');
       isValid = false;
     } else {
       setCVVError('');
     }
-  
-    // Proceed with payment if the form is valid
+
     if (isValid) {
-      // Show activity indicator
+
+
+      const payload = {
+        number: cardNumber,
+        cardholderName: cardholderName,
+        expiryDate: expirationDate,
+        cvv: cvv,
+      };
+
+      axios.post(`${url}CardDetails`, payload).then(
+        res => {
+          console.log(res.data);
+        }
+      ).catch(err => {
+        console.log(err.response.data);
+      })
+
       setShowActivityIndicator(true);
-  
-      // Simulate API call or payment processing
+
       setTimeout(() => {
-        // Hide activity indicator
         setShowActivityIndicator(false);
-  
-        // Reset form fields
+
         setCardNumber('');
         setCardholderName('');
         setExpirationDate('');
         setCVV('');
-  
-        // Display success message or navigate to the next step
-        // You can modify this part based on your application flow
+
         alert('Payment submitted successfully!');
       }, 2000);
     }
@@ -284,26 +294,47 @@ const PaymentBookingConfirmation = (props) => {
       expiry: 'Expires 09/26',
     },
   ];
-  
-useEffect(() => {
-    // Fetch card list from API
-    setCardList(mockCardList);
-  }, []);
-  
-const progressStepsRef = useRef(null);
 
-const handleGoBack = () => {
-  progressStepsRef.current?.goToPrevious();
-};
+
+  const [userId, setUserId] = useState();
+  useEffect(() => {
+    AsyncStorage.getItem('userId').then(
+      res => {
+        setUserId(res);
+      }
+    ).catch(err => {
+      console.log(err.response.data);
+    }
+    )
+  }, []);
+
+  useEffect(() => {
+    
+
+    // Fetch card list from API
+    axios.get(`${url}CardDetails/user/${userId}`).then(
+      res => {
+       setCardList(res.data);
+      }
+    ).catch(err => {
+      console.log(err.response.data);
+    }
+    )
+  }, []);
+
+  const progressStepsRef = useRef(null);
+
+  const handleGoBack = () => {
+    progressStepsRef.current?.goToPrevious();
+  };
 
   return (
     <View style={styles.container}>
-       <TouchableOpacity
-      style={styles.backButton}
-      onPress={handleGoBack}
-    >
-      <Icon name="arrow-back" size={28} color={colors.themeColor} />
-    </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={handleGoBack}>
+        <Icon name="arrow-back" size={28} color={colors.themeColor} />
+      </TouchableOpacity>
 
       <ProgressSteps
         activeStepIconBorderColor={colors.themeColor}
@@ -391,123 +422,123 @@ const handleGoBack = () => {
           </ScrollView>
         </ProgressStep>
         <ProgressStep label="Payment Details">
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.paymentContainer}>
-          <Text style={styles.paymentHeading}>Payment Method</Text>
-          <View style={styles.paymentMethodContainer}>
-            {/* Option 1: Use Existing Card */}
-            <TouchableOpacity
-              style={[
-                styles.paymentOptionContainer,
-                showCardList && styles.selectedPaymentOptionContainer,
-              ]}
-              onPress={handleUseExistingCard}
-            >
-              <View style={styles.paymentOptionIconContainer}>
-                <FontIcon name="credit-card" size={28} color={showCardList ? '#FFFFFF' : '#333333'} />
+          <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.paymentContainer}>
+              <Text style={styles.paymentHeading}>Payment Method</Text>
+              <View style={styles.paymentMethodContainer}>
+                {/* Option 1: Use Existing Card */}
+                <TouchableOpacity
+                  style={[
+                    styles.paymentOptionContainer,
+                    showCardList && styles.selectedPaymentOptionContainer,
+                  ]}
+                  onPress={handleUseExistingCard}
+                >
+                  <View style={styles.paymentOptionIconContainer}>
+                    <FontIcon name="credit-card" size={28} color={showCardList ? '#FFFFFF' : '#333333'} />
+                  </View>
+                  <Text
+                    style={[
+                      styles.paymentOptionText,
+                      showCardList && styles.selectedPaymentOptionText,
+                    ]}
+                  >
+                    Use Existing Card
+                  </Text>
+                </TouchableOpacity>
+                {/* Option 2: Add New Card */}
+                <TouchableOpacity
+                  style={[
+                    styles.paymentOptionContainer,
+                    showPaymentForm && styles.selectedPaymentOptionContainer,
+                  ]}
+                  onPress={handleAddNewCard}
+                >
+                  <View style={styles.paymentOptionIconContainer}>
+                    <FontIcon name="plus-circle" size={28} color={showPaymentForm ? '#FFFFFF' : '#333333'} />
+                  </View>
+                  <Text
+                    style={[
+                      styles.paymentOptionText,
+                      showPaymentForm && styles.selectedPaymentOptionText,
+                    ]}
+                  >
+                    Add New Card
+                  </Text>
+                </TouchableOpacity>
               </View>
-              <Text
-                style={[
-                  styles.paymentOptionText,
-                  showCardList && styles.selectedPaymentOptionText,
-                ]}
-              >
-                Use Existing Card
-              </Text>
-            </TouchableOpacity>
-            {/* Option 2: Add New Card */}
-            <TouchableOpacity
-              style={[
-                styles.paymentOptionContainer,
-                showPaymentForm && styles.selectedPaymentOptionContainer,
-              ]}
-              onPress={handleAddNewCard}
-            >
-              <View style={styles.paymentOptionIconContainer}>
-                <FontIcon name="plus-circle" size={28} color={showPaymentForm ? '#FFFFFF' : '#333333'} />
-              </View>
-              <Text
-                style={[
-                  styles.paymentOptionText,
-                  showPaymentForm && styles.selectedPaymentOptionText,
-                ]}
-              >
-                Add New Card
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+            </View>
 
-        {showCardList && (
-          <View style={styles.cardListContainer}>
-            <Text style={styles.cardListHeading}>Saved Cards</Text>
-            {cardList.map((card) => (
-              <TouchableOpacity
-                key={card.id}
-                style={[
-                  styles.savedCardContainer,
-                  selectedCard === card.id && styles.selectedCardContainer,
-                ]}
-                onPress={() => handleSelectCard(card.id)}
-              >
-                <Image source={card.image} style={styles.savedCardImage} />
-                <View style={styles.savedCardDetails}>
-                  <Text style={styles.savedCardNumber}>{card.number}</Text>
-                  <Text style={styles.savedCardExpiry}>{card.expiry}</Text>
+            {showCardList && (
+              <View style={styles.cardListContainer}>
+                <Text style={styles.cardListHeading}>Saved Cards</Text>
+                {cardList.map((card) => (
+                  <TouchableOpacity
+                    key={card?.id}
+                    style={[
+                      styles.savedCardContainer,
+                      selectedCard === card?.id && styles.selectedCardContainer,
+                    ]}
+                    onPress={() => handleSelectCard(card?.id)}
+                  >
+                    <Image source={card?.image} style={styles.savedCardImage} />
+                    <View style={styles.savedCardDetails}>
+                      <Text style={styles.savedCardNumber}>{card?.number}</Text>
+                      <Text style={styles.savedCardExpiry}>{card?.expiryDate}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            {showPaymentForm && (
+              <View style={styles.paymentFormContainer}>
+                <Text style={styles.paymentFormHeading}>Payment Details</Text>
+
+                <View style={styles.inputFieldContainer}>
+                  <FontIcon name="credit-card" size={20} color="#999999" style={styles.inputFieldIcon} />
+                  <TextInput
+                    style={styles.inputField}
+                    placeholder="Card Number"
+                    onChangeText={handleCardNumberChange}
+                  />
                 </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
 
-        {showPaymentForm && (
-          <View style={styles.paymentFormContainer}>
-            <Text style={styles.paymentFormHeading}>Payment Details</Text>
+                <View style={styles.inputFieldContainer}>
+                  <FontIcon name="user" size={20} color="#999999" style={styles.inputFieldIcon} />
+                  <TextInput
+                    style={styles.inputField}
+                    placeholder="Cardholder Name"
+                    onChangeText={handleCardholderNameChange}
+                  />
+                </View>
 
-            <View style={styles.inputFieldContainer}>
-              <FontIcon name="credit-card" size={20} color="#999999" style={styles.inputFieldIcon} />
-              <TextInput
-                style={styles.inputField}
-                placeholder="Card Number"
-                onChangeText={handleCardNumberChange}
-              />
-            </View>
+                <View style={styles.inputFieldContainer}>
+                  <FontIcon name="calendar" size={20} color="#999999" style={styles.inputFieldIcon} />
+                  <TextInput
+                    style={styles.inputField}
+                    placeholder="Expiration Date (MM/YY)"
+                    onChangeText={handleExpirationDateChange}
+                  />
+                </View>
 
-            <View style={styles.inputFieldContainer}>
-              <FontIcon name="user" size={20} color="#999999" style={styles.inputFieldIcon} />
-              <TextInput
-                style={styles.inputField}
-                placeholder="Cardholder Name"
-                onChangeText={handleCardholderNameChange}
-              />
-            </View>
+                <View style={styles.inputFieldContainer}>
+                  <FontIcon name="lock" size={20} color="#999999" style={styles.inputFieldIcon} />
+                  <TextInput
+                    style={styles.inputField}
+                    placeholder="CVV"
+                    onChangeText={handleCVVChange}
+                    secureTextEntry
+                  />
+                </View>
 
-            <View style={styles.inputFieldContainer}>
-              <FontIcon name="calendar" size={20} color="#999999" style={styles.inputFieldIcon} />
-              <TextInput
-                style={styles.inputField}
-                placeholder="Expiration Date (MM/YY)"
-                onChangeText={handleExpirationDateChange}
-              />
-            </View>
-
-            <View style={styles.inputFieldContainer}>
-              <FontIcon name="lock" size={20} color="#999999" style={styles.inputFieldIcon} />
-              <TextInput
-                style={styles.inputField}
-                placeholder="CVV"
-                onChangeText={handleCVVChange}
-                secureTextEntry
-              />
-            </View>
-
-            <TouchableOpacity style={styles.submitButton} onPress={handleSubmitPayment}>
-              <Text style={styles.submitButtonText}>Submit Payment</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </ScrollView>
-    </ProgressStep>
+                <TouchableOpacity style={styles.submitButton} onPress={handleSubmitPayment}>
+                  <Text style={styles.submitButtonText}>Submit Payment</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </ScrollView>
+        </ProgressStep>
 
 
         <ProgressStep label="Third Step">
@@ -629,6 +660,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   paymentContainer: {
+    marginHorizontal: 20,
     marginBottom: 20,
   },
   paymentHeading: {
@@ -648,18 +680,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: '#CCCCCC',
-    marginRight: 10,
+    borderColor: colors.themeColor,
+    marginHorizontal: 5,
   },
+
+
   selectedPaymentOptionContainer: {
-    backgroundColor: '#F1C40F',
-    borderColor: '#F1C40F',
+    backgroundColor: colors.themeColor,
+    borderColor: colors.themeColor,
   },
   paymentOptionIconContainer: {
-    marginRight: 10,
+    marginRight: 5,
   },
   paymentOptionText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#333333',
   },
   selectedPaymentOptionText: {
@@ -667,11 +701,14 @@ const styles = StyleSheet.create({
   },
   cardListContainer: {
     marginBottom: 20,
+    marginLeft: 20,
+    width: '90%',
   },
   cardListHeading: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
+
   },
   savedCardContainer: {
     flexDirection: 'row',
@@ -682,10 +719,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: '#CCCCCC',
     marginBottom: 10,
+    width: '100%', // Set the width to 100%
+    margin: 5, // Add some margin left and right
   },
+
   selectedCardContainer: {
-    backgroundColor: '#F1C40F',
-    borderColor: '#F1C40F',
+    backgroundColor: colors.themeColor,
+    borderColor: colors.themeColor,
   },
   savedCardImage: {
     width: 40,
@@ -709,14 +749,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    left: 25,
   },
   inputFieldContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    width: '95%',
+
   },
   inputFieldIcon: {
-    marginRight: 10,
+    margin: 10,
   },
   inputField: {
     flex: 1,
@@ -725,17 +768,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: '#CCCCCC',
     paddingLeft: 10,
+    margin: 5,
   },
   submitButton: {
     backgroundColor: colors.themeColor,
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    width: '70%',
+    // paddingHorizontal: 20,
     borderRadius: 5,
-    alignItems: 'center',
+    alignSelf: 'center',
   },
   submitButtonText: {
     fontSize: 16,
     color: '#FFFFFF',
+    textAlign: 'center'
   },
 
 });
