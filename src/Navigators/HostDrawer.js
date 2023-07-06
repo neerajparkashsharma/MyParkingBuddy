@@ -32,11 +32,11 @@ export default function HostDrawer({navigation}) {
         component={VehicleParkingRegistration}
         options={{headerShown: false}}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="E-Wallet"
         component={EWallet}
         options={{headerShown: false}}
-      />
+      /> */}
 
       <Drawer.Screen
         name="Profile"

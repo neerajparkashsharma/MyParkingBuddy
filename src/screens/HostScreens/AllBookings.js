@@ -44,6 +44,18 @@ const AllBookings = props => {
     setQRType(null);
   };
 
+  const [walletAmount, setWalletAmount] = useState(0);
+
+  const getWalletAmount = async (hostId) => {
+    try {
+      const response = await axios.get(url + `booking/wallet/${hostId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch wallet amount:', error);
+      return 0;
+    }
+  };
+
 
   const takeScreenShot = () => {
     // To capture Screenshot
@@ -83,13 +95,16 @@ const AllBookings = props => {
         axios
           .get(url + 'parking/host/' + value)
           .then(function (response) {
-            setLoading(false);
+            setLoading(false); 
             console.log(response.data);
             setListOfBookings(response.data);
           })
           .catch(function (error) {
             console.log(error);
           });
+
+        const walletAmount = await getWalletAmount(value);
+        setWalletAmount(walletAmount);
       }
     } catch (e) {
       alert(e);
@@ -101,7 +116,7 @@ const AllBookings = props => {
     getData();
   }, [props]);
 
- 
+
 
 
 
@@ -144,89 +159,125 @@ const AllBookings = props => {
             <>
 
               <Headerx navigation={props.navigation} headerName={'All Parkings'} />
+
+              <Text style={{ fontSize: 16, fontWeight: 'bold', marginTop: 10 }}>
+                Wallet Amount: {walletAmount}
+              </Text>
+
               <ScrollView>
-                {listOfBookings.map((item, index) => (
+                {
 
-
-                  <View style={styles.container} key={item.createDate}>
-                    <Text style={styles.titleText}>Parking #{index + 1}</Text>
-
-                    <MaterialCommunityIcons
-                      name='pencil'
-                      size={30}
-                      style={{ position: 'absolute', top: SCREEN_HEIGHT / 40, right: SCREEN_WIDTH / 10 }}
-                      onPress={() => props.navigation.navigate('EditParking', { item: item })}
-                    />
-
-                    <Divider style={styles.divider} color="#BEBEBE" />
-
-                    <View style={styles.rowContainer}>
-                      <Text style={styles.labelText}>Check-In QR</Text>
-                      <TouchableOpacity onPress={() => openModal(item.checkInCode, "CHECK IN QR")}>
-                        <MaterialCommunityIcons
-                          style={styles.qrIcon}
-                          name="qrcode-scan"
-                          color="black"
-                          size={25}
-
-
-                        />
+                  listOfBookings.length == 0 ? (
+                    <>
+                      <Text style={{
+                        fontSize: 16,
+                        color: 'gray',
+                        textAlign: 'center',
+                        marginTop: 20,
+                      }}>No bookings available.</Text>
+                      <TouchableOpacity style={
+                        {
+                          backgroundColor: colors.themeColor,
+                          padding: 20,
+                          borderRadius: 5,
+                          marginTop: 20,
+                          alignSelf: 'center',
+                          color: 'white',
+                          // opacity: 0.8,
+                        }
+                      } onPress={() => props.navigation.navigate("ParkingRegistration")}>
+                        <Text style={{
+                          color: 'white',
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                        }}>Create Parking</Text>
                       </TouchableOpacity>
+                    </>
+                  ) :
+                    listOfBookings.map((item, index) => (
 
-                    </View>
 
-                    <View style={styles.rowContainer}>
-                      <Text style={styles.labelText}>Check-Out QR</Text>
-                      <TouchableOpacity onPress={() => item.checkOutCode == null ?  alert("No Any Code is set") :openModal(  item.checkOutCode, "CHECK OUT QR")}>
+                      <View style={styles.container} key={item.createDate}>
+                        <Text style={styles.titleText}>Parking #{index + 1}</Text>
+
                         <MaterialCommunityIcons
-                          style={styles.qrIcon}
-                          name="qrcode-scan"
-                          color="black"
-                          size={25}
-
-
+                          name='pencil'
+                          size={30}
+                          style={{ position: 'absolute', top: SCREEN_HEIGHT / 40, right: SCREEN_WIDTH / 10 }}
+                          onPress={() => props.navigation.navigate('EditParking', { item: item })}
                         />
-                      </TouchableOpacity>
 
-                    </View>
+                        <Divider style={styles.divider} color="#BEBEBE" />
 
-
-
-
-                    <View style={styles.rowContainer}>
-                      <Text style={styles.labelText}>Charges/hr:</Text>
-                      <Text style={styles.valueText}>Rs. {item.parkingCharges}</Text>
-                    </View>
-
-                    <View style={styles.buttonsContainer}>
-                      <Pressable style={styles.button} onPress={() => props?.navigation.navigate("ParkingBookingsDetails",{
-                        parkingId: item.id
-                      })}>
-                        <Text style={styles.buttonText}>View Bookings</Text>
-                      </Pressable>
-                    
-                    </View>
+                        <View style={styles.rowContainer}>
+                          <Text style={styles.labelText}>Check-In QR</Text>
+                          <TouchableOpacity onPress={() => openModal(item.checkInCode, "CHECK IN QR")}>
+                            <MaterialCommunityIcons
+                              style={styles.qrIcon}
+                              name="qrcode-scan"
+                              color="black"
+                              size={25}
 
 
-                    <Divider
-                      style={styles.divider}
-                      color="#BEBEBE"
-                      leadingInset={10}
-                      trailingInset={10}
-                    />
+                            />
+                          </TouchableOpacity>
 
-                    <View style={styles.locationContainer}>
-                      <Entypo
-                        style={styles.locationIcon}
-                        name="location-pin"
-                        color="red"
-                        size={25}
-                      />
-                      <Text style={styles.locationText}>{item?.parkingLocation}</Text>
-                    </View>
+                        </View>
 
-                  </View>
-                ))}
+                        <View style={styles.rowContainer}>
+                          <Text style={styles.labelText}>Check-Out QR</Text>
+                          <TouchableOpacity onPress={() => item.checkOutCode == null ? alert("No Any Code is set") : openModal(item.checkOutCode, "CHECK OUT QR")}>
+                            <MaterialCommunityIcons
+                              style={styles.qrIcon}
+                              name="qrcode-scan"
+                              color="black"
+                              size={25}
+
+
+                            />
+                          </TouchableOpacity>
+
+                        </View>
+
+
+
+
+                        <View style={styles.rowContainer}>
+                          <Text style={styles.labelText}>Charges/hr:</Text>
+                          <Text style={styles.valueText}>Rs. {item.parkingCharges}</Text>
+                        </View>
+
+                        <View style={styles.buttonsContainer}>
+                          <Pressable style={styles.button} onPress={() => props?.navigation.navigate("ParkingBookingsDetails", {
+                            parkingId: item.id
+                          })}>
+                            <Text style={styles.buttonText}>View Bookings</Text>
+                          </Pressable>
+
+                        </View>
+
+
+                        <Divider
+                          style={styles.divider}
+                          color="#BEBEBE"
+                          leadingInset={10}
+                          trailingInset={10}
+                        />
+
+                        <View style={styles.locationContainer}>
+                          <Entypo
+                            style={styles.locationIcon}
+                            name="location-pin"
+                            color="red"
+                            size={25}
+                          />
+                          <Text style={styles.locationText}>{item?.parkingLocation}</Text>
+                        </View>
+
+                      </View>
+                    ))}
+
+
               </ScrollView>
             </>
           )

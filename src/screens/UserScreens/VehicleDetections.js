@@ -222,11 +222,16 @@ const VehicleDetections = props => {
 
 
 
-
+const [detectionData,setDetectionData] = useState([])
   const fetchImages = async (value) => {
     try {
-      const response = await axios.get(`${url}all`);
-      setImages(response.data);
+      const response = await axios.get(`${url}all_detections`);
+      setDetectionData(response.data)
+      
+      setImages(detectionData.map((item,index)=>{
+         item.image
+      }))
+
       console.log('...............', response.data);
     } catch (error) {
       console.log('Error fetching images:', error);

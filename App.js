@@ -47,8 +47,8 @@ export default function App() {
 
   if (!isConnected) {
     return (
-      <View>
-        <Text>No internet connection</Text>
+      <View style={{justifyContent:'center', alignContent:'center'}}>
+        <Text style={{textAlign:'center',fontWeight:'bold'}}>No internet connection</Text>
       </View>
     );
   }

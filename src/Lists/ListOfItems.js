@@ -18,16 +18,11 @@ export const UserListOfDrawerItems = [
 
   {
     id: 3,
-    name: 'Vehicle Detection',
+    name: 'Detections History',
     icon: 'local-car-wash',
   },
 
-  {
-    id: 4,
-    name: 'Number Plate Detection',
-    icon: 'local-parking',
-  },
-
+ 
 
 
   
@@ -53,14 +48,14 @@ export const HostListOfDrawerItems = [
     icon: 'local-parking',
   },
 
-  {
-    id: 2,
-    name: 'E-Wallet',
-    icon: 'payment',
-  },
+  // {
+  //   id: 2,
+  //   name: 'E-Wallet',
+  //   icon: 'payment',
+  // },
 
   {
-    id: 3,
+    id: 2,
     name: 'Profile',
     icon: 'person',
   },

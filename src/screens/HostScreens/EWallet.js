@@ -30,7 +30,7 @@ const {width} = Dimensions.get('window');
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { color } from 'react-native-reanimated';
 
-const EWallet = props => {
+const EWalletHost = props => {
   const [isModalVisible, setModalVisible] = useState(false);
 
   [listOfBookings, setListOfBookings] = useState([]);
@@ -375,7 +375,7 @@ const EWallet = props => {
     </SafeAreaView>
   );
 };
-export default EWallet;
+export default EWalletHost;
 const styles = StyleSheet.create({
   container: {
     flex: 1,

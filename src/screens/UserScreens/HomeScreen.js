@@ -88,7 +88,7 @@ export default Home = props => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [isFocused]);
 
 
   const NavItems = [
@@ -125,7 +125,7 @@ export default Home = props => {
           styles.categoryItemWrapper,
           {
             backgroundColor: item.selected ? colors.themeColor : colors.white,
-            marginLeft: item.id == 1 ? 20 : 0,
+            marginLeft:13,
           },
         ]}>
         <Image source={item.image} style={styles.categoryItemImage} />

@@ -95,6 +95,7 @@ const ParkingRegistration = props => {
 
         .then(response => {
           alert(response.data);
+          props.navigation.navigate('ParkingBookings+');
         })
         .catch(error => alert('Something went wrong: ' + error));
     }

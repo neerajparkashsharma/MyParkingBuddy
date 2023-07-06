@@ -48,7 +48,7 @@ const PaymentBookingConfirmation = (props) => {
   const id = props.route.params?.id;
   const [booked, setBooked] = useState([]);
   const [selectedDates, setSelectedDates] = useState([]);
-
+  const [userId, setUserId] = useState(null);
   const currentDate = moment().format('YYYY-MM-DD');
 
   useEffect(() => {
@@ -73,6 +73,24 @@ const PaymentBookingConfirmation = (props) => {
     };
   }, [id]);
 
+
+   
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const res = await AsyncStorage.getItem('userdata');
+        console.log("/..user",res)
+        setUserId(res);
+
+        console.log("..iuser",userId)
+
+      } catch (err) {
+        console.log(err);
+      }
+    };
+  
+    getUserData();
+  }, []);
 
   useEffect(() => {
     axios
@@ -172,6 +190,40 @@ const PaymentBookingConfirmation = (props) => {
   const [cvvError, setCVVError] = useState('');
   const [showActivityIndicator, setShowActivityIndicator] = useState(false);
 
+  
+
+
+  const bookParking = async () => {
+    try {
+      const user_id = await AsyncStorage.getItem('userdata');
+  
+      const booking = {
+        parkingId: data?.id,
+        customerId: user_id,
+        bookingDates: selectedDates,
+      };
+  
+      const striperequest = {
+        amount: selectedDates.length * data?.parkingCharges * 24,
+        currency: 'usd',
+        source: 'tok_visa',
+        description: "for --> " + JSON.stringify(booking),
+      };
+  
+      await axios.post(`${url}book-parking`, booking);
+      alert('Parking Booked Successfully');
+  
+      await axios.post(`${url}stripe/payment/charge`, striperequest);
+      // alert('Payment Done Successfully');
+      
+      props?.navigation.navigate('Home');
+    } catch (error) {
+      console.error(error.response.data);
+    }
+  };
+  
+
+
 
   // Method for handling cardholder name change
   const handleCardholderNameChange = (cardholderName) => {
@@ -179,10 +231,19 @@ const PaymentBookingConfirmation = (props) => {
     setCardholderName(cardholderName);
   };
 
-  // Method for handling expiration date change
   const handleExpirationDateChange = (expirationDate) => {
+    let formattedExpirationDate = expirationDate;
+  
+    // Remove any non-numeric characters from the input
+    formattedExpirationDate = formattedExpirationDate.replace(/\D/g, '');
+  
+    // Add a "/" after two digits
+    if (formattedExpirationDate.length > 2) {
+      formattedExpirationDate = formattedExpirationDate.slice(0, 2) + '/' + formattedExpirationDate.slice(2);
+    }
+  
     // Update the state variable for expiration date
-    setExpirationDate(expirationDate);
+    setExpirationDate(formattedExpirationDate);
   };
 
   // Method for handling CVV change
@@ -202,78 +263,120 @@ const PaymentBookingConfirmation = (props) => {
     setShowPaymentForm(true);
   };
 
-  const handleSelectCard = (cardId) => {
+
+  const [selectCardNumber,setSelectedCardNumber] = useState('');
+  
+  const [selectedAccountTitle,setSelectedAccountTitle] = useState('');
+  const handleSelectCard = (cardId,accountTitle,cardNumber) => {
     setSelectedCard(cardId);
+    setSelectedAccountTitle(accountTitle);
+    setSelectedCardNumber(cardNumber);
+
+    if(selectedCard){
+      setShowNext(true);
+    }
   };
 
   const handleCardNumberChange = (value) => {
     setCardNumber(value);
   };
 
-  const handleSubmitPayment = () => {
+  const handleSubmitPayment = async() => {
     // Perform validation on the entered card details
     let isValid = true;
+  
     if (cardNumber === '') {
       setCardNumberError('Please enter card number');
+      isValid = false;
+    } else if (!/^\d{16}$/.test(cardNumber)) {
+      setCardNumberError('Card number should be 16 digits');
       isValid = false;
     } else {
       setCardNumberError('');
     }
-
+  
     if (cardholderName === '') {
       setCardholderNameError('Please enter cardholder name');
       isValid = false;
     } else {
       setCardholderNameError('');
     }
-
+  
     if (expirationDate === '') {
       setExpirationDateError('Please enter expiration date');
+      isValid = false;
+    } else if (!/^((0[1-9])|(1[0-2]))\/\d{2}$/.test(expirationDate)) {
+      setExpirationDateError('Expiration date should be in MM/YY format');
       isValid = false;
     } else {
       setExpirationDateError('');
     }
-
+  
     if (cvv === '') {
       setCVVError('Please enter CVV');
+      isValid = false;
+    } else if (!/^\d{3,4}$/.test(cvv)) {
+      setCVVError('CVV should be 3 or 4 digits');
       isValid = false;
     } else {
       setCVVError('');
     }
+    const user_id = await AsyncStorage.getItem('userdata');
 
     if (isValid) {
 
+      
 
       const payload = {
         number: cardNumber,
-        cardholderName: cardholderName,
+        accountTitle: cardholderName,
         expiryDate: expirationDate,
         cvv: cvv,
+        userId:user_id
       };
+  
+      axios
+        .post(`${url}stripe/payment/CardDetails/`, payload)
+        .then(res => {
+          alert('Card Added Success, Select from existing cards and proceed!');
 
-      axios.post(`${url}CardDetails`, payload).then(
-        res => {
+          
+           // Fetch updated card list from API
+        axios.get(`${url}CardDetails/user/${user_id}`)
+        .then(res => {
+          console.log(res.data)
+          setCardList(res.data);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+
+
           console.log(res.data);
-        }
-      ).catch(err => {
-        console.log(err.response.data);
-      })
-
+        })
+        .catch(err => {
+          
+        // alert(err.response.data);
+          console.log(err.response.data);
+        });
+  
       setShowActivityIndicator(true);
-
+  
       setTimeout(() => {
         setShowActivityIndicator(false);
-
+  
         setCardNumber('');
         setCardholderName('');
         setExpirationDate('');
         setCVV('');
-
-        alert('Payment submitted successfully!');
+  
       }, 2000);
     }
   };
+  
+  const [showNext,setShowNext] = useState(false);
 
+  const images= [require('../../Images/card1.png'), require('../../Images/card2.png'), require('../../Images/card3.png'), require('../../Images/card4.png'), require('../../Images/card5.png')]
   const mockCardList = [
     {
       id: 1,
@@ -296,37 +399,48 @@ const PaymentBookingConfirmation = (props) => {
   ];
 
 
-  const [userId, setUserId] = useState();
+  
   useEffect(() => {
-    AsyncStorage.getItem('userId').then(
-      res => {
+    AsyncStorage.getItem('userId')
+      .then(res => {
         setUserId(res);
-      }
-    ).catch(err => {
-      console.log(err.response.data);
-    }
-    )
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }, []);
-
+  
   useEffect(() => {
+    const fetchData = async () => {
     
-
-    // Fetch card list from API
-    axios.get(`${url}CardDetails/user/${userId}`).then(
-      res => {
-       setCardList(res.data);
-      }
-    ).catch(err => {
-      console.log(err.response.data);
-    }
-    )
+        try {
+          const user_id = await AsyncStorage.getItem('userdata');
+          const res = await axios.get(`${url}CardDetails/user/${user_id}`);
+          console.log(res.data)
+          setCardList(res.data);
+        } catch (err) {
+          console.log(err);
+        }
+      
+    };
+  
+    fetchData();
   }, []);
+  
+  
 
   const progressStepsRef = useRef(null);
 
   const handleGoBack = () => {
-    progressStepsRef.current?.goToPrevious();
+    try{
+    progressStepsRef?.current?.goToPrevious();
+  }
+  catch(Exception){
+    props?.navigation?.goBack();
+  }
+
   };
+  const randomNumber = Math.floor(Math.random() * 5) + 1;
 
   return (
     <View style={styles.container}>
@@ -352,7 +466,9 @@ const PaymentBookingConfirmation = (props) => {
         ref={progressStepsRef}
 
       >
-        <ProgressStep label="Parking Details" nextButtonStyle={buttonTextStyle}>
+        <ProgressStep label="Parking Details"  nextBtnStyle={{
+        display:  selectedDates.length > 0 ? 'flex' : 'none'
+        }}>
           <ScrollView>
             <View style={styles.header}>
               <TouchableOpacity
@@ -414,14 +530,22 @@ const PaymentBookingConfirmation = (props) => {
                 />
               </View>
             </View>
-            <View style={styles.bookNowContainer}>
-              <TouchableOpacity style={styles.btn} onPress={handleBooking}>
-                <Text style={styles.btnText}>Book Now</Text>
-              </TouchableOpacity>
-            </View>
+          
+{/* Display parking charges */}
+{selectedDates.length > 0 && (
+  <View style={styles.parkingChargesContainer}>
+    <Text style={styles.parkingChargesText}>
+      Parking Charges for {selectedDates.length} {selectedDates.length > 1 ? 'days' : 'day'}  = Rs. {selectedDates.length * 24 * (data?.parkingCharges || 0)}
+    </Text>
+  </View>
+)}
+
+
           </ScrollView>
         </ProgressStep>
-        <ProgressStep label="Payment Details">
+        <ProgressStep label="Payment Details"  nextBtnStyle={{
+    display: showNext ? 'flex':'none'
+  }}>
           <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.paymentContainer}>
               <Text style={styles.paymentHeading}>Payment Method</Text>
@@ -479,9 +603,11 @@ const PaymentBookingConfirmation = (props) => {
                       styles.savedCardContainer,
                       selectedCard === card?.id && styles.selectedCardContainer,
                     ]}
-                    onPress={() => handleSelectCard(card?.id)}
+                    onPress={() => handleSelectCard(card?.id,card?.accountTitle,card?.number)}
                   >
-                    <Image source={card?.image} style={styles.savedCardImage} />
+                    <Image source={
+                      images[randomNumber]
+                    } style={styles.savedCardImage} />
                     <View style={styles.savedCardDetails}>
                       <Text style={styles.savedCardNumber}>{card?.number}</Text>
                       <Text style={styles.savedCardExpiry}>{card?.expiryDate}</Text>
@@ -490,62 +616,97 @@ const PaymentBookingConfirmation = (props) => {
                 ))}
               </View>
             )}
+{showPaymentForm && (
+  <View style={styles.paymentFormContainer}>
+    <Text style={styles.paymentFormHeading}>Payment Details</Text>
 
-            {showPaymentForm && (
-              <View style={styles.paymentFormContainer}>
-                <Text style={styles.paymentFormHeading}>Payment Details</Text>
+    <View style={styles.inputFieldContainer}>
+      <FontIcon name="credit-card" size={20} color="#999999" style={styles.inputFieldIcon} />
+      <TextInput
+      value={cardNumber}
+        style={styles.inputField}
+        placeholder="Card Number"
+        onChangeText={handleCardNumberChange}
+      />
+    </View>
+    {cardNumberError !== '' && <Text style={styles.errorText}>{cardNumberError}</Text>}
 
-                <View style={styles.inputFieldContainer}>
-                  <FontIcon name="credit-card" size={20} color="#999999" style={styles.inputFieldIcon} />
-                  <TextInput
-                    style={styles.inputField}
-                    placeholder="Card Number"
-                    onChangeText={handleCardNumberChange}
-                  />
-                </View>
+    <View style={styles.inputFieldContainer}>
+      <FontIcon name="user" size={20} color="#999999" style={styles.inputFieldIcon} />
+      <TextInput
+        style={styles.inputField}
+        placeholder="Cardholder Name"
+        value={cardholderName}
+        onChangeText={handleCardholderNameChange}
+      />
+    </View>
+    {cardholderNameError !== '' && <Text style={styles.errorText}>{cardholderNameError}</Text>}
 
-                <View style={styles.inputFieldContainer}>
-                  <FontIcon name="user" size={20} color="#999999" style={styles.inputFieldIcon} />
-                  <TextInput
-                    style={styles.inputField}
-                    placeholder="Cardholder Name"
-                    onChangeText={handleCardholderNameChange}
-                  />
-                </View>
+    <View style={styles.inputFieldContainer}>
+      <FontIcon name="calendar" size={20} color="#999999" style={styles.inputFieldIcon} />
+      <TextInput
+        style={styles.inputField}
+        value={expirationDate}
+        keyboardType='numeric'
+        placeholder="Expiration Date (MM/YY)"
+        onChangeText={handleExpirationDateChange}
+      />
+    </View>
+    {expirationDateError !== '' && <Text style={styles.errorText}>{expirationDateError}</Text>}
 
-                <View style={styles.inputFieldContainer}>
-                  <FontIcon name="calendar" size={20} color="#999999" style={styles.inputFieldIcon} />
-                  <TextInput
-                    style={styles.inputField}
-                    placeholder="Expiration Date (MM/YY)"
-                    onChangeText={handleExpirationDateChange}
-                  />
-                </View>
+    <View style={styles.inputFieldContainer}>
+      <FontIcon name="lock" size={20} color="#999999" style={styles.inputFieldIcon} />
+      <TextInput
+        style={styles.inputField}
+        placeholder="CVV"
+        value={cvv}
+        onChangeText={handleCVVChange}
+        secureTextEntry
+      />
+    </View>
+    {cvvError !== '' && <Text style={styles.errorText}>{cvvError}</Text>}
 
-                <View style={styles.inputFieldContainer}>
-                  <FontIcon name="lock" size={20} color="#999999" style={styles.inputFieldIcon} />
-                  <TextInput
-                    style={styles.inputField}
-                    placeholder="CVV"
-                    onChangeText={handleCVVChange}
-                    secureTextEntry
-                  />
-                </View>
+    <TouchableOpacity style={styles.submitButton} onPress={handleSubmitPayment}>
+      <Text style={styles.submitButtonText}>Verify Card Details</Text>
+    </TouchableOpacity>
+  </View>
+)}
 
-                <TouchableOpacity style={styles.submitButton} onPress={handleSubmitPayment}>
-                  <Text style={styles.submitButtonText}>Submit Payment</Text>
-                </TouchableOpacity>
-              </View>
-            )}
           </ScrollView>
         </ProgressStep>
 
+        <ProgressStep label="Booking Confirmation">
+        <ScrollView contentContainerStyle={{ alignItems: 'flex-start', paddingHorizontal: 20 }}>
+    {/* Display confirmation details */}
+    <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: colors.themeColor }}>Confirmation Details</Text>
+    <Text style={{ fontSize: 16, marginBottom: 20, textAlign: 'center' }}>Booking Dates: {selectedDates.join(', ')}</Text>
 
-        <ProgressStep label="Third Step">
-          <View style={styles.stepContainer}>
-            <Text>This is the content within step 3!</Text>
-          </View>
-        </ProgressStep>
+    {/* Display booking summary */}
+    <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: colors.themeColor }}>Booking Summary</Text>
+    <Text style={{ fontSize: 16, marginBottom: 10, textAlign: 'center' }}>Parking Location: {data?.parkingLocation}</Text>
+    <Text style={{ fontSize: 16, marginBottom: 10, textAlign: 'center' }}>Parking Charges: {data?.parkingCharges}</Text>
+
+    {/* Display payment details */}
+    <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: colors.themeColor }}>Payment Details</Text>
+    <Text style={{ fontSize: 16, marginBottom: 10, textAlign: 'center' }}>Card Number: **** **** **** {selectCardNumber.slice(-4)}</Text>
+    <Text style={{ fontSize: 16, marginBottom: 10, textAlign: 'center' }}>Cardholder Name: {selectedAccountTitle}</Text>
+
+    {/* Add a button to submit the booking */}
+    <TouchableOpacity style={{ backgroundColor: colors.themeColor, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 5, marginTop: 20 }}
+    
+    onPress={bookParking}
+    >
+      <Text style={{ color: colors.white, fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}>Book Now</Text>
+    </TouchableOpacity>
+  </ScrollView>
+</ProgressStep>
+
+
+
+
+
+
+
       </ProgressSteps>
     </View>
   );
@@ -591,6 +752,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.themeColor,
     borderRadius: 12,
+  },
+  parkingChargesContainer: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  parkingChargesText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   priceText: {
     color: '#fff',
@@ -684,6 +854,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
 
+  errorText:{
+    color: 'red',
+    textAlign:'center',
+    // alignSelf:'center',
+    margin:10,
+  },
 
   selectedPaymentOptionContainer: {
     backgroundColor: colors.themeColor,
@@ -783,5 +959,40 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center'
   },
+  stepContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  confirmationHeading: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  confirmationText: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  bookingSummaryHeading: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  bookingSummaryText: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  bookNowButton: {
+    backgroundColor: '#007AFF',
+    padding: 10,
+    borderRadius: 5,
+  },
+  bookNowButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
 
 });

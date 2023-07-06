@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import url from '../../commons/axiosUrl';
 import axios from 'axios';
 import {
@@ -13,57 +13,52 @@ import {
   Button,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import {RNCamera} from 'react-native-camera'; 
-import {RNHoleView} from 'react-native-hole-view';
-
+import { RNCamera } from 'react-native-camera';
+import { RNHoleView } from 'react-native-hole-view';
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Headerx from '../../components/header.js';
-import { set } from 'lodash';
+
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
-console.disableYellowBox = true;
-const CheckInQR =  props => {
-    
-    const {bookingId,userId,parkingId} = props.route.params;
-    const [isActive, setIsActive] = useState(true);
-    const [loading, setLoading] = useState(false);
 
-  const onSuccess = e => {
-    // console.log(e.data);
-    //  setLoading(true);
-      axios
-        .post(url + 'booking/checkin', {
-        parkingId:parkingId,
-          checkInCode: e.data,
-          bookingId:bookingId,
-          userId:userId,
+const CheckInQR = (props) => {
+  const { bookingId, userId, parkingId } = props.route.params;
+  const [loading, setLoading] = useState(false);
+  const [isActive, setIsActive] = useState(true);
+  const [isRequestInProgress, setIsRequestInProgress] = useState(false);
 
-        })
+  const onSuccess = (e) => {
+    if (isRequestInProgress) return; // Prevent multiple requests
 
-        .then(function (response) {
-            setIsActive(false);
-            alert('Please park your vehicle in the parking area')
-        })
-        .catch(function (error) {
-            setLoading(false);
-           
-            if(error.response.status == 500)
-            {
-                alert("AI is not able to detect your vehicle. Please try again later")
-            }
-            else{
-                alert('Your QR code is not valid for this parking at this time')
-                setIsActive(true);
-        }
+    setIsRequestInProgress(true); // Set the flag to indicate the request is in progress
+    setLoading(true);
 
+    axios
+      .post(url + 'booking/checkin', {
+        parkingId: parkingId,
+        checkInCode: e.data,
+        bookingId: bookingId,
+        userId: userId,
+      })
+      .then(function (response) {
+        setIsRequestInProgress(false); // Reset the flag
+        setLoading(false);
+        setIsActive(false);
+
+        alert('Check In Successful, please proceed to your parking lot');
         props.navigation.navigate('Home');
-          console.log('error' + error);
-        });
-    
-   
-    // Alert.alert(e.data);
+      })
+      .catch(function (error) {
+        setIsRequestInProgress(false); // Reset the flag
+        setLoading(false);
+        alert('Your QR code is not valid for this parking at this time');
+        setIsActive(true);
+        props.navigation.navigate('Home');
+        console.log('error' + error);
+      });
   };
+
   const makeSlideOutTranslation = (translationType, fromValue) => {
     return {
       from: {
@@ -74,18 +69,18 @@ const CheckInQR =  props => {
       },
     };
   };
+
   const startScan = () => {
-    console.log('first');
     setIsActive(!isActive);
   };
+
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="blue" />
       </View>
     );
   }
-
 
   return (
     <View style={{ flex: 1, padding: 10, justifyContent: 'flex-start', alignItems: 'center' }}>

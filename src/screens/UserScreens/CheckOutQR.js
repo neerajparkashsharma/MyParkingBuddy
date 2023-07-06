@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import url from '../../commons/axiosUrl';
 import axios from 'axios';
 import {
@@ -13,53 +13,48 @@ import {
   Button,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import {RNCamera} from 'react-native-camera'; 
-import {RNHoleView} from 'react-native-hole-view';
-
+import { RNCamera } from 'react-native-camera';
+import { RNHoleView } from 'react-native-hole-view';
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Headerx from '../../components/header.js';
-import { set } from 'lodash';
+
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 console.disableYellowBox = true;
-const CheckOutQR =  props => {
-    
-    const {bookingId,userId,parkingId} = props.route.params;
-    const [isActive, setIsActive] = useState(true);
 
+const CheckOutQR = (props) => {
+  const { bookingId, userId, parkingId } = props.route.params;
+  const [isActive, setIsActive] = useState(true);
+  const [isRequestInProgress, setIsRequestInProgress] = useState(false);
 
-  const onSuccess = e => {
-    // console.log(e.data);
-     
-setIsActive(false);
-      axios
-        .post(url + 'booking/checkout', {
-        parkingId:parkingId,
+  const onSuccess = (e) => {
+    if (isRequestInProgress) return; // Prevent multiple requests
+
+    setIsRequestInProgress(true); // Set the flag to indicate the request is in progress
+
+    axios
+      .post(url + 'booking/checkout', {
+        parkingId: parkingId,
         checkOutCode: e.data,
-          bookingId:bookingId,
-          userId:userId,
-
-        })
-
-        .then(function (response) {
-            setIsActive(false);
-            alert('Check Out Successful')
-        })
-        .catch(function (error) {
-        
-            alert('Please scan the correct QR code')
-            setIsActive(true);
-        
-        
-
+        bookingId: bookingId,
+        userId: userId,
+      })
+      .then(function (response) {
+        setIsRequestInProgress(false); // Reset the flag
+        setIsActive(false);
+        alert('Check Out Successful');
         props.navigation.navigate('Home');
-          console.log('error' + error);
-        });
-    
-   
-    // Alert.alert(e.data);
+      })
+      .catch(function (error) {
+        setIsRequestInProgress(false); // Reset the flag
+        alert('Please scan the correct QR code');
+        setIsActive(true);
+        props.navigation.navigate('Home');
+        console.log('error' + error);
+      });
   };
+
   const makeSlideOutTranslation = (translationType, fromValue) => {
     return {
       from: {
@@ -70,64 +65,56 @@ setIsActive(false);
       },
     };
   };
+
   const startScan = () => {
-    console.log('first');
     setIsActive(!isActive);
   };
+
   return (
     <View style={{ flex: 1, padding: 10, justifyContent: 'flex-start', alignItems: 'center' }}>
- 
       <QRCodeScanner
-      showMarker
-      reactivateTimeout={4}
-      onRead={onSuccess}
-      reactivate={true}
-      cameraStyle={{ height: SCREEN_HEIGHT }}
+        showMarker
+        reactivateTimeout={4}
+        onRead={onSuccess}
+        reactivate={true}
+        cameraStyle={{ height: SCREEN_HEIGHT }}
         customMarker={
           <View style={styles.rectangleContainer}>
             <View style={styles.topOverlay}>
-              <Text style={{fontSize: 30, color: 'white'}}>QR CODE SCANNER</Text>
+              <Text style={{ fontSize: 30, color: 'white' }}>QR CODE SCANNER</Text>
             </View>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <View style={styles.leftAndRightOverlay} />
               <View style={styles.rectangle}>
-                <Icon
-                  name="ios-scan-sharp"
-                  size={SCREEN_WIDTH * 0.6}
-                  color="white"
-                />
+                <Icon name="ios-scan-sharp" size={SCREEN_WIDTH * 0.6} color="white" />
                 <Animatable.View
                   style={styles.scanBar}
                   direction="alternate-reverse"
                   iterationCount="infinite"
                   duration={1700}
                   easing="linear"
-                  animation={makeSlideOutTranslation(
-                    'translateY',
-                    SCREEN_WIDTH * -0.5,
-                  )}
+                  animation={makeSlideOutTranslation('translateY', SCREEN_WIDTH * -0.5)}
                 />
               </View>
               <View style={styles.leftAndRightOverlay} />
             </View>
-
             <View style={styles.bottomOverlay} />
           </View>
         }
       />
     </View>
-  )
+  );
+};
 
-
-}
-const overlayColor = 'rgba(0,0,0,0.5)'; // this gives us a black color with a 50% transparency
-const rectDimensions = SCREEN_WIDTH * 0.65; // this is equivalent to 255 from a 393 device width
-const rectBorderWidth = SCREEN_WIDTH * 0.005; // this is equivalent to 2 from a 393 device width
+const overlayColor = 'rgba(0,0,0,0.5)';
+const rectDimensions = SCREEN_WIDTH * 0.65;
+const rectBorderWidth = SCREEN_WIDTH * 0.005;
 const rectBorderColor = 'purple';
-const scanBarWidth = SCREEN_WIDTH * 0.46; // this is equivalent to 180 from a 393 device width
-const scanBarHeight = SCREEN_WIDTH * 0.0025; //this is equivalent to 1 from a 393 device width
+const scanBarWidth = SCREEN_WIDTH * 0.46;
+const scanBarHeight = SCREEN_WIDTH * 0.0025;
 const scanBarColor = '#22FF00';
 const iconScanColor = 'red';
+
 const styles = StyleSheet.create({
   centerText: {
     flex: 1,
@@ -187,4 +174,5 @@ const styles = StyleSheet.create({
     backgroundColor: scanBarColor,
   },
 });
+
 export default CheckOutQR;

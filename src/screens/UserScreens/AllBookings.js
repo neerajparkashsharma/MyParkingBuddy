@@ -67,6 +67,7 @@ const AllBookings = props => {
         axios
           .get(url + 'parkingBookingRecords/customer/' + value)
           .then(function (response) {
+            console.log(response.data);
             setLoading(false);
             setListOfBookings(response.data);
           })
@@ -260,7 +261,7 @@ const AllBookings = props => {
                               props?.navigation.navigate('Check In QR Scanner', {
                                 bookingId: item?.parkingBookingRecords?.id,
                                 userId: userid,
-                                parkingId: item?.parkingBookingRecordsparking?.id,
+                                parkingId: item?.parkingBookingRecords?.parking?.id,
 
                               });
                             }}
@@ -294,9 +295,9 @@ const AllBookings = props => {
 
                             onPress={() => {
                               props?.navigation.navigate('Check Out QR Scanner', {
-                                bookingId: item?.parkingBookingRecordsid,
+                                bookingId: item?.parkingBookingRecords?.id,
                                 userId: userid,
-                                parkingId: item?.parkingBookingRecordsparking?.id,
+                                parkingId: item?.parkingBookingRecords?.parking?.id,
                               });
                             }}
 
@@ -314,12 +315,12 @@ const AllBookings = props => {
                               Check Out
                             </Text>
                           </TouchableOpacity>
-
+{/* 
                           <TouchableOpacity style={{ flexDirection: 'row', marginTop: 10 }}
 
                             onPress={() => {
                               props?.navigation.navigate('ChatRoom', {
-                                bookingId: item?.parkingBookingRecordsid,
+                                bookingId: item?.parkingBookingRecords?.id,
                                 userId: userid,
                                 parki8ngId: item?.parkingBookingRecordsparking?.id,
 
@@ -335,7 +336,7 @@ const AllBookings = props => {
 
                             <Icon name="md-chatbubble-ellipses-outline" size={0.07 * SCREEN_WIDTH} color={colors.themeColor} style={{ marginRight: 0.02 * SCREEN_WIDTH }} />
 
-                          </TouchableOpacity>
+                          </TouchableOpacity> */}
 
                         </View>
                       )}
@@ -515,9 +516,9 @@ const AllBookings = props => {
 
                               onPress={() => {
                                 props?.navigation.navigate('Check Out QR Scanner', {
-                                  bookingId: item?.parkingBookingRecordsid,
+                                  bookingId: item?.parkingBookingRecords?.id,
                                   userId: userid,
-                                  parkingId: item?.parkingBookingRecordsparking?.id,
+                                  parkingId: item?.parkingBookingRecords?.parking?.id,
                                 });
                               }}
 
@@ -535,7 +536,7 @@ const AllBookings = props => {
                                 Check Out
                               </Text>
                             </TouchableOpacity>
-
+{/* 
                             <TouchableOpacity style={{ flexDirection: 'row', marginTop: 10 }}
 
                               onPress={() => {
@@ -556,7 +557,7 @@ const AllBookings = props => {
 
                               <Icon name="md-chatbubble-ellipses-outline" size={0.07 * SCREEN_WIDTH} color={colors.themeColor} style={{ marginRight: 0.02 * SCREEN_WIDTH }} />
 
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
 
                           </View>
                         )}

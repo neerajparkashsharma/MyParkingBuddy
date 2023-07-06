@@ -15,11 +15,11 @@ import { Button, Drawer } from 'react-native-paper';
 import { HostListOfDrawerItems } from '../../Lists/ListOfItems';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../../components/units';
 import url from '../../commons/axiosUrl';
+import { StackActions } from '@react-navigation/native';
 
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const HostCustomDrawer = props => {
-
 
 
 
@@ -160,7 +160,20 @@ const HostCustomDrawer = props => {
       </View>
       <TouchableOpacity
         style={styles.container}
-        onPress={() => props?.navigation.navigate('Login')}>
+        onPress={async () => 
+        {
+          try {
+            await AsyncStorage.removeItem('userdata');
+            await AsyncStorage.removeItem('token');
+            await AsyncStorage.removeItem('role');
+      
+            props?.navigation.dispatch(StackActions?.popToTop());
+            props?.navigation.navigate('Login');
+          } catch (error) {
+            console.log('Error occurred while logging out:', error);
+          }
+
+        }}>
         <Icon name="logout" size={25} style={styles.icon} />
         <Text style={styles.text}>Logout</Text>
       </TouchableOpacity>
