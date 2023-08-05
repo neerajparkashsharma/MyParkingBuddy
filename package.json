@@ -11,6 +11,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@notifee/react-native": "^7.6.1",
     "@react-native-async-storage/async-storage": "^1.17.10",
     "@react-native-community/geolocation": "^3.0.3",
     "@react-navigation/drawer": "^6.5.6",
@@ -54,7 +55,6 @@
     "react-native-svg-transformer": "^1.0.0",
     "react-native-swiper": "^1.6.0",
     "react-native-table-component": "^1.2.2",
-    "react-native-toast-message": "^2.1.5",
     "react-native-vector-icons": "^9.2.0",
     "react-native-vega-scroll-list": "^1.0.0",
     "react-redux": "^8.0.5",

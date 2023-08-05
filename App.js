@@ -8,6 +8,7 @@ import 'react-native-gesture-handler';
 import SignUpOptions from './src/screens/commonScreens/SignUpOptions';
 import GuestSignUp from './src/screens/UserScreens/GuestSignUp';
 import Imge from './src/screens/HostScreens/ParkingRegistration';
+import Toast from 'react-native-toast-message';
 
 import AllBookings from './src/screens/UserScreens/AllBookings';
 import VisionCamera from './src/screens/QRScanning';
@@ -23,17 +24,24 @@ import CardDetails from './src/screens/UserScreens/CardDetails';
 import DrawerNavigator from './src/Navigators/DrawerNavigator';
 import LocationSettings from './src/screens/UserScreens/LocationSettings';
 import HostDrawer from './src/Navigators/HostDrawer';
+import Alerts from './src/screens/HostScreens/Alerts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function App() {
   return (
     <NavigationContainer>
 
- 
+
      
-      <Stack.Navigator initialRouteName="OnBoarding">
+      <Stack.Navigator initialRouteName="Alerts">
         <Stack.Screen
           name="OnBoarding"
           component={OnBoarding}
+          options={{headerShown: false}}
+        />
+          <Stack.Screen
+          name="Alerts"
+          component={Alerts}
           options={{headerShown: false}}
         />
 
@@ -122,6 +130,7 @@ export default function App() {
         {/* <Stack.Screen name="QRScan" component={Scan} options={{headerShown: false}}/> */}
         {/* <Stack.Screen name="QRScan" component={QRScan} options={{headerShown: false}}/> */}
       </Stack.Navigator>
+    
     </NavigationContainer>
   );
   0;

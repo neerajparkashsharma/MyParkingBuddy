@@ -35,7 +35,7 @@ const Settings = props => {
           }}>
           <Image
             style={{alignSelf: 'center', marginTop: 10}}
-            source={require('../../Images/icons8-user-shield-100.png')}></Image>
+            source={require('../../Images/icons8-user-shield-96.png')}></Image>
           <Text
             style={{
               color: colors.themeColor,
@@ -63,7 +63,7 @@ const Settings = props => {
           >
           <Image
             style={{alignSelf: 'center', marginTop: 10}}
-            source={require('../../Images/icons8-location-100.png')}></Image>
+            source={require('../../Images/icons8-place-marker-96.png')}></Image>
           <Text
             style={{
               color: colors.themeColor,
@@ -98,7 +98,7 @@ const Settings = props => {
           }}>
           <Image
             style={{alignSelf: 'center', marginTop: 10}}
-            source={require('../../Images/icons8-male-user-100.png')}></Image>
+            source={require('../../Images/icons8-account-10.png')}></Image>
           <Text
             style={{
               color: colors.themeColor,
@@ -122,7 +122,7 @@ const Settings = props => {
           }}>
           <Image
             style={{alignSelf: 'center', marginTop: 10}}
-            source={require('../../Images/icons8-terms-and-conditions-100.png')}></Image>
+            source={require('../../Images/icons8-terms-and-conditions-96.png')}></Image>
           <Text
             style={{
               color: colors.themeColor,
