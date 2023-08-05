@@ -19,6 +19,7 @@ import {RNHoleView} from 'react-native-hole-view';
 
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Headerx from '../components/header.js';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 console.disableYellowBox = true;
@@ -32,8 +33,7 @@ const VisionCamera = ({route, navigation}) => {
 
   const onSuccess = e => {
     console.log(e.data);
-    //console.log(Ischeckout);
-   
+     
       axios
         .post(url + 'bookingVehicles', {
           parkingBookingRecords: {id: JSON.stringify(bookingId)},
@@ -67,47 +67,52 @@ const VisionCamera = ({route, navigation}) => {
     setIsActive(!Isactive);
   };
   return (
-    <QRCodeScanner
-      showMarker
-      reactivateTimeout={4}
-      onRead={onSuccess}
-      reactivate={Isactive}
-      cameraStyle={{height: SCREEN_HEIGHT}}
-      customMarker={
-        <View style={styles.rectangleContainer}>
-          <View style={styles.topOverlay}>
-            <Text style={{fontSize: 30, color: 'white'}}>QR CODE SCANNER</Text>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <View style={styles.leftAndRightOverlay} />
-            <View style={styles.rectangle}>
-              <Icon
-                name="ios-scan-sharp"
-                size={SCREEN_WIDTH * 0.6}
-                color="white"
-              />
-              <Animatable.View
-                style={styles.scanBar}
-                direction="alternate-reverse"
-                iterationCount="infinite"
-                duration={1700}
-                easing="linear"
-                animation={makeSlideOutTranslation(
-                  'translateY',
-                  SCREEN_WIDTH * -0.5,
-                )}
-              />
+    <View style={{ flex: 1, padding: 10, justifyContent: 'space-around', alignItems: 'center' }}>
+    <Headerx navigation={navigation} headerName={'QR SCANNING'}/>
+
+      <QRCodeScanner
+        showMarker
+        reactivateTimeout={4}
+        onRead={onSuccess}
+        reactivate={Isactive}
+        cameraStyle={{height: SCREEN_HEIGHT}}
+        customMarker={
+          <View style={styles.rectangleContainer}>
+            <View style={styles.topOverlay}>
+              <Text style={{fontSize: 30, color: 'white'}}>QR CODE SCANNER</Text>
             </View>
-            <View style={styles.leftAndRightOverlay} />
+            <View style={{flexDirection: 'row'}}>
+              <View style={styles.leftAndRightOverlay} />
+              <View style={styles.rectangle}>
+                <Icon
+                  name="ios-scan-sharp"
+                  size={SCREEN_WIDTH * 0.6}
+                  color="white"
+                />
+                <Animatable.View
+                  style={styles.scanBar}
+                  direction="alternate-reverse"
+                  iterationCount="infinite"
+                  duration={1700}
+                  easing="linear"
+                  animation={makeSlideOutTranslation(
+                    'translateY',
+                    SCREEN_WIDTH * -0.5,
+                  )}
+                />
+              </View>
+              <View style={styles.leftAndRightOverlay} />
+            </View>
+
+            <View style={styles.bottomOverlay} />
           </View>
+        }
+      />
+    </View>
+  )
 
-          <View style={styles.bottomOverlay} />
-        </View>
-      }
-    />
-  );
-};
 
+}
 const overlayColor = 'rgba(0,0,0,0.5)'; // this gives us a black color with a 50% transparency
 const rectDimensions = SCREEN_WIDTH * 0.65; // this is equivalent to 255 from a 393 device width
 const rectBorderWidth = SCREEN_WIDTH * 0.005; // this is equivalent to 2 from a 393 device width

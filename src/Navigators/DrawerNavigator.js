@@ -11,6 +11,15 @@ import FindParking from '../screens/UserScreens/FindParking';
 import Settings from '../screens/UserScreens/Settings';
 import LocationSettings from '../screens/UserScreens/LocationSettings';
 import BookingParking from '../screens/UserScreens/ParkingBooking';
+import NumberPlateDetections from '../screens/UserScreens/NumberPlateDetections';
+import VehicleDetections from '../screens/UserScreens/VehicleDetections';
+import UserPayment from '../screens/UserScreens/UserPayment';
+import VoiceToText from '../screens/UserScreens/test';
+import ParkingDetails from '../screens/UserScreens/ParkingDetails';
+import CheckInQR from '../screens/UserScreens/CheckInQR';
+import CheckOutQR from '../screens/UserScreens/CheckOutQR';
+import ChatRoom from '../screens/UserScreens/BookingChat';
+import PaymentBookingConfirmation from '../screens/UserScreens/PaymentBookingConfirmation';
 const Drawer = createDrawerNavigator();
 
 export default function DrawerNavigator({navigation}) {
@@ -19,11 +28,13 @@ export default function DrawerNavigator({navigation}) {
       useLegacyImplementation
       initialRouteName="Home"
       drawerContent={props => <UserDrawerCustom {...props} />}>
-      
       <Drawer.Screen
         name="Home"
         component={Home}
-        options={{headerShown: false}}
+        options={{
+          
+          
+          headerShown: false}}
       />
 
       <Drawer.Screen
@@ -37,23 +48,30 @@ export default function DrawerNavigator({navigation}) {
         options={{headerShown: false}}
       />
       <Drawer.Screen
+       name="VehicleDetection"
+       component={VehicleDetections}
+       options={{headerShown: false}}/>
+
+      <Drawer.Screen
+       name="NumberPlatesDetection"
+       component={NumberPlateDetections}
+       options={{headerShown: false}}/>
+
+      <Drawer.Screen
         name="Settings"
         component={Settings}
         options={{headerShown: false}}
       />
 
       <Drawer.Screen
-      name='LocationSettings'
-      component={LocationSettings}
-      options={{headerShown:false}}
-
-
+        name="LocationSettings"
+        component={LocationSettings}
+        options={{headerShown: false}}
       />
       <Drawer.Screen
-
-      name='BookParking'
-      component={BookingParking}
-      options={{headerShown:false}}
+        name="BookParking"
+        component={PaymentBookingConfirmation}
+        options={{headerShown: false}}
       />
 
       <Drawer.Screen
@@ -72,6 +90,35 @@ export default function DrawerNavigator({navigation}) {
         component={Profile}
         options={{headerShown: false}}
       />
+      <Drawer.Screen
+        name="UserPayment"
+        component={UserPayment}
+        options={{headerShown: false}}
+        />
+        <Drawer.Screen
+        name="BookingsParkingDetails"
+        component={ParkingDetails}
+        options={{headerShown: false}}
+        />
+
+<Drawer.Screen
+        name="Check In QR Scanner"
+        component={CheckInQR}
+        options={{headerShown: true}}
+        />
+
+<Drawer.Screen
+        name="Check Out QR Scanner"
+        component={CheckOutQR}
+        options={{headerShown: true}}
+        />
+
+<Drawer.Screen
+        name="ChatRoom"
+        component={ChatRoom}
+        options={{headerShown: false}}
+        />
+
 
     </Drawer.Navigator>
   );

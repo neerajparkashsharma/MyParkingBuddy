@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ImageBackground,
   ScrollView,
@@ -8,334 +8,381 @@ import {
   Text,
   FlatList,
   View,
+  TouchableWithoutFeedback,
+  TimePickerAndroid,
+  Button,
+  TextInput,
+  Linking,
 } from 'react-native';
-
+import { debounce, set } from 'lodash';
+import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+// import Intl from 'react-native-intl';
 import FIcon from 'react-native-vector-icons/Feather';
-import {colors} from '../../commons/Colors';
-
-import {SCREEN_WIDTH, SCREEN_HEIGHT} from '../../components/units';
+import { colors } from '../../commons/Colors';
+import MIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../../components/units';
 import Headerx from '../../components/header';
 import axios from 'axios';
 import url from '../../commons/axiosUrl';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default BookingParking = (props) => {
-  
-  [address, setAddress] = React.useState('');
-  const id = props.route.params?.id
+import { Calendar, LocaleConfig } from 'react-native-calendars';
+import { useIsFocused } from '@react-navigation/native';
+
+export default ParkingBooking = props => {
+  const isFocused = useIsFocused();
+
+ 
+  const [data, setData] = React.useState([]);
+  const id = props.route.params?.id;
+  const [booked, setBooked] = useState([]);
 
   useEffect(() => {
-    console.log(props)
-    console.log(id)
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${url}parking_dates_occupied/${id}`);
+        const { data } = response;
+        
+        const bookedDates = data.map((item) => moment(item.date).format('YYYY-MM-DD'));
 
-    axios.get(`${url}parking/${id}`).then((res) => {
-      console.log(res.data);
-      setAddress(res.data?.parkingLocation)
+        setBooked(bookedDates);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+
+    const interval = setInterval(fetchData, 60000); // Fetch data every 1 minute
+
+    return () => {
+      clearInterval(interval); // Clean up the interval on component unmount
+    };
+  }, [id]);
+
+
+
+
+
+
+
+
+  useEffect(() => {
+    axios
+      .get(`${url}parking/${id}`)
+      .then(res => {
+        console.log(res.data);
+        setData(res?.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, [isFocused]);
+
+
+ 
+  const [selectedDates, setSelectedDates] = useState([]); 
+
+  const handleBooking = async () => {
+    try {
+
+ 
+
+      const userId = await AsyncStorage.getItem('userdata'); 
+      console.log("inside handle booking")
+
+      const payload = {
+        parkingId: data?.id,
+        customerId: userId,
+        bookingDates: selectedDates,
+      }
+      console.log(payload, 'payload')
+
+
+      const response = await axios.post(`${url}book-parking`, payload);
+
+      if(response.data === 'Parking Booked Successfully'){
+        alert('Parking Booked Successfully');
+        props?.navigation.navigate('Home');
+      }
+      else{
+        alert('Parking Already Booked');
+        props?.navigation.navigate('Home');
+      }
+
+
+      setBooked(null);
+      setSelectedDates([]);
+      setData(null);
       
+
+      // axios.post(`${url}book-parking`, payload).then(
+      //   res => {
+      //     console.log(res.data);
+      //     if (res.data === 'Parking Booked Successfully')
+      //       alert('Parking Booked Successfully');
+      //     props?.navigation.navigate('Home');
+      //   }
+
+
+      // ).catch(err => {
+      //   setError(err.response.data);
+
+
+      // }
+      // )
+
+    } catch (error) {
+      console.error(error);
     }
-    ).catch((err) => {
-      console.log(err);
-    }
-    )
-  }, [])
 
+  
 
-  //   const item = route.params;
-  const ANIMAL_NAMES = [
-    {
-      id: 1,
-      name: '30 mins',
-      selected: true,
-    },
-    {
-      id: 2,
-      name: '1 hour',
-      selected: false,
-    },
-    {
-      id: 3,
-      name: '1.5 hours',
-      selected: false,
-    },
-    {
-      id: 4,
-      name: '2 hours',
-      selected: false,
-    },
-    {
-      id: 5,
-      name: '2.5',
-      selected: false,
-    },
-    {
-      id: 6,
-      name: '3',
-      selected: false,
-    },
-    {
-      id: 7,
-      name: '4',
-      selected: false,
-    },
-  ];
-  const Security = [
-    {
-      id: 1,
-      icon: 'camera',
-      name: 'Location With Camera ',
-      selected: false,
-    },
-    {
-      id: 2,
-      icon: 'camera-off',
-      name: 'Location Without Camera',
-      selected: false,
-    },
-  ];
-
-  const [selectedSecurity, setSelectedSecurity] = React.useState(null);
-
-  const handleSecuritySelection = (name) => {
-    setSelectedSecurity(name);
   };
 
-  const ItemRender = ({name, selected}) => (
-    <TouchableOpacity style={selected == true ? style.item2 : style.item}>
-      <Text style={selected == true ? style.itemText2 : style.itemText}>
-        {name}
-      </Text>
-    </TouchableOpacity>
-  );
 
-  const SecurityOptions = ({name, selected, icon}) => (
-    <TouchableOpacity style={selectedSecurity == name ? style.item2 : style.item}
-    onPress={() => handleSecuritySelection(name)}
-    >
-      <FIcon
-        name={icon}
-        size={25}
-        color={selectedSecurity == name ? 'white' : 'black'}
-      />
-    </TouchableOpacity>
-  );
 
-  const Separator = () => {
-    return (
-      <View
-        style={{
-          height: 50,
-          width: 10,
 
-          backgroundColor: 'white',
-        }}
-      />
-    );
+
+  // const handleDayPress = (day) => {
+  //   const selectedDate = day.dateString;
+
+  //   // Check if both from and to dates are already selected
+  //   if (fromDate && toDate) {
+  //     // Clear the selections if a new date is pressed
+  //     setFromDate(null);
+  //     setToDate(null);
+  //     setSelectedDates({});
+  //   } else if (!fromDate) {
+  //     // Select the first date (from date)
+  //     setFromDate(selectedDate);
+  //     const selectedDatesCopy = { [selectedDate]: { selected: true, selectedDotColor: 'orange' } };
+  //     setSelectedDates(selectedDatesCopy);
+  //   } else {
+  //     // Select the second date (to date)
+  //     setToDate(selectedDate);
+  //     const selectedDatesCopy = { ...selectedDates };
+  //     selectedDatesCopy[selectedDate] = { selected: true, selectedDotColor: 'orange' };
+  //     setSelectedDates(selectedDatesCopy);
+
+  //     // Validate the date range (optional)
+  //     if (new Date(selectedDate) < new Date(fromDate)) {
+  //       console.log('Invalid date range. "To" date should be after "From" date.');
+  //       // You can show an error message or perform any other action here
+  //       // You can also clear the selections and allow the user to select new dates
+  //       setFromDate(null);
+  //       setToDate(null);
+  //       setSelectedDates({});
+  //     } else {
+  //       // Valid date range, perform any necessary actions here
+  //       // You can calculate the duration, update the UI, etc.
+  //       console.log('Selected date range:', fromDate, 'to', selectedDate);
+  //     }
+  //   }
+  // };
+
+  const currentDate = moment().format('YYYY-MM-DD');
+
+  const handleDateSelect = (date) => {
+    const updatedDates = [...selectedDates];
+    if (selectedDates.includes(date)) {
+      // Date already selected, remove it
+      const index = updatedDates.indexOf(date);
+      updatedDates.splice(index, 1);
+    } else {
+      // Date not selected, add it
+      updatedDates.push(date);
+    }
+    setSelectedDates(updatedDates);
   };
+
+  const getMarkedDates = (dates) => {
+
+    const markedDates = {};
+
+
+    booked?.forEach((date) => {
+
+   
+
+      markedDates[date] = { disabled: true, disableTouchEvent: true, dotColor: 'red', selectedDotColor: 'red', selected: false, 
+      selectedColor: 'red'
+    };
+    });
+    
+    dates?.forEach((date) => {
+      markedDates[date] = { selected: true, selectedColor:  colors.themeColor };
+    });
+
+   
+
+    return markedDates;
+  };
+
+
+ 
+
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{
-        backgroundColor: 'white',
-        paddingBottom: 70,
-      }}>
-   <Headerx navigation={props?.navigation} headerName={'Booking Parking'}></Headerx>
-      <ImageBackground
-        style={style.headerImage}
-        source={require('../../Images/parking.jpeg')}>
-        <View style={style.header}>
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.themeColor,
-              width: 50,
-              height: 50,
-              borderColor: 'black',
-              borderRadius: 15,
-              borderLeftWidth: 2,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            onPress={() => console.log('object2')}>
-            <FIcon
-              name="phone-call"
-              size={28}
-              color={'white'}
-              // onPress={navigation.goBack}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.themeColor,
-              width: 50,
-              height: 50,
-              borderColor: 'black',
-              borderRadius: 15,
-              borderLeftWidth: 2,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            onPress={() => console.log('object')}>
-            <Icon name="place" size={28} color={'white'} />
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
-      <View>
-        <View
-          style={{marginTop: 20, paddingHorizontal: 10, flexDirection: 'row'}}>
-          <Icon name="place" size={25} color={'red'} />
-          <Text
-            style={{
-              fontSize: 23,
-              fontWeight: '600',
-              color: colors.themeColor,
-              marginBottom: 15,
-            }}>
-            Korangi Crossing
-          </Text>
-        </View>
-        <View>
-          <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 15}}>
-           Industrial Area, Karachi
-          </Text>
-          <View style={{flexDirection: 'row', marginLeft: 15}}>
-            <Icon name="star" size={25} color={'orange'} />
-            <Icon name="star" size={25} color={'orange'} />
-            <Icon name="star" size={25} color={'orange'} />
-            <Icon name="star" size={25} color={'orange'} />
-            <Icon name="star" size={25} color={'orange'} />
-          </View>
-        </View>
-        <View style={{marginTop: 23, paddingHorizontal: 20}}>
-          <Text
-            style={{
-              fontSize: 25,
-              fontWeight: '600',
-              color: colors.themeColor,
-              marginBottom: 15,
-            }}>
-            Parking Rates
-          </Text>
-          <ScrollView>
-            <FlatList
-              data={ANIMAL_NAMES}
-              renderItem={({item}) => (
-                <ItemRender name={item.name} selected={item.selected} />
-              )}
-              keyExtractor={item => item.id}
-              ItemSeparatorComponent={Separator}
-              horizontal={true}
-            />
-          </ScrollView>
 
+    <>
+      <Headerx
+        navigation={props?.navigation}
+        headerName={'Booking Parking'}></Headerx>
+      <ScrollView>
+
+        <ImageBackground
+          style={style.headerImage}
+          source={require('../../Images/bg.jpg')}>
+          <View style={style.header}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#0000ff',
+                width: 50,
+                height: 50,
+                borderRadius: 12,
+                marginRight: 5,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={() =>
+
+
+                Linking.openURL(`tel:${data?.contactNumber}`)
+
+              }>
+              <FIcon name="phone-call" size={28} color={'white'} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#cc0000',
+                width: 50,
+                height: 50,
+                borderRadius: 12,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: 5,
+              }}
+              onPress={() =>
+
+
+                //google maps
+
+                Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${data?.latitude},${data?.longitude}`)
+
+              }>
+              <Icon name="place" size={28} color={'white'} />
+            </TouchableOpacity>
+
+            <View
+              style={{
+                backgroundColor: colors.themeColor,
+                height: 50,
+                width: SCREEN_WIDTH/2,
+                borderRadius: 12,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+>
+                <Text
+                style={{
+                  color: "#fff",
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                }}>
+
+                Per Day Charges: Rs. {data?.parkingCharges*24}
+              </Text>
+            </View>
+          </View>
+        </ImageBackground>
+
+        <View>
           <View
             style={{
-              marginTop: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <View style={{flexDirection: 'row'}}>
-              <View style={{flexDirection: 'row'}}>
-                {/* <Icon name="star" size={20} color={'orange'} />
-                <Icon name="star" size={20} color={COLORS.orange} />
-                <Icon name="star" size={20} color={COLORS.orange} />
-                <Icon name="star" size={20} color={COLORS.orange} />
-                <Icon name="star" size={20} color={COLORS.grey} /> */}
-              </View>
-            </View>
-          </View>
-        </View>
-        <View
-          style={{
-            marginTop: 20,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingLeft: 20,
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              fontSize: 23,
-              fontWeight: '600',
-              color: colors.themeColor,
               marginTop: 20,
-            }}>
-            Payment Accepted
-          </Text>
-
-          <View style={style.priceTag}>
+              paddingHorizontal: 10,
+              flexDirection: 'row',
+            }}></View>
+          <View style={{ flexDirection: 'row' }}>
             <Text
               style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                color: 'white',
+                fontWeight: '700',
+                fontSize: SCREEN_HEIGHT / 45,
+                marginLeft: 15,
+                color: '#333333',
               }}>
-              $200
+              <Icon name="place" size={25} color={'#cc0000'} />
+              {data?.parkingLocation}
             </Text>
-          </View>
-        </View>
-        <View style={{marginTop: 20, paddingHorizontal: 20}}>
-          <ScrollView>
-            <FlatList
-              data={ANIMAL_NAMES}
-              renderItem={({item}) => (
-                <ItemRender name={item.name} selected={item.selected} />
-              )}
-              keyExtractor={item => item.id}
-              ItemSeparatorComponent={Separator}
-              horizontal={true}
-            />
-          </ScrollView>
-        </View>
-      </View>
-      <View style={{marginTop: 23, paddingHorizontal: 20}}>
-        <Text
-          style={{
-            fontSize: 25,
-            fontWeight: '600',
-            color: colors.themeColor,
-            marginBottom: 15,
-          }}>
-          Security
-        </Text>
-        <ScrollView>
-          <FlatList
-            data={Security}
-            renderItem={({item}) => (
-              <SecurityOptions
-                name={item.name}
-                selected={item.selected}
-                icon={item.icon}
-              />
-            )}
-            keyExtractor={item => item.id}
-            ItemSeparatorComponent={Separator}
-            horizontal={true}
-          />
-        </ScrollView>
 
-        <View
-          style={{
-            marginTop: 10,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
-          <View style={{flexDirection: 'row'}}>
-            <View style={{flexDirection: 'row'}}>
-              {/* <Icon name="star" size={20} color={'orange'} />
-                <Icon name="star" size={20} color={COLORS.orange} />
-                <Icon name="star" size={20} color={COLORS.orange} />
-                <Icon name="star" size={20} color={COLORS.orange} />
-                <Icon name="star" size={20} color={COLORS.grey} /> */}
+          </View>
+
+          <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: '600',
+                color: colors.themeColor,
+                marginBottom: 15,
+              }}>
+              Select Dates
+            </Text>
+
+            <View
+
+              style={{
+                borderRadius: 12,
+
+              }}
+            >
+              <Calendar
+                theme={{
+                  selectedDayBackgroundColor: colors.themeColor,
+                  monthTextColor: colors.themeColor,
+                  todayTextColor: colors.themeColor,
+                  arrowColor: colors.themeColor,
+                  monthTextFontSize: 20,
+                  dayTextColor: colors.themeColor,
+                  disabledArrowColor: colors.themeColor,
+                  textDayFontWeight: 'bold',
+                  textMonthFontWeight: 'bold',
+                  textDayHeaderFontWeight: 'bold',
+                  textDayFontSize: 16,
+                  textMonthFontSize: 16,
+                  textDayHeaderFontSize: 16,
+
+                }}
+                disableAllTouchEventsForDisabledDays={true}
+                minDate={currentDate}
+                markedDates={getMarkedDates(selectedDates)}
+                onDayPress={(day) => handleDateSelect(day.dateString)}
+                hideExtraDays={true}
+                showWeekNumbers={true}
+                hideDayNames={false}
+              />
             </View>
+
           </View>
         </View>
-        <View style={style.btn}>
-          <Text style={{color:'white', fontSize: 18, fontWeight: 'bold'}}>
-            Book Now
-          </Text>
+
+
+
+
+       
+
+        <View style={{ marginTop: 23, paddingHorizontal: 20 }}>
+          <TouchableOpacity style={style.btn} onPress={handleBooking}>
+            <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
+              Book Now
+            </Text>
+          </TouchableOpacity>
         </View>
-      </View>
-    </ScrollView>
+
+
+
+      </ScrollView>
+    </>
   );
 };
 
@@ -346,13 +393,33 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 40,
-    left: SCREEN_WIDTH / 6.5,   
+    left: SCREEN_WIDTH / 6.5,
     marginBottom: 70,
     backgroundColor: colors.themeColor,
     marginHorizontal: 20,
     borderRadius: 10,
   },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    padding: 10,
+    fontSize: 20,
+    flex: 1,
+    marginRight: 10,
+  },
+  container1: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  calendarContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    width: 300, height: 200,
 
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+  },
   priceTag: {
     height: 40,
     alignItems: 'center',
@@ -376,9 +443,7 @@ const style = StyleSheet.create({
   },
   headerImage: {
     height: 250,
-    top:15,
-    borderBottomRightRadius: 40,
-    borderBottomLeftRadius: 40,
+    top: 15,
     overflow: 'hidden',
   },
   header: {
@@ -393,6 +458,31 @@ const style = StyleSheet.create({
     backgroundColor: 'white',
   },
 
+  fieldTitle: {
+    fontSize: 14,
+    color: colors.gray,
+  },
+
+  bodyContainer: {
+    marginHorizontal: SCREEN_WIDTH / 21,
+    marginTop: SCREEN_HEIGHT / 25,
+  },
+
+  fieldContainer: {
+    borderWidth: 1,
+    borderColor: colors.themeColor,
+    borderRadius: 10,
+    paddingVertical: SCREEN_HEIGHT / 48,
+    paddingLeft: SCREEN_WIDTH / 23,
+    marginTop: SCREEN_HEIGHT / 67,
+  },
+
+  userName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.gray,
+  },
+
   titleText: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -403,8 +493,8 @@ const style = StyleSheet.create({
   item: {
     padding: 8,
 
-    width: 120,
-    height: 80,
+    width: 100,
+    height: 50,
 
     borderColor: '#c0c0c0',
     borderRadius: 5,
@@ -416,8 +506,8 @@ const style = StyleSheet.create({
   item2: {
     padding: 8,
 
-    width: 120,
-    height: 80,
+    width: 100,
+    height: 50,
     backgroundColor: colors.themeColor,
 
     borderColor: '#c0c0c0',
@@ -440,4 +530,3 @@ const style = StyleSheet.create({
     textAlign: 'center',
   },
 });
-

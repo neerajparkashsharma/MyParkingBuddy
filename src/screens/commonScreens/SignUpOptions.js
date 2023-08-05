@@ -20,9 +20,9 @@ const SignUpOptions = ({navigation}) => {
 
 <SafeAreaView style={{flex:1,backgroundColor:colors.white}}>   
 <Headerx navigation={navigation} headerName={"Sign Up Options"}/>
-<Text style={{flex:0.2, fontSize:SCREEN_WIDTH/19,color:colors.black,fontWeight:'500',textAlign:'center',top:SCREEN_WIDTH/7}}>Who are <Text style={{color:colors.themeColor,fontWeight:'bold', fontSize:SCREEN_WIDTH/11}}> YOU?</Text> </Text>
-     <View style={{ flex: 0.5,justifyContent:'space-between'}}>
-      <TouchableOpacity  onPress={() => navigation.navigate('SignUp')}>
+<Text style={{flex:0.2, fontSize:SCREEN_WIDTH/19,color:colors.black,fontWeight:'500',textAlign:'center',top:SCREEN_WIDTH/20}}>Who are <Text style={{color:colors.themeColor,fontWeight:'bold', fontSize:SCREEN_WIDTH/20}}> YOU?</Text> </Text>
+     <View style={{ flex: 2,justifyContent:'space-between'}}>
+      <TouchableWithoutFeedback  onPress={() => navigation.navigate('SignUp')}>
         <View style={homecardstyles.container}>
           <Image
             resizeMode="contain"
@@ -33,21 +33,21 @@ const SignUpOptions = ({navigation}) => {
           /> 
         </View>
        
-      </TouchableOpacity>
-      <Text style={{alignSelf:'center', fontSize: 20, fontWeight: 'bold', color: colors.themeColor}}>PARKING HOST</Text>
+      </TouchableWithoutFeedback>
+      <Text style={{alignSelf:'center', fontSize: 20, fontWeight: 'bold', color: colors.themeColor,bottom:20}}>PARKING HOST</Text>
        
-      <TouchableOpacity  onPress={() => navigation.navigate('GuestSignUp')}>
+      <TouchableWithoutFeedback  onPress={() => navigation.navigate('GuestSignUp')}>
         <View style={homecardstyles.container2}>
           <Image
             resizeMode="contain"
-            source={require('../../Images/spaceuser.png')}
+            source={require('../../Images/carparking.jpg')}
             borderTopLeftRadius={15}
             borderTopRightRadius={15}
-            style={homecardstyles.image}
+            style={homecardstyles.image1}
           />
         </View>
-      </TouchableOpacity> 
-      <Text style={{alignSelf:'center', fontSize: 20, fontWeight: 'bold', color: colors.themeColor}}>SPACE USER</Text>
+      </TouchableWithoutFeedback> 
+      <Text style={{alignSelf:'center', fontSize: 20, fontWeight: 'bold', color: colors.themeColor,bottom:20}}>SPACE USER</Text>
        
     </View>
     </SafeAreaView>
@@ -177,15 +177,9 @@ const homecardstyles = StyleSheet.create({
     borderRadius: 15,
     flexDirection: 'row',
    
-    backgroundColor: colors.white,
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
+   
+    
+    
     marginHorizontal: SCREEN_WIDTH / 46,
 
     alignSelf: 'center',
@@ -230,8 +224,15 @@ const homecardstyles = StyleSheet.create({
     marginLeft: SCREEN_WIDTH / 47,
   },
   image: {
-    height: SCREEN_HEIGHT / 6,
-    width: SCREEN_WIDTH / 2,
+    height: SCREEN_HEIGHT / 3.5,
+    width: SCREEN_WIDTH / 1.2,
+    borderRadius: 15,
+  },
+  image1: {
+    height: SCREEN_HEIGHT / 3.5,
+    width: SCREEN_WIDTH / 1.2,
+    bottom:20,
+    borderRadius: 15,
   },
 });
 const categorycardstyles = StyleSheet.create({

@@ -9,6 +9,10 @@ import VisionCamera2 from '../screens/QRCheckout';
 import Profile from '../screens/HostScreens/Profile';
 import HostCustomDrawer from '../screens/HostScreens/HostCustomDrawer';
 import ParkingRegistration from '../screens/HostScreens/ParkingRegistration';
+import VehicleParkingRegistration from '../screens/HostScreens/VehicleParkingRegistration';
+import Alerts from '../screens/HostScreens/Alerts';
+import AccessForParking from '../screens/HostScreens/AccessForParking';
+import ParkingBookings from '../screens/HostScreens/ParkingBookings';
 const Drawer = createDrawerNavigator();
 
 export default function HostDrawer({navigation}) {
@@ -17,34 +21,47 @@ export default function HostDrawer({navigation}) {
       useLegacyImplementation
       initialRouteName="ParkingBookings"
       drawerContent={props => <HostCustomDrawer {...props} />}>
-    
-
- 
-
       <Drawer.Screen
         name="ParkingBookings"
         component={AllBookings}
         options={{headerShown: false}}
       />
 
-         
-    <Drawer.Screen
+      <Drawer.Screen
         name="ParkingRegistration"
-        component={ParkingRegistration}
+        component={VehicleParkingRegistration}
         options={{headerShown: false}}
       />
-      <Drawer.Screen
-        name="EWallet"
+      {/* <Drawer.Screen
+        name="E-Wallet"
         component={EWallet}
         options={{headerShown: false}}
-      />
-     
-    
+      /> */}
+
       <Drawer.Screen
         name="Profile"
         component={Profile}
         options={{headerShown: false}}
       />
+
+      <Drawer.Screen
+        name="Alerts"
+        component={Alerts}
+        options={{headerShown: false}}
+      />
+        <Drawer.Screen
+        name="AccessForParking"
+        component={AccessForParking}
+        options={{headerShown: false}}
+      />
+
+        <Drawer.Screen
+        name="ParkingBookingsDetails"
+        component={ParkingBookings}
+        options={{headerShown: false}}
+      />
+
+
     </Drawer.Navigator>
   );
 }

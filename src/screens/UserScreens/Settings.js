@@ -95,7 +95,10 @@ const Settings = props => {
             elevation: 20,
             alignItems: 'center',
             borderRadius: 15,
-          }}>
+          }}
+          
+          
+          >
           <Image
             style={{alignSelf: 'center', marginTop: 10}}
             source={require('../../Images/icons8-account-10.png')}></Image>

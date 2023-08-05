@@ -1,1 +1,5 @@
-export default url="http://172.15.2.207:8042/"; 
+
+export default url = 'http://192.168.249.180:8042/';
+
+
+     

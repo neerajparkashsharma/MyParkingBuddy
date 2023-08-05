@@ -13,6 +13,8 @@ import {
   ActivityIndicator,
   Button,
 } from 'react-native';
+import moment from 'moment';
+
 import React, {useState, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {colors} from '../../commons/Colors';
@@ -84,8 +86,7 @@ const EWallet = props => {
       const value = await AsyncStorage.getItem('userdata');
 
       if (value !== null) {
-        setUserid(value);
-        console.log('> } > >  > ' + value);
+        setUserid(value); 
 
         axios
           .get(url + 'parkingBookingRecords/customer/' + value)
@@ -140,6 +141,25 @@ const EWallet = props => {
 
   const [selectedPayment, setSelectedPayment] = useState(payments[0].id);
 
+
+
+  const [cardList, setCardList] = useState([]);
+
+ useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user_id = await AsyncStorage.getItem('userdata');
+        const response = await axios.get(`${url}CardDetails/user/${user_id}`);
+        setCardList(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
   const renderPayemtCard = ({item}) => (
     <PaymentCard
       item={item}
@@ -169,6 +189,15 @@ const EWallet = props => {
     );
   }
 
+  let totalCharges = 0;
+
+  listOfBookings.forEach((item) => {
+    if (item?.parkingBookingRecords?.totalParkingCharges) {
+      totalCharges += item.parkingBookingRecords.totalParkingCharges;
+    }
+  });
+
+
   return (
     <SafeAreaView style={styles.container}>
       <Headerx navigation={props.navigation} headerName={'E-Wallet'} />
@@ -180,33 +209,12 @@ const EWallet = props => {
       <View style={EWalletStyles.popularCardWrapper}>
         <View>
           <View style={EWalletStyles.popularTopWrapper}>
-            <Text style={EWalletStyles.popularTopText}>Wallet Balance</Text>
+            <Text style={EWalletStyles.popularTopText}>Total rWallet Balance</Text>
           </View>
           <View style={EWalletStyles.popularTitlesWrapper}>
-            <Text style={EWalletStyles.popularTitlesTitle}>PKR 1200</Text>
+            <Text style={EWalletStyles.popularTitlesTitle}>PKR {totalCharges}</Text>
 
-            <TouchableOpacity
-              onPress={toggleModalVisibility}
-              style={{
-               backgroundColor:colors.white,
-                width: 120,
-                height: 30,
-left:240,
-                borderRadius: 15,
-                borderColor: 'black',
-              }}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  top: 5,
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                  color: colors.themeColor,
-                }}>
-                + Add Card
-              </Text>
-            </TouchableOpacity>
-
+     
             <Text style={EWalletStyles.popularTitlesWeight}>
               {/* PKR120/hour */}
             </Text>
@@ -246,10 +254,12 @@ left:240,
    */}
       <ScrollView>
         <View style={styles.popularWrapper}>
-          <Text style={styles.titlesTitle}>Recent Transactions</Text>
+          <Text style={styles.titlesTitle}>Total Transactions</Text>
+          
 
-          {listOfBookings.map(item => (
-            <TouchableOpacity key={item.id}>
+          {listOfBookings.map((item,id) => (
+            
+            <View key={item.id}>
               <View
                 style={[
                   styles.popularCardWrapper,
@@ -261,16 +271,16 @@ left:240,
                   <View>
                     <View style={styles.popularTopWrapper}>
                       <Text style={styles.popularTopText}>
-                        Transaction # {item.id}
+                        Transaction # {id+1}
                       </Text>
                     </View>
                     <View style={styles.popularTitlesWrapper}>
                       <Text style={styles.popularTitlesWeight}>
-                        Parking Booking
+                        Booking ID : {item?.parkingBookingRecords?.id}
                       </Text>
 
                       <Text style={styles.popularTitlesTitle}>
-                        {item.parking.parkingLocation}
+                        {item?.parkingBookingRecords?.parking?.parkingLocation}
                       </Text>
                     </View>
                   </View>
@@ -281,19 +291,13 @@ left:240,
                           styles.popularTitlesTitle,
                           {fontWeight: 'bold', color: colors.white},
                         ]}>
-                        PKR 120
+                           PKR {item?.parkingBookingRecords?.totalParkingCharges == null ? 'N/A' : 'Rs. ' + item?.parkingBookingRecords?.totalParkingCharges}
                       </Text>
                     </View>
-                    <Text style={[styles.popularTopText, {left: 30}]}>
-                      {' '}
-                      12/Dec/2023, 12:30PM
-                    </Text>
-                    <View style={styles.ratingWrapper}>
-                      {/* <MaterialCommunityIcons
-                        name="star"
-                        size={10}
-                        color={colors.black}
-                      /> */}
+              
+                      
+
+
 
                       {/* <View>
                         <TouchableOpacity>
@@ -308,14 +312,14 @@ left:240,
                         </TouchableOpacity>
                       </View> */}
                     </View>
-                  </View>
+                  {/* </View> */}
                 </View>
 
                 <View style={styles.popularCardRight}>
-                  <Image source={item.image} style={styles.popularCardImage} />
+                  <Image source={item?.image} style={styles.popularCardImage} />
                 </View>
               </View>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
       </ScrollView>
@@ -695,7 +699,7 @@ const EWalletStyles = StyleSheet.create({
   popularCardWrapper: {
     backgroundColor: colors.themeColor,
     borderRadius: 5,
-    height: SCREEN_HEIGHT / 4.5,
+    height: SCREEN_HEIGHT / 6,
     paddingTop: 20,
     paddingLeft: 20,
     width: '95%',
@@ -714,6 +718,7 @@ const EWalletStyles = StyleSheet.create({
   popularTopWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+    width:SCREEN_HEIGHT/3
   },
   popularTopText: {
     fontWeight: '700',

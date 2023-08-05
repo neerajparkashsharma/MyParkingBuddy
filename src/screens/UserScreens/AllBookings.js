@@ -1,76 +1,74 @@
 import {
   View,
   Text,
-  FlatListm,
   StyleSheet,
-  FlatList,
+  TextInput,
   ActivityIndicator,
   Image,
+  ScrollView,
+  TouchableOpacity, TouchableWithoutFeedback
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {black} from 'react-native-paper/lib/typescript/styles/colors';
+import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import url from '../../commons/axiosUrl.js';
-import {colors} from '../../commons/Colors';
-
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Button} from 'react-native-paper';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {getData} from '../../commons/Data.js';
-import {useNavigation} from '@react-navigation/native';
-import {SCREEN_WIDTH} from '../../components/units.js';
+import { colors } from '../../commons/Colors';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../components/units.js';
+import { useIsFocused } from '@react-navigation/native';
 import Headerx from '../../components/header.js';
+import moment from 'moment';
+import uuid from 'react-native-uuid';
+
 
 const AllBookings = props => {
-  const navigation = useNavigation();
-  const Item = ({Id, location, descriptionm, charges}) => {
-    return (
-      <View style={styles.item} key={Id}>
-        {console.log(Id)}
-        <Text style={styles.txt}>Location: {location}</Text>
-        <Text style={styles.txt}>Description: {descriptionm}</Text>
-
-        <Button
-          onPress={() =>
-            navigation.navigate('Camera', {
-              bookingId: Id,
-            })
-          }>
-          <Text style={styles.txt}> Check In ✔</Text>
-        </Button>
-
-        <Button
-          onPress={() =>
-            navigation.navigate('Camera2', {
-              bookingId: Id,
-            })
-          }>
-          <Text style={styles.txt}> Check Out ✔</Text>
-        </Button>
-      </View>
-    );
-  };
-
-  // const { id } = route.params;
-  [listOfBookings, setListOfBookings] = useState([]);
-  // const iddd = JSON.stringify(id);
+  const isFocused = useIsFocused(); 
+  const [listOfBookings, setListOfBookings] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [userid, setUserid] = useState();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [sortOrder, setSortOrder] = useState('asc');
+
+  const filterBookings = () => {
+    const filtered = listOfBookings.filter(item =>
+      item?.parkingBookingRecords?.parking?.parkingLocation?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    console.log(filtered, 'filtered');
+    setFilteredBookings(filtered);
+  };
+
+  const sortBookings = () => {
+    const sortedBookings = [...listOfBookings];
+    sortedBookings.sort((a, b) => {
+      const dateA = a.bookingDates[0]?.bookingDate;
+      const dateB = b.bookingDates[0]?.bookingDate;
+
+      if (sortOrder === 'asc') {
+        return moment(dateA).diff(moment(dateB));
+      } else {
+        return moment(dateB).diff(moment(dateA));
+      }
+    });
+
+    setListOfBookings(sortedBookings);
+  };
+
+
+
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('userdata');
 
       if (value !== null) {
         setUserid(value);
-        console.log('> } > >  > ' + value);
-
         axios
           .get(url + 'parkingBookingRecords/customer/' + value)
-
           .then(function (response) {
+            console.log(response.data);
             setLoading(false);
-            console.log(response);
             setListOfBookings(response.data);
           })
           .catch(function (error) {
@@ -79,192 +77,507 @@ const AllBookings = props => {
       }
     } catch (e) {
       alert(e);
-      // error reading value
     }
   };
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [isFocused]);
 
-  // useEffect(() => {
-  //   // getData();
 
-  // }, []);
-
-  const renderItem = ({item}) => (
-    <Item
-      Id={item.id}
-      location={item.parking.parkingLocation}
-      descriptionm={item.parking.description}
-      charges={item.parking.charges}
-    />
-  );
 
   if (isLoading) {
     return (
       <ActivityIndicator
         size="large"
         color="#0000ff"
-        style={{alignSelf: 'center', flex: 1}}
+        style={{ alignSelf: 'center', flex: 1 }}
       />
     );
   }
+
+
+
   return (
     <View style={styles.container}>
       <Headerx
         navigation={props?.navigation}
         headerName={'Parking Bookings'}></Headerx>
-      <View style={{marginBottom: 30}}></View>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Map')}
-        style={{
-          backgroundColor: colors.themeColor,
-          paddingHorizontal: 40,
-          paddingVertical: 20,
-          width: SCREEN_WIDTH / 2.2,
-          justifyContent: 'center',
-          alignSelf: 'center',
-        }}>
-        <Text style={{alignSelf: 'center', color: 'white'}}>Book New (+)</Text>
-      </TouchableOpacity>
 
-      <View style={styles.popularWrapper}>
-        {listOfBookings.map(item => (
-          <TouchableOpacity key={item.id}>
-            <View
-              style={[
-                styles.popularCardWrapper,
-                {
-                  marginTop: item.id == 1 ? 10 : 20,
-                },
-              ]}>
-              <View>
-                <View>
-                  <View style={styles.popularTopWrapper}>
-                    <MaterialCommunityIcons
-                      name="crown"
-                      size={12}
-                      color={colors.primary}
-                    />
-                    <Text style={styles.popularTopText}>
-                      Details: {item.parking.description}
-                    </Text>
-                  </View>
-                  <View style={styles.popularTitlesWrapper}>
-                    <Text style={styles.popularTitlesTitle}>
-                      {item.parking.parkingLocation}
-                    </Text>
-                    <Text style={styles.popularTitlesWeight}>
-                      {/* PKR120/hour */}
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.popularCardBottom}>
-                  <View style={styles.addPizzaButton}>
-                    <Text
-                      style={[
-                        styles.popularTitlesTitle,
-                        {fontWeight: 'bold', color: colors.white},
-                      ]}>
-                      PKR120/hour
-                    </Text>
-                  </View>
-                  <View style={styles.ratingWrapper}>
-                    {/* <MaterialCommunityIcons
-                        name="star"
-                        size={10}
-                        color={colors.black}
-                      /> */}
+      <View style={styles.searchContainer}>
+        <Icon name="search-outline" size={20} color="gray" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search by location"
+          placeholderTextColor="gray"
+          value={searchQuery}
+          onChangeText={(text) => {
+            setSearchQuery(text);
+            filterBookings();
+          }}
+          onEndEditing={filterBookings}
+        />
+        <View style={styles.sortButtonContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+              sortBookings();
+            }}
+            style={styles.sortButton}
+          >
+            <Icon
+              name={sortOrder === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'}
+              size={20}
+              color={colors.themeColor}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
 
-                    <View>
-                      <TouchableOpacity onPress={() =>
-                       props?.navigation.navigate('Camera2', {
-                        bookingId: 1})}>
-                        <Text style={{color: colors.themeColor}}>Check In</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity>
-                        <Text style={{color: colors.themeColor}}>
-                          Check Out
+      {searchQuery.length > 0 ? (
+        <ScrollView style={styles.popularWrapper}>
+          {filteredBookings.length == 0 ? (
+            <Text style={{ textAlign: 'center', marginTop: 20, fontSize: 18, color: colors.textDark }}>
+              No bookings found
+            </Text>
+
+          ) : (
+            <>
+              {filteredBookings.map((item) => (
+                <TouchableWithoutFeedback key={item?.parkingBookingRecords?.id}>
+                  <View
+                    style={[
+                      styles.popularCardWrapper,
+                      {
+                        marginTop: 15, alignItems: 'center', // Align items to the center
+
+                      },
+                    ]}
+                  >
+                    <View style={{ flexDirection: 'column' }}>
+                      <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                        <Text
+                          style={[
+                            styles.popularTitlesTitle,
+                            {
+                              backgroundColor: item?.parkingBookingRecords?.isExpired ? '#FF0000' : '#613EEA',
+                              borderRadius: 20,
+                              paddingHorizontal: 10,
+                              paddingVertical: 4,
+                              alignSelf: 'flex-start',
+                              color: 'white',
+                              fontSize: 12,
+                              marginRight: 10,
+                            },
+                          ]}
+                        >
+                          <Text style={{ fontWeight: 'bold' }}>Status: </Text>
+                          {item?.parkingBookingRecords?.isExpired ? 'Expired' : 'Active'}
                         </Text>
-                      </TouchableOpacity>
+
+                        <Text
+                          style={[
+                            styles.popularTitlesTitle,
+                            {
+                              backgroundColor: item?.parkingBookingRecords?.isExpired ? '#FF0000' : '#613EEA',
+                              borderRadius: 20,
+                              paddingHorizontal: 10,
+                              paddingVertical: 4,
+                              alignSelf: 'flex-start',
+                              color: 'white',
+                              fontSize: 12,
+                            },
+                          ]}
+                        >
+                          <Text style={{ fontWeight: 'bold' }}>$ Total Charges: </Text>
+                          {item?.parkingBookingRecords?.totalParkingCharges == null ? 'N/A' : 'Rs. ' + item?.parkingBookingRecords?.totalParkingCharges}
+                        </Text>
+
+                      </View>
+                      {
+                        item?.parkingBookingRecords?.isExpired ? null : (
+                          <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+
+                          </View>
+                        )
+                      }
+
+
+                      <View style={{ flexDirection: 'row', marginTop: 10, marginBottom: item?.parkingBookingRecords?.isExpired ? 10 : -3 }}>
+                        <Icon name="location" size={20} color="green" style={{ marginRight: 5 }} />
+                        <Text style={styles.popularTitlesTitle}>{item?.parkingBookingRecords?.parking?.parkingLocation}</Text>
+                      </View>
+
+                      <View style={{ flexDirection: 'row', marginTop: 13, marginBottom: item?.parkingBookingRecords?.isExpired ? 10 : -3 }}>
+                        <Icon name="md-calendar-sharp" size={20} color={colors.primary} style={{ marginRight: 5 }} />
+                        <Text style={[styles.popularTitlesTitle,
+                        {
+                          fontSize: 13,
+                          fontWeight: '800'
+                        }]}>
+
+                          {item?.bookingDates?.length > 1 && item?.bookingDates?.map((i) => (
+                            <Text style={{ fontSize: 13, fontWeight: '800' }} key={uuid.v4()}>
+                              {
+                                moment(i?.bookingDate).format('DD-MM-YYYY').toString()
+                              }
+                            </Text>
+                          ))
+                            .reduce((prev, curr) => [prev, ', ', curr])
+                          }
+
+                          {item?.bookingDates?.length == 1 && item?.bookingDates?.map((i) => (
+                            <Text style={{ fontSize: 13, fontWeight: '800' }} key={item?.id}>
+                              {
+                                moment(i?.bookingDate).format('DD-MM-YYYY').toString()
+                              }
+                            </Text>
+                          ))
+                          }
+
+                          {item?.bookingDates?.length == 0 ? 'N/A' : null}
+
+
+
+
+                        </Text>
+                      </View>
+
+
+                      {item?.parkingBookingRecords?.isExpired  ? null : (
+                        <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                          <TouchableOpacity
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              backgroundColor: '#613EEA',
+                              borderRadius: 6,
+                              paddingHorizontal: 0.04 * SCREEN_WIDTH,
+                              paddingVertical: 0.003 * SCREEN_HEIGHT,
+                              marginRight: 10,
+                              marginBottom: 10,
+                            }}
+                            onPress={() => {
+                              props?.navigation.navigate('Check In QR Scanner', {
+                                bookingId: item?.parkingBookingRecords?.id,
+                                userId: userid,
+                                parkingId: item?.parkingBookingRecords?.parking?.id,
+
+                              });
+                            }}
+                          >
+                            <Icon name="checkmark-outline" size={0.05 * SCREEN_WIDTH} color={'white'} style={{ marginRight: 0.02 * SCREEN_WIDTH }} />
+                            <Text
+                              style={{
+                                backgroundColor: '#613EEA',
+                                borderRadius: 5,
+                                color: 'white',
+                                fontSize: 0.03 * SCREEN_WIDTH,
+                                marginRight: 10,
+                              }}
+                            >
+                              Check In
+                            </Text>
+                          </TouchableOpacity>
+
+                          <TouchableOpacity
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              backgroundColor: '#613EEA',
+                              borderRadius: 5,
+                              paddingHorizontal: 0.04 * SCREEN_WIDTH,
+                              paddingVertical: 0.03 * SCREEN_WIDTH,
+                              marginRight: 10,
+                              marginBottom: 10,
+
+                            }}
+
+                            onPress={() => {
+                              props?.navigation.navigate('Check Out QR Scanner', {
+                                bookingId: item?.parkingBookingRecords?.id,
+                                userId: userid,
+                                parkingId: item?.parkingBookingRecords?.parking?.id,
+                              });
+                            }}
+
+                          >
+                            <Icon name="checkmark-done-outline" size={0.05 * SCREEN_WIDTH} color={'white'} style={{ marginRight: 0.02 * SCREEN_WIDTH }} />
+                            <Text
+                              style={{
+                                backgroundColor: '#613EEA',
+                                borderRadius: 5,
+                                color: 'white',
+                                fontSize: 0.03 * SCREEN_WIDTH,
+                                marginRight: 10,
+                              }}
+                            >
+                              Check Out
+                            </Text>
+                          </TouchableOpacity>
+{/* 
+                          <TouchableOpacity style={{ flexDirection: 'row', marginTop: 10 }}
+
+                            onPress={() => {
+                              props?.navigation.navigate('ChatRoom', {
+                                bookingId: item?.parkingBookingRecords?.id,
+                                userId: userid,
+                                parki8ngId: item?.parkingBookingRecordsparking?.id,
+
+                              });
+                            }}
+                          >
+                            <Text style={[styles.popularTitlesTitle,
+                            {
+                              color: colors.themeColor,
+                              fontSize: 13,
+                              fontWeight: '800'
+                            }]}>Chat</Text>
+
+                            <Icon name="md-chatbubble-ellipses-outline" size={0.07 * SCREEN_WIDTH} color={colors.themeColor} style={{ marginRight: 0.02 * SCREEN_WIDTH }} />
+
+                          </TouchableOpacity> */}
+
+                        </View>
+                      )}
+
+
+
                     </View>
                   </View>
-                </View>
-              </View>
+                </TouchableWithoutFeedback>
+              ))}
 
-              <View style={styles.popularCardRight}>
-                <Image source={item.image} style={styles.popularCardImage} />
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
+            </>
+          )}
+        </ScrollView>
+      )
+        :
+        (
+          <ScrollView style={styles.popularWrapper}>
+            {listOfBookings.length == 0 ? (
+              <Text style={{ textAlign: 'center', marginTop: 20, fontSize: 18, color: colors.textDark }}>
+                No bookings found
+              </Text>
+
+            ) : (
+              <>
+                {listOfBookings.map((item) => (
+
+
+                  <TouchableWithoutFeedback key={item?.parkingBookingRecords?.id}>
+                    <View
+                      style={[
+                        styles.popularCardWrapper,
+                        {
+                          marginTop: 15, alignItems: 'center', // Align items to the center
+
+                        },
+                      ]}
+                    >
+                      <View style={{ flexDirection: 'column' }}>
+                        <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                          <Text
+                            style={[
+                              styles.popularTitlesTitle,
+                              {
+                                backgroundColor: item?.parkingBookingRecords?.isExpired ? '#FF0000' : '#613EEA',
+                                borderRadius: 20,
+                                paddingHorizontal: 10,
+                                paddingVertical: 4,
+                                alignSelf: 'flex-start',
+                                color: 'white',
+                                fontSize: 12,
+                                marginRight: 10,
+                              },
+                            ]}
+                          >
+                            <Text style={{ fontWeight: 'bold' }}>Status: </Text>
+                            {item?.parkingBookingRecords?.isExpired ? 'Expired' : 'Active'}
+                          </Text>
+
+                          <Text
+                            style={[
+                              styles.popularTitlesTitle,
+                              {
+                                backgroundColor: item?.parkingBookingRecords?.isExpired ? '#FF0000' : '#613EEA',
+                                borderRadius: 20,
+                                paddingHorizontal: 10,
+                                paddingVertical: 4,
+                                alignSelf: 'flex-start',
+                                color: 'white',
+                                fontSize: 12,
+                              },
+                            ]}
+                          >
+                            <Text style={{ fontWeight: 'bold' }}>$ Total Charges: </Text>
+                            {item?.parkingBookingRecords?.totalParkingCharges == null ? 'N/A' : 'Rs. ' + item?.parkingBookingRecords?.totalParkingCharges}
+                          </Text>
+
+                        </View>
+                        {
+                          item?.parkingBookingRecords?.isExpired ? null : (
+                            <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+
+                            </View>
+                          )
+                        }
+
+
+                        <View style={{ flexDirection: 'row', marginTop: 10, marginBottom: item?.parkingBookingRecords?.isExpired ? 10 : -3 }}>
+                          <Icon name="location" size={20} color="green" style={{ marginRight: 5 }} />
+                          <Text style={styles.popularTitlesTitle}>{item?.parkingBookingRecords?.parking?.parkingLocation}</Text>
+                        </View>
+
+                        <View style={{ flexDirection: 'row', marginTop: 13, marginBottom: item?.parkingBookingRecords?.isExpired ? 10 : -3 }}>
+                          <Icon name="md-calendar-sharp" size={20} color={colors.primary} style={{ marginRight: 5 }} />
+                          <Text style={[styles.popularTitlesTitle,
+                          {
+                            fontSize: 13,
+                            fontWeight: '800'
+                          }]}>
+
+                            {item?.bookingDates?.length > 1 && item?.bookingDates?.map((i) => (
+                              <Text style={{ fontSize: 13, fontWeight: '800' }} key={i?.bookingDate || item?.id}>
+                                {
+                                  moment(i?.bookingDate).format('DD-MM-YYYY').toString()
+                                }
+                              </Text>
+                            ))
+                              .reduce((prev, curr) => [prev, ', ', curr])
+                            }
+
+                            {item?.bookingDates?.length == 1 && item?.bookingDates?.map((i) => (
+                              <Text style={{ fontSize: 13, fontWeight: '800' }} key={i?.bookingDate || item?.id}>
+                                {
+                                  moment(i?.bookingDate).format('DD-MM-YYYY').toString()
+                                }
+                              </Text>
+                            ))
+                            }
+
+                            {item?.bookingDates?.length == 0 ? 'N/A' : null}
+
+
+
+
+                          </Text>
+                        </View>
+
+
+                        {item?.parkingBookingRecords?.isExpired ? null : (
+                          <View style={{ flexDirection: 'row', marginTop: 30 }}>
+                            <TouchableOpacity
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                backgroundColor: '#613EEA',
+                                borderRadius: 6,
+                                paddingHorizontal: 0.04 * SCREEN_WIDTH,
+                                paddingVertical: 0.003 * SCREEN_HEIGHT,
+                                marginRight: 10,
+                                marginBottom: 10,
+                              }}
+                              onPress={() => {
+                                props?.navigation.navigate('Check In QR Scanner', {
+                                  bookingId: item?.parkingBookingRecords?.id,
+                                  userId: userid,
+                                  parkingId: item?.parkingBookingRecords?.parking?.id,
+
+                                });
+                              }}
+                            >
+                              <Icon name="checkmark-outline" size={0.05 * SCREEN_WIDTH} color={'white'} style={{ marginRight: 0.02 * SCREEN_WIDTH }} />
+                              <Text
+                                style={{
+                                  backgroundColor: '#613EEA',
+                                  borderRadius: 5,
+                                  color: 'white',
+                                  fontSize: 0.03 * SCREEN_WIDTH,
+                                  marginRight: 10,
+                                }}
+                              >
+                                Check In
+                              </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                backgroundColor: '#613EEA',
+                                borderRadius: 5,
+                                paddingHorizontal: 0.04 * SCREEN_WIDTH,
+                                paddingVertical: 0.03 * SCREEN_WIDTH,
+                                marginRight: 10,
+                                marginBottom: 10,
+
+                              }}
+
+                              onPress={() => {
+                                props?.navigation.navigate('Check Out QR Scanner', {
+                                  bookingId: item?.parkingBookingRecords?.id,
+                                  userId: userid,
+                                  parkingId: item?.parkingBookingRecords?.parking?.id,
+                                });
+                              }}
+
+                            >
+                              <Icon name="checkmark-done-outline" size={0.05 * SCREEN_WIDTH} color={'white'} style={{ marginRight: 0.02 * SCREEN_WIDTH }} />
+                              <Text
+                                style={{
+                                  backgroundColor: '#613EEA',
+                                  borderRadius: 5,
+                                  color: 'white',
+                                  fontSize: 0.03 * SCREEN_WIDTH,
+                                  marginRight: 10,
+                                }}
+                              >
+                                Check Out
+                              </Text>
+                            </TouchableOpacity>
+{/* 
+                            <TouchableOpacity style={{ flexDirection: 'row', marginTop: 10 }}
+
+                              onPress={() => {
+                                props?.navigation.navigate('ChatRoom', {
+                                  bookingId: item?.parkingBookingRecords?.id,
+                                  userId: userid,
+                                  parki8ngId: item?.parkingBookingRecords?.parking?.id,
+
+                                });
+                              }}
+                            >
+                              <Text style={[styles.popularTitlesTitle,
+                              {
+                                color: colors.themeColor,
+                                fontSize: 13,
+                                fontWeight: '800'
+                              }]}>Chat</Text>
+
+                              <Icon name="md-chatbubble-ellipses-outline" size={0.07 * SCREEN_WIDTH} color={colors.themeColor} style={{ marginRight: 0.02 * SCREEN_WIDTH }} />
+
+                            </TouchableOpacity> */}
+
+                          </View>
+                        )}
+
+
+
+                      </View>
+                    </View>
+                  </TouchableWithoutFeedback>
+                ))}
+
+              </>
+            )}
+          </ScrollView>
+        )
+      }
+
     </View>
 
-    // <View>
-    //   <View style={{alignItems: 'center', top: 30}}>
-    //     <Text style={{color: 'black', fontSize: 32, fontWeight: 'bold'}}>
-    //       All Parking  Bookings
-    //       {JSON.stringify(id)}
-    //     </Text>
-    //     </View>
-    //         <View style={{alignItems:'center', top:50}}>
 
-    //   <TouchableOpacity onPress={()=>navigation.navigate("Map",{id:iddd})}
-    //      >
-    //      <Text style={{color:'black',fontSize:30,color:'grey'}}> Book New</Text>
-    //      </TouchableOpacity>
-    //    </View>
-
-    // { console.log(listOfBookings)}
-    //          {listOfBookings.map(item => (
-
-    //     <View  key={item.parking.id}
-    //       style={{
-    //         backgroundColor: 'white',
-    //         padding: 60,
-    //         top: 70,
-    //         elevation: 3,
-    //         alignItems: 'center',
-    //         margin: 2,
-    //       }}>
-    //          <Text style={{color:'black', fontSize:24, fontWeight:'bold'}}>PARKING </Text>
-
-    //       <Text
-    //         style={{
-    //           color: 'black',
-    //           fontSize: 20,
-    //           marginBottom: 5,
-    //         }}>
-    //        Location:  {item.parking.parkingLocation}
-    //       </Text>
-
-    //       <Text
-    //        style={{
-    //         color: 'black',
-    //         fontSize: 20,
-    //         marginBottom: 5,
-    //       }}>
-    //      Description:   {item.parking.description}
-    //       </Text>
-
-    //       <Text
-    //     style={{
-    //         color: 'black',
-    //         fontSize: 20,
-    //         marginBottom: 5,
-    //       }}>
-    //      Charges:   {item.parking.parkingCharges}
-    //       </Text>
-    //       <Button onPress={()=>navigation.navigate("Camera")}>
-    //         Check In
-    //     </Button>
-
-    //     </View>
-
-    //   ))}
-    // </View>
   );
 };
 
@@ -281,13 +594,35 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 16,
   },
-
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingHorizontal: 16,
+  },
+  searchInput: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: 'black',
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  noBookingsText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 18,
+    color: 'darkgray',
+  },
   txt: {
     color: 'white',
     fontSize: 17,
     fontWeight: 'bold',
   },
-
   popularWrapper: {
     paddingHorizontal: 20,
   },
@@ -297,7 +632,7 @@ const styles = StyleSheet.create({
   },
   popularCardWrapper: {
     backgroundColor: colors.white,
-    borderRadius: 25,
+    borderRadius: 5,
     paddingTop: 20,
     paddingLeft: 20,
     flexDirection: 'row',
@@ -325,7 +660,8 @@ const styles = StyleSheet.create({
   },
   popularTitlesTitle: {
     fontFamily: 'Montserrat-SemiBold',
-    fontSize: 14,
+    fontSize: 13,
+    flexWrap: 'wrap-reverse',
     color: colors.textDark,
   },
   popularTitlesWeight: {
@@ -339,13 +675,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginLeft: -20,
+    width: SCREEN_WIDTH / 20,
+
   },
   addPizzaButton: {
     backgroundColor: colors.themeColor,
-    paddingHorizontal: 40,
+    paddingHorizontal: SCREEN_WIDTH / 8,
     paddingVertical: 20,
-    borderTopRightRadius: 25,
-    borderBottomLeftRadius: 25,
+    textAlign: 'center',
+    width: SCREEN_WIDTH / 1,
   },
   ratingWrapper: {
     flexDirection: 'row',
@@ -365,5 +703,22 @@ const styles = StyleSheet.create({
     width: 210,
     height: 125,
     resizeMode: 'contain',
+  },
+  checkInOutButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkInOutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#613EEA',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginRight: 10,
+  },
+  checkInOutButtonText: {
+    color: 'white',
+    marginLeft: 5,
   },
 });
